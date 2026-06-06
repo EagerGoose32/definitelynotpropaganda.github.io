@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "definitelynotpropagandagit",
+  "name": "icy-art-12c8",
   "compatibility_date": "2026-06-06",
   "observability": {
     "enabled": true
