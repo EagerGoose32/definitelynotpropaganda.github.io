@@ -1166,6 +1166,10 @@
 
       const data = await res.json();
 
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       if (!data.messages || data.messages.length === 0) {
         if (chatMessages.children.length === 1) { // Still has loading message
           chatMessages.innerHTML = '<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 12px;">No messages yet. Be the first to document.</div>';
@@ -1181,7 +1185,11 @@
       });
     } catch (e) {
       console.error('Error loading messages:', e);
-      chatMessages.innerHTML = '<div style="padding: 20px; color: var(--accent2); font-family: var(--mono); font-size: 12px;">Chat temporarily unavailable. Please check back soon.</div>';
+      chatMessages.innerHTML = `<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 11px; line-height: 1.6;">
+        Worker update needed.<br><br>
+        Your Worker needs to support message fetching. See <a href="https://github.com/EagerGoose32/definitelynotpropaganda.github.io/blob/main/WORKER.md" target="_blank" style="color: var(--accent); text-decoration: none;">WORKER.md</a> for setup.<br><br>
+        <span style="color: var(--accent2);">Status: ${e.message}</span>
+      </div>`;
     }
   }
 
