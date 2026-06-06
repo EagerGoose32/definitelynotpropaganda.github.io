@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Definitely Not Propaganda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #2a2a2a;
+      --accent: #c8f135;
+      --accent2: #ff3b3b;
+      --text: #e8e8e8;
+      --muted: #666;
+      --mono: 'Space Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+      --body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* TICKER */
+    .ticker-wrap {
+      background: var(--accent);
+      color: #000;
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 8px 0;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .ticker {
+      display: inline-block;
+      animation: ticker 30s linear infinite;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .logo {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1;
+    }
+    .logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      background: var(--accent2);
+      color: #fff;
+      padding: 4px 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* HERO */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 80vh;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-left {
+      padding: 60px 40px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 24px;
+    }
+
+    .hero-headline {
+      font-family: var(--display);
+      font-size: clamp(64px, 8vw, 120px);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: var(--text);
+    }
+    .hero-headline .strike {
+      position: relative;
+      display: inline-block;
+    }
+    .hero-headline .strike::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      top: 50%;
+      height: 6px;
+      background: var(--accent2);
+      transform: rotate(-1deg);
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 400px;
+      margin-top: 32px;
+      font-weight: 300;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--accent2);
+    }
+
+    .btn-secondary {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 14px 28px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .hero-right {
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .stat-block {
+      border-bottom: 1px solid var(--border);
+      padding: 28px 0;
+    }
+    .stat-block:first-child { padding-top: 0; }
+    .stat-num {
+      font-family: var(--display);
+      font-size: 52px;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-top: 6px;
+    }
+
+    /* METHODOLOGY */
+    .section {
+      padding: 80px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-size: 48px;
+      letter-spacing: 0.04em;
+    }
+
+    .section-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .method-card {
+      background: var(--bg);
+      padding: 32px;
+      transition: background 0.2s;
+    }
+    .method-card:hover { background: var(--surface); }
+
+    .method-icon {
+      font-family: var(--mono);
+      font-size: 24px;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .method-title {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .method-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* FEED */
+    .feed-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .feed-main { background: var(--bg); }
+    .feed-sidebar { background: var(--bg); }
+
+    .feed-item {
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .feed-item:hover { background: var(--surface); }
+
+    .feed-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .feed-tag {
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 3px 8px;
+    }
+    .tag-hasbara { background: var(--accent2); color: #fff; }
+    .tag-disinfo { background: #1a1a6e; color: var(--accent); border: 1px solid var(--accent); }
+    .tag-analysis { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+    .tag-confirmed { background: #1a3a1a; color: #4caf50; border: 1px solid #4caf50; }
+
+    .feed-date {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .feed-title {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .feed-excerpt {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .feed-sources {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .source-pill {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* SIDEBAR */
+    .sidebar-block {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .pattern-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .pattern-item:last-child { border-bottom: none; }
+
+    .pattern-bar {
+      height: 3px;
+      background: var(--border);
+      flex: 1;
+      margin: 0 12px;
+      position: relative;
+    }
+    .pattern-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: var(--accent);
+    }
+
+    .pattern-count {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+    }
+
+    /* CHATROOM */
+    .chat-section {
+      padding: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chat-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-live {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .chat-container {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      height: 520px;
+    }
+
+    .chat-main {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .msg {
+      display: flex;
+      gap: 12px;
+      animation: fadeUp 0.3s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-avatar {
+      width: 32px; height: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .msg-body { flex: 1; }
+
+    .msg-header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .msg-name {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .msg-time {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    .msg-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .msg-text .highlight {
+      background: rgba(200, 241, 53, 0.1);
+      color: var(--accent);
+      padding: 0 4px;
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .msg.system .msg-text {
+      color: var(--muted);
+      font-style: italic;
+      font-size: 12px;
+    }
+
+    .chat-input-area {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      font-family: var(--body);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-input::placeholder { color: var(--muted); }
+
+    .chat-send {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 10px 20px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: opacity 0.2s;
+    }
+    .chat-send:hover { opacity: 0.85; }
+
+    .chat-sidebar {
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .online-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .online-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .online-user:last-child { border-bottom: none; }
+
+    .user-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #4caf50;
+      flex-shrink: 0;
+    }
+
+    .chat-matrix-note {
+      margin-top: 20px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .chat-matrix-note a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* SUBMIT */
+    .submit-section {
+      padding: 80px 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .submit-left h2 {
+      font-family: var(--display);
+      font-size: 52px;
+      line-height: 0.95;
+      margin-bottom: 20px;
+    }
+
+    .submit-left p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .submit-form { display: flex; flex-direction: column; gap: 16px; }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+
+    .form-input, .form-textarea, .form-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      font-family: var(--body);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--accent);
+    }
+    .form-textarea { min-height: 120px; resize: vertical; }
+    .form-select option { background: var(--surface); }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+
+    .footer-logo {
+      font-family: var(--display);
+      font-size: 40px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer-logo span { color: var(--accent); }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    .footer-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 40px 20px; border-right: none; border-bottom: 1px solid var(--border); }
+      .hero-right { padding: 40px 20px; }
+      .method-grid { grid-template-columns: 1fr; }
+      .feed-grid { grid-template-columns: 1fr; }
+      .chat-container { grid-template-columns: 1fr; }
+      .chat-sidebar { display: none; }
+      .submit-section { grid-template-columns: 1fr; gap: 40px; padding: 40px 20px; }
+      .section { padding: 48px 20px; }
+      footer { padding: 32px 20px; }
+    }
+
+    /* SCROLL ANIMATIONS */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <span class="ticker">
+    ◼ SILENCE IS A TELL — ORGANIC COMMENTERS DON'T GO QUIET WHEN CONFRONTED WITH FACTS ◼ FOLLOW THE INVOICE ◼ ZONE FLOODING: HIGH INFORMATION VELOCITY USED TO BURY ACCOUNTABILITY STORIES ◼ SELECTION NOT PURCHASE: ALIGNMENT OPERATES THROUGH CANDIDATE ARCHITECTURE ◼ TACO PATTERN: MAXIMUM THREAT → QUIET DE-ESCALATION → FACE-SAVING FRAMING ◼ THE AUDIENCE IS ALWAYS THE PASSIVE READER, NOT THE ACCOUNT BEING REPLIED TO ◼
+  </span>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">DNP<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#feed">Feed</a></li>
+    <li><a href="#methodology">Method</a></li>
+    <li><a href="#chat">Room</a></li>
+    <li><a href="#submit">Submit</a></li>
+  </ul>
+  <div class="nav-badge">● Live</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div>
+      <div class="hero-label">// Counter-Propaganda Documentation Project</div>
+      <h1 class="hero-headline">
+        DEFINITELY<br>
+        <span class="strike">NOT</span><br>
+        PROPAGANDA
+      </h1>
+      <p class="hero-sub">
+        Documenting coordinated influence operations, hasbara networks, and information warfare in real time. Receipts first. Analysis second. No both-sidesing when the evidence is clear.
+      </p>
+      <div class="hero-cta">
+        <a href="#feed" class="btn-primary">View Documentation</a>
+        <a href="#chat" class="btn-secondary">Join the Room</a>
+      </div>
+    </div>
+    <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 40px; line-height: 1.8;">
+      MASTODON: @Captured99 &nbsp;·&nbsp; YOUTUBE: @DubbznWubbz99<br>
+      ALL CLAIMS SOURCED · ALL RECEIPTS ARCHIVED
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="stat-block">
+      <div class="stat-num">47</div>
+      <div class="stat-label">Coordinated Accounts Documented</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Active Campaigns Tracked</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Confirmed Silence Patterns</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Unverified Claims Published</div>
+    </div>
+    <div class="stat-block" style="border-bottom: none;">
+      <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 1.8;">
+        Sources: Al Jazeera · Middle East Eye · Anadolu Agency · TRT World · +972 Magazine · The Intercept · CGTN · Press TV<br><br>
+        <span style="color: var(--accent);">⚑ Western-only sourcing flagged on every post</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHODOLOGY -->
+<section class="section" id="methodology">
+  <div class="section-header reveal">
+    <span class="section-num">// 01</span>
+    <h2 class="section-title">THE METHOD</h2>
+  </div>
+  <div class="method-grid">
+    <div class="method-card reveal">
+      <div class="method-icon">$</div>
+      <div class="method-title">Follow The Invoice</div>
+      <div class="method-desc">Trace institutional behavior to financial incentives and ownership before accepting stated rationales. Donor capture, not ideology, explains most media failures.</div>
+    </div>
+    <div class="method-card reveal">
+      <div class="method-icon">◼</div>
+      <div class="method-title">Silence Is A Tell</div>
+      <div class="method-desc">Suspected coordinated accounts go silent when confronted with documented facts. Organic commenters don't. The pattern is the evidence.</div>
+    </div>
+    <div class="method-card reveal">
+      <div class="method-icon">↯</div>
+      <div class="method-title">Zone Flooding</div>
+      <div class="method-desc">High information velocity used to bury accountability stories. When four major stories drop simultaneously, ask what's being buried underneath them.</div>
+    </div>
+    <div class="method-card reveal">
+      <div class="method-icon">⌖</div>
+      <div class="method-title">Selection Not Purchase</div>
+      <div class="method-desc">Institutional alignment operates through candidate selection architecture, not direct transactional corruption. The architecture is the mechanism.</div>
+    </div>
+    <div class="method-card reveal">
+      <div class="method-icon">◎</div>
+      <div class="method-title">Receipts First</div>
+      <div class="method-desc">Screenshots archived on Wayback Machine before accounts get cleaned. Every claim sourced to primary material. Timestamped. Verifiable. No exceptions.</div>
+    </div>
+    <div class="method-card reveal">
+      <div class="method-icon">⊕</div>
+      <div class="method-title">Non-Western Priority</div>
+      <div class="method-desc">Al Jazeera, Anadolu, TRT World, Middle East Eye, CGTN confirmed before Western sources. Western-only sourcing flagged explicitly on every post.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEED -->
+<section class="section" id="feed" style="padding: 0;">
+  <div style="padding: 48px 40px 32px; border-bottom: 1px solid var(--border);">
+    <div class="section-header reveal" style="margin-bottom: 0;">
+      <span class="section-num">// 02</span>
+      <h2 class="section-title">DOCUMENTATION FEED</h2>
+    </div>
+  </div>
+  <div class="feed-grid">
+    <div class="feed-main">
+
+      <div class="feed-item reveal">
+        <div class="feed-meta">
+          <span class="feed-tag tag-hasbara">Hasbara</span>
+          <span class="feed-tag tag-confirmed">Confirmed</span>
+          <span class="feed-date">Jun 4, 2026 · 14:32 UTC</span>
+        </div>
+        <div class="feed-title">Coordinated Comment Surge: "Human Shield" Narrative Deployed Across 6 Platforms Simultaneously</div>
+        <div class="feed-excerpt">Identical phrasing appearing within 4-minute window across Twitter/X, Facebook, Reddit, YouTube, Telegram, and TikTok. Account creation dates cluster 2021–2022. All accounts go silent 6 hours after initial burst.</div>
+        <div class="feed-sources">
+          <span class="source-pill">Al Jazeera</span>
+          <span class="source-pill">+972 Magazine</span>
+          <span class="source-pill">Middle East Eye</span>
+          <span class="source-pill">Archived: Wayback</span>
+        </div>
+      </div>
+
+      <div class="feed-item reveal">
+        <div class="feed-meta">
+          <span class="feed-tag tag-disinfo">Disinfo</span>
+          <span class="feed-date">Jun 3, 2026 · 09:17 UTC</span>
+        </div>
+        <div class="feed-title">Zone Flooding in Action: Epstein Adjacent Story Buried Under Four Simultaneous Domestic News Cycles</div>
+        <div class="feed-excerpt">Pattern documented: major accountability story drops, then within 90 minutes four unrelated breaking stories appear across major outlets. Third time this month. Information velocity as a burial mechanism.</div>
+        <div class="feed-sources">
+          <span class="source-pill">The Intercept</span>
+          <span class="source-pill">TRT World</span>
+          <span class="source-pill">⚑ Western-sourced only</span>
+        </div>
+      </div>
+
+      <div class="feed-item reveal">
+        <div class="feed-meta">
+          <span class="feed-tag tag-analysis">Analysis</span>
+          <span class="feed-date">Jun 1, 2026 · 18:44 UTC</span>
+        </div>
+        <div class="feed-title">TACO Pattern Cycle 7: Maximum Escalation Rhetoric Followed by Quiet Reversal, Face-Saving Framing Applied</div>
+        <div class="feed-excerpt">Documented cycle: threat issued at maximum volume, then reversed quietly with rebranding. Media covers the threat, ignores the reversal. Called this pattern in February. The framing shift is the tell.</div>
+        <div class="feed-sources">
+          <span class="source-pill">Anadolu Agency</span>
+          <span class="source-pill">CGTN</span>
+          <span class="source-pill">Al Jazeera</span>
+        </div>
+      </div>
+
+      <div style="padding: 24px 32px; border-bottom: 1px solid var(--border);">
+        <a href="#" class="btn-secondary" style="display: inline-block;">Load More Entries →</a>
+      </div>
+    </div>
+
+    <div class="feed-sidebar">
+      <div class="sidebar-block">
+        <div class="sidebar-title">// Active Patterns</div>
+        <div class="pattern-item">
+          <span style="font-size: 11px;">Hasbara Ops</span>
+          <div class="pattern-bar"><div class="pattern-fill" style="width: 78%;"></div></div>
+          <span class="pattern-count">78%</span>
+        </div>
+        <div class="pattern-item">
+          <span style="font-size: 11px;">Zone Flood</span>
+          <div class="pattern-bar"><div class="pattern-fill" style="width: 54%;"></div></div>
+          <span class="pattern-count">54%</span>
+        </div>
+        <div class="pattern-item">
+          <span style="font-size: 11px;">TACO Cycle</span>
+          <div class="pattern-bar"><div class="pattern-fill" style="width: 91%;"></div></div>
+          <span class="pattern-count">91%</span>
+        </div>
+        <div class="pattern-item">
+          <span style="font-size: 11px;">Bot Silence</span>
+          <div class="pattern-bar"><div class="pattern-fill" style="width: 63%;"></div></div>
+          <span class="pattern-count">63%</span>
+        </div>
+      </div>
+
+      <div class="sidebar-block">
+        <div class="sidebar-title">// Source Monitor</div>
+        <div style="font-size: 12px; color: var(--muted); line-height: 2;">
+          <div style="color: #4caf50;">✓ Al Jazeera</div>
+          <div style="color: #4caf50;">✓ Anadolu Agency</div>
+          <div style="color: #4caf50;">✓ TRT World</div>
+          <div style="color: #4caf50;">✓ Middle East Eye</div>
+          <div style="color: #4caf50;">✓ +972 Magazine</div>
+          <div style="color: #4caf50;">✓ CGTN</div>
+          <div style="color: var(--accent2);">⚑ AP/Reuters (secondary)</div>
+          <div style="color: var(--accent2);">⚑ NYT/WaPo (flagged)</div>
+        </div>
+      </div>
+
+      <div class="sidebar-block">
+        <div class="sidebar-title">// Quick Links</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <a href="https://mastodon.social/@Captured99" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">Mastodon @Captured99</a>
+          <a href="https://youtube.com/@DubbznWubbz99" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">YouTube @DubbznWubbz99</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHATROOM -->
+<section class="chat-section" id="chat">
+  <div class="chat-header">
+    <div>
+      <div class="section-num" style="margin-bottom: 8px;">// 03</div>
+      <h2 class="section-title" style="font-family: var(--display); font-size: 36px; letter-spacing: 0.04em;">THE ROOM</h2>
+    </div>
+    <div class="chat-live">
+      <div class="live-dot"></div>
+      Open Channel
+    </div>
+  </div>
+  <div class="chat-container">
+    <div class="chat-main">
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg system">
+          <div class="msg-avatar">SYS</div>
+          <div class="msg-body">
+            <div class="msg-header">
+              <span class="msg-name">SYSTEM</span>
+              <span class="msg-time">today</span>
+            </div>
+            <div class="msg-text">Channel open. Document what you see. Sources required. No speculation without receipts.</div>
+          </div>
+        </div>
+        <div class="msg">
+          <div class="msg-avatar">R7</div>
+          <div class="msg-body">
+            <div class="msg-header">
+              <span class="msg-name">reader_7</span>
+              <span class="msg-time">2h ago</span>
+            </div>
+            <div class="msg-text">Same three accounts showing up in every Gaza thread I check. Created same week. Zero original content, only replies. Classic <span class="highlight">silence pattern</span> — went dark after I posted the UN report.</div>
+          </div>
+        </div>
+        <div class="msg">
+          <div class="msg-avatar">NK</div>
+          <div class="msg-body">
+            <div class="msg-header">
+              <span class="msg-name">northkeep</span>
+              <span class="msg-time">1h ago</span>
+            </div>
+            <div class="msg-text">Zone flood happening right now. Massive domestic story drops then three unrelated breaking stories within the hour. Buried the ICJ ruling completely.</div>
+          </div>
+        </div>
+        <div class="msg">
+          <div class="msg-avatar">MZ</div>
+          <div class="msg-body">
+            <div class="msg-header">
+              <span class="msg-name">mzaatar</span>
+              <span class="msg-time">45m ago</span>
+            </div>
+            <div class="msg-text">Anadolu just confirmed what TRT had yesterday. Now waiting for Al Jazeera follow-up. Western outlets still haven't touched it.</div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-area" style="flex-direction: column; align-items: stretch; gap: 10px;">
+        <div style="display: flex; gap: 10px;">
+          <input
+            type="text"
+            class="chat-input"
+            id="chatHandle"
+            placeholder="handle (optional)"
+            maxlength="30"
+            style="max-width: 160px; flex-shrink: 0;"
+          />
+          <input
+            type="text"
+            class="chat-input"
+            id="chatInput"
+            placeholder="Message... (sources encouraged)"
+            maxlength="500"
+          />
+          <button class="chat-send" id="chatSend">Send</button>
+        </div>
+        <div id="chatStatus" style="font-family: var(--mono); font-size: 10px; color: var(--muted); min-height: 14px;"></div>
+      </div>
+    </div>
+    <div class="chat-sidebar">
+      <div class="online-label">Online Now</div>
+      <div class="online-user"><div class="user-dot"></div><span>reader_7</span></div>
+      <div class="online-user"><div class="user-dot"></div><span>northkeep</span></div>
+      <div class="online-user"><div class="user-dot"></div><span>mzaatar</span></div>
+      <div class="online-user"><div class="user-dot" style="background: var(--muted);"></div><span>lurker_99</span></div>
+      <div class="online-user"><div class="user-dot" style="background: var(--muted);"></div><span>anon_44</span></div>
+
+      <div class="chat-matrix-note">
+        Messages post anonymously to the live Matrix room. No account needed.<br><br>
+        For full access: <a href="https://matrix.to/#/!bxksvGChRQwBgnuARN:matrix.org?via=matrix.org" target="_blank">Join on Matrix →</a><br><br>
+        Use <a href="https://element.io" target="_blank">Element.io</a> — encrypted, no corporate ownership.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBMIT -->
+<section class="submit-section" id="submit">
+  <div class="submit-left reveal">
+    <div class="section-num" style="margin-bottom: 16px;">// 04</div>
+    <h2 style="font-family: var(--display); font-size: 52px; line-height: 0.95; margin-bottom: 20px;">
+      SUBMIT A TIP
+    </h2>
+    <p style="font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300;">
+      See a coordinated account pattern? Catch a zone flood in progress? Document it and send it here. Include sources. Screenshots archived to Wayback. We verify before we publish.
+    </p>
+    <div style="margin-top: 32px; font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 2;">
+      ENCRYPTED: Use <a href="https://signal.org" target="_blank" style="color: var(--accent); text-decoration: none;">Signal</a> or Matrix for sensitive submissions.<br>
+      ANONYMOUS: No identifying info required.<br>
+      VERIFIED: All tips cross-referenced before publication.
+    </div>
+  </div>
+  <div class="submit-form reveal">
+    <div class="form-field">
+      <label class="form-label">Pattern Type</label>
+      <select class="form-select">
+        <option value="">Select type...</option>
+        <option>Coordinated Account Behavior</option>
+        <option>Hasbara Operation</option>
+        <option>Zone Flooding</option>
+        <option>TACO Cycle</option>
+        <option>Silence Pattern</option>
+        <option>Narrative Injection</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Platform(s)</label>
+      <input type="text" class="form-input" placeholder="Twitter/X, Facebook, Reddit..." />
+    </div>
+    <div class="form-field">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" placeholder="What did you observe? Be specific. Include timestamps if possible."></textarea>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Sources / Archive Links</label>
+      <textarea class="form-textarea" style="min-height: 80px;" placeholder="Wayback Machine links, Al Jazeera URLs, primary sources..."></textarea>
+    </div>
+    <button class="btn-primary" style="align-self: flex-start;">Submit Documentation →</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DNP<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="#feed">Feed</a></li>
+    <li><a href="#methodology">Method</a></li>
+    <li><a href="#chat">Room</a></li>
+    <li><a href="#submit">Submit</a></li>
+    <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
+    <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
+  </ul>
+  <div class="footer-note">
+    Definitely Not Propaganda<br>
+    All claims sourced · Receipts archived<br>
+    <span style="color: var(--accent);">Free press or no press.</span>
+  </div>
+</footer>
+
+<script>
+  // ─── CONFIG ───────────────────────────────────────────────────────────────
+  // Once your Cloudflare Worker is deployed, paste its URL here:
+  const WORKER_URL = 'https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev';
+  // ──────────────────────────────────────────────────────────────────────────
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) el.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Chat elements
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput    = document.getElementById('chatInput');
+  const chatHandle   = document.getElementById('chatHandle');
+  const chatSend     = document.getElementById('chatSend');
+  const chatStatus   = document.getElementById('chatStatus');
+
+  // Rate limit: one message per 10s per session
+  let lastSent = 0;
+  const RATE_LIMIT_MS = 10000;
+
+  function setStatus(msg, color = 'var(--muted)') {
+    chatStatus.style.color = color;
+    chatStatus.textContent = msg;
+    if (msg) setTimeout(() => { chatStatus.textContent = ''; }, 4000);
+  }
+
+  function addMessage(name, text, isLocal = false) {
+    const initials = name.slice(0, 2).toUpperCase();
+    const escaped = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const msg = document.createElement('div');
+    msg.className = 'msg' + (isLocal ? ' local' : '');
+    msg.innerHTML = `
+      <div class="msg-avatar" style="${isLocal ? 'border-color: var(--accent);' : ''}">${initials}</div>
+      <div class="msg-body">
+        <div class="msg-header">
+          <span class="msg-name">${name}</span>
+          <span class="msg-time">just now</span>
+        </div>
+        <div class="msg-text">${escaped}</div>
+      </div>
+    `;
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const text   = chatInput.value.trim();
+    const handle = chatHandle.value.trim() || 'anon';
+
+    if (!text) return;
+
+    if (text.length < 2) {
+      setStatus('Message too short.', 'var(--accent2)');
+      return;
+    }
+
+    const now = Date.now();
+    if (now - lastSent < RATE_LIMIT_MS) {
+      const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSent)) / 1000);
+      setStatus(`Slow down — wait ${wait}s`, 'var(--accent2)');
+      return;
+    }
+
+    // Optimistic UI — show immediately
+    addMessage(handle, text, true);
+    chatInput.value = '';
+    chatSend.disabled = true;
+    setStatus('Sending...');
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, handle })
+      });
+
+      if (res.ok) {
+        lastSent = Date.now();
+        setStatus('✓ Posted to Matrix room', 'var(--accent)');
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setStatus(`Error: ${err.error || res.status}`, 'var(--accent2)');
+      }
+    } catch (e) {
+      setStatus('Network error — Worker URL not configured yet?', 'var(--accent2)');
+    } finally {
+      chatSend.disabled = false;
+    }
+  }
+
+  chatSend.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // Animate stats on load
+  document.querySelectorAll('.stat-num').forEach(el => {
+    const target = parseInt(el.textContent);
+    if (isNaN(target) || target === 0) return;
+    let current = 0;
+    const step = Math.ceil(target / 30);
+    const interval = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current;
+      if (current >= target) clearInterval(interval);
+    }, 40);
+  });
+</script>
+
+</body>
+</html>
