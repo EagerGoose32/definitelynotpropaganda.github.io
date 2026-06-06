@@ -758,6 +758,7 @@
       transform: translateY(0);
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/matrix-js-sdk@30.2.0/dist/matrix.js"></script>
 </head>
 <body>
 
@@ -994,45 +995,8 @@
   <div class="chat-container">
     <div class="chat-main">
       <div class="chat-messages" id="chatMessages">
-        <div class="msg system">
-          <div class="msg-avatar">SYS</div>
-          <div class="msg-body">
-            <div class="msg-header">
-              <span class="msg-name">SYSTEM</span>
-              <span class="msg-time">today</span>
-            </div>
-            <div class="msg-text">Channel open. Document what you see. Sources required. No speculation without receipts.</div>
-          </div>
-        </div>
-        <div class="msg">
-          <div class="msg-avatar">R7</div>
-          <div class="msg-body">
-            <div class="msg-header">
-              <span class="msg-name">reader_7</span>
-              <span class="msg-time">2h ago</span>
-            </div>
-            <div class="msg-text">Same three accounts showing up in every Gaza thread I check. Created same week. Zero original content, only replies. Classic <span class="highlight">silence pattern</span> — went dark after I posted the UN report.</div>
-          </div>
-        </div>
-        <div class="msg">
-          <div class="msg-avatar">NK</div>
-          <div class="msg-body">
-            <div class="msg-header">
-              <span class="msg-name">northkeep</span>
-              <span class="msg-time">1h ago</span>
-            </div>
-            <div class="msg-text">Zone flood happening right now. Massive domestic story drops then three unrelated breaking stories within the hour. Buried the ICJ ruling completely.</div>
-          </div>
-        </div>
-        <div class="msg">
-          <div class="msg-avatar">MZ</div>
-          <div class="msg-body">
-            <div class="msg-header">
-              <span class="msg-name">mzaatar</span>
-              <span class="msg-time">45m ago</span>
-            </div>
-            <div class="msg-text">Anadolu just confirmed what TRT had yesterday. Now waiting for Al Jazeera follow-up. Western outlets still haven't touched it.</div>
-          </div>
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--muted); font-family: var(--mono); font-size: 12px;">
+          Loading messages...
         </div>
       </div>
       <div class="chat-input-area" style="flex-direction: column; align-items: stretch; gap: 10px;">
@@ -1160,9 +1124,16 @@
   const chatSend     = document.getElementById('chatSend');
   const chatStatus   = document.getElementById('chatStatus');
 
+  // Matrix configuration
+  const MATRIX_HOME_SERVER = 'https://matrix.org';
+  const MATRIX_ROOM_ID = '!bxksvGChRQwBgnuARN:matrix.org';
+
   // Rate limit: one message per 10s per session
   let lastSent = 0;
   const RATE_LIMIT_MS = 10000;
+
+  let matrixClient = null;
+  const messageCache = new Set(); // Track displayed message IDs
 
   function setStatus(msg, color = 'var(--muted)') {
     chatStatus.style.color = color;
@@ -1187,6 +1158,91 @@
     `;
     chatMessages.appendChild(msg);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  async function initMatrix() {
+    try {
+      const sdk = window.matrixcs;
+      matrixClient = sdk.createClient({
+        baseUrl: MATRIX_HOME_SERVER
+      });
+
+      // Register as guest
+      try {
+        await matrixClient.registerGuest();
+      } catch (e) {
+        console.log('Guest registration skipped:', e.message);
+      }
+
+      // Join room
+      try {
+        await matrixClient.joinRoom(MATRIX_ROOM_ID);
+      } catch (e) {
+        console.log('Room join skipped (may already be joined):', e.message);
+      }
+
+      // Load last 3 messages
+      await loadInitialMessages();
+
+      // Listen for new messages
+      matrixClient.on('Room.timeline', (event, room, toStart) => {
+        if (room.roomId === MATRIX_ROOM_ID && event.getType() === 'm.room.message') {
+          const eventId = event.getId();
+          if (messageCache.has(eventId)) return; // Skip duplicates
+          messageCache.add(eventId);
+
+          const content = event.getContent();
+          const sender = event.getSender();
+          const text = content.body;
+
+          // Extract username from @user:domain
+          const username = sender.replace('@', '').split(':')[0];
+          addMessage(username, text, false);
+        }
+      });
+
+      // Start syncing
+      await matrixClient.startClient({ initialSyncLimit: 10 });
+    } catch (e) {
+      console.error('Matrix initialization error:', e);
+      chatMessages.innerHTML = '<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 12px;">Unable to load chat. Check browser console.</div>';
+    }
+  }
+
+  async function loadInitialMessages() {
+    try {
+      const room = matrixClient.getRoom(MATRIX_ROOM_ID);
+      if (!room) {
+        console.log('Room not loaded yet');
+        return;
+      }
+
+      // Get all message events from the room
+      const timeline = room.getLiveTimeline();
+      const events = timeline.getEvents();
+
+      const messages = events
+        .filter(e => e.getType() === 'm.room.message' && e.getContent().msgtype === 'm.text')
+        .slice(-3); // Last 3 messages
+
+      if (messages.length === 0) {
+        chatMessages.innerHTML = '<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 12px;">No messages yet. Be the first to document.</div>';
+      } else {
+        chatMessages.innerHTML = ''; // Clear loading message
+        messages.forEach(event => {
+          const eventId = event.getId();
+          messageCache.add(eventId);
+
+          const content = event.getContent();
+          const sender = event.getSender();
+          const text = content.body;
+          const username = sender.replace('@', '').split(':')[0];
+          addMessage(username, text, false);
+        });
+      }
+    } catch (e) {
+      console.error('Error loading initial messages:', e);
+    }
   }
 
   async function sendMessage() {
@@ -1228,7 +1284,7 @@
         setStatus(`Error: ${err.error || res.status}`, 'var(--accent2)');
       }
     } catch (e) {
-      setStatus('Network error — Worker URL not configured yet?', 'var(--accent2)');
+      setStatus('Network error — check Worker URL', 'var(--accent2)');
     } finally {
       chatSend.disabled = false;
     }
@@ -1241,6 +1297,13 @@
       sendMessage();
     }
   });
+
+  // Initialize Matrix on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMatrix);
+  } else {
+    initMatrix();
+  }
 
   // Animate stats on load
   document.querySelectorAll('.stat-num').forEach(el => {
