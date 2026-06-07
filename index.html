@@ -1053,10 +1053,13 @@
       VERIFIED: All tips cross-referenced before publication.
     </div>
   </div>
-  <div class="submit-form reveal">
+  <form class="submit-form reveal" id="tipForm" action="https://formsubmit.co/ajax/flockofego45@proton.me" method="POST">
+    <input type="hidden" name="_subject" value="New Tip Submission — Definitely Not Propaganda">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
     <div class="form-field">
       <label class="form-label">Pattern Type</label>
-      <select class="form-select">
+      <select class="form-select" name="Pattern Type" required>
         <option value="">Select type...</option>
         <option>Coordinated Account Behavior</option>
         <option>Hasbara Operation</option>
@@ -1069,18 +1072,19 @@
     </div>
     <div class="form-field">
       <label class="form-label">Platform(s)</label>
-      <input type="text" class="form-input" placeholder="Twitter/X, Facebook, Reddit..." />
+      <input type="text" class="form-input" name="Platforms" placeholder="Twitter/X, Facebook, Reddit..." />
     </div>
     <div class="form-field">
       <label class="form-label">Description</label>
-      <textarea class="form-textarea" placeholder="What did you observe? Be specific. Include timestamps if possible."></textarea>
+      <textarea class="form-textarea" name="Description" placeholder="What did you observe? Be specific. Include timestamps if possible." required></textarea>
     </div>
     <div class="form-field">
       <label class="form-label">Sources / Archive Links</label>
-      <textarea class="form-textarea" style="min-height: 80px;" placeholder="Wayback Machine links, Al Jazeera URLs, primary sources..."></textarea>
+      <textarea class="form-textarea" style="min-height: 80px;" name="Sources" placeholder="Wayback Machine links, Al Jazeera URLs, primary sources..."></textarea>
     </div>
-    <button class="btn-primary" style="align-self: flex-start;">Submit Documentation →</button>
-  </div>
+    <button type="submit" class="btn-primary" style="align-self: flex-start;">Submit Documentation →</button>
+    <div id="tipStatus" style="font-family: var(--mono); font-size: 10px; color: var(--muted); min-height: 14px;"></div>
+  </form>
 </section>
 
 <!-- FOOTER -->
@@ -1288,6 +1292,42 @@
       el.textContent = current;
       if (current >= target) clearInterval(interval);
     }, 40);
+  });
+
+  // Tip submission form
+  const tipForm   = document.getElementById('tipForm');
+  const tipStatus = document.getElementById('tipStatus');
+
+  function setTipStatus(msg, color = 'var(--muted)') {
+    tipStatus.style.color = color;
+    tipStatus.textContent = msg;
+  }
+
+  tipForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const submitBtn = tipForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    setTipStatus('Sending...');
+
+    try {
+      const res = await fetch(tipForm.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(tipForm)
+      });
+
+      if (res.ok) {
+        setTipStatus('✓ Submitted — thank you. We verify before we publish.', 'var(--accent)');
+        tipForm.reset();
+      } else {
+        setTipStatus('Error submitting tip. Please try again.', 'var(--accent2)');
+      }
+    } catch (err) {
+      setTipStatus('Network error. Please try again.', 'var(--accent2)');
+    } finally {
+      submitBtn.disabled = false;
+    }
   });
 </script>
 
