@@ -367,11 +367,14 @@
     { id: 'presstv',    name: 'Press TV',         rss: ['https://www.presstv.ir/rss.xml'] },
   ];
 
-  // CORS proxies tried in order — fall back if one is blocked or down.
+  // Direct fetch tried first (some feeds allow CORS); proxies as fallback.
   const PROXIES = [
+    url => url, // direct — works if the feed sends CORS headers
     url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    url => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`,
     url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    url => `https://thingproxy.freeboard.io/fetch/${url}`,
+    url => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`,
   ];
   const REFRESH_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -599,24 +602,30 @@
     });
   }
 
-  async function fetchViaProxies(rssUrls) {
+  async function fetchViaProxies(rssUrls, sourceName) {
     // rssUrls can be a string or array — try each one with each proxy
     const urlsToTry = Array.isArray(rssUrls) ? rssUrls : [rssUrls];
     let lastError;
 
     for (const rssUrl of urlsToTry) {
       for (const buildUrl of PROXIES) {
+        const proxyUrl = buildUrl(rssUrl);
+        const label = `[${sourceName}] ${proxyUrl.slice(0, 80)}`;
         try {
-          const proxyUrl = buildUrl(rssUrl);
           const res = await fetch(proxyUrl);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          if (!res.ok) {
+            console.warn(`${label} → HTTP ${res.status}`);
+            throw new Error(`HTTP ${res.status}`);
+          }
 
           // rss2json returns JSON; the others return raw XML/text
           if (proxyUrl.includes('rss2json.com')) {
             const data = await res.json();
             if (data.status !== 'ok' || !Array.isArray(data.items)) {
+              console.warn(`${label} → ${data.message || 'feed unavailable'}`);
               throw new Error(data.message || 'Feed unavailable');
             }
+            console.log(`${label} → OK (${data.items.length} items via rss2json)`);
             return data.items.slice(0, 15).map(item => ({
               title: item.title,
               description: item.description || item.content,
@@ -626,9 +635,14 @@
           }
 
           const text = await res.text();
-          if (!text || text.length < 50) throw new Error('Empty response');
+          if (!text || text.length < 50) {
+            console.warn(`${label} → empty/short response (${text.length} chars)`);
+            throw new Error('Empty response');
+          }
+          console.log(`${label} → OK (${text.length} chars)`);
           return text;
         } catch (err) {
+          console.warn(`${label} → ${err.message}`);
           lastError = err;
         }
       }
@@ -638,7 +652,7 @@
 
   async function loadSource(src) {
     try {
-      const result = await fetchViaProxies(src.rss);
+      const result = await fetchViaProxies(src.rss, src.name);
 
       let items;
       if (typeof result === 'string') {
