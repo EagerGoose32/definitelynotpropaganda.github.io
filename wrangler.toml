@@ -1,0 +1,9 @@
+name = "dnp-chat-bot"
+main = "worker.js"
+compatibility_date = "2024-06-01"
+
+[env.production]
+vars = { }
+
+[[env.production.secrets]]
+binding = "MATRIX_BOT_TOKEN"
