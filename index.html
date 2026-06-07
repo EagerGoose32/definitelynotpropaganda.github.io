@@ -906,11 +906,10 @@
   <a href="#" class="logo">DNP<span>.</span></a>
   <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
   <ul class="nav-links" id="navLinks">
-    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="feed.html">Live News</a></li>
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html">Account</a></li>
     <li><a href="submit-tip.html">Submit Tip</a></li>
-    <li><a href="#feed">Documentation</a></li>
     <li><a href="#methodology">Method</a></li>
     <li><a href="#chat">Room</a></li>
   </ul>
@@ -1247,11 +1246,10 @@
 <footer>
   <div class="footer-logo">DNP<span>.</span></div>
   <ul class="footer-links">
-    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="feed.html">Live News</a></li>
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html">Account</a></li>
     <li><a href="submit-tip.html">Submit Tip</a></li>
-    <li><a href="#feed">Documentation</a></li>
     <li><a href="#methodology">Method</a></li>
     <li><a href="#chat">Room</a></li>
     <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
@@ -1333,7 +1331,7 @@
     recalcPatternPercentages();
   }
 
-  // ─── Breaking entries: pulled live from the same sources as the Live Feed,
+  // ─── Breaking entries: pulled live from the same sources as Live News,
   // clustered by topic, and ranked by how many distinct outlets are currently
   // covering that topic (a proxy for "how big is this story right now"),
   // with a preference bump for Israel/Middle East and US policy & corruption.
@@ -1406,7 +1404,7 @@
         if (nodes.length === 0) { nodes = Array.from(doc.querySelectorAll('entry')); isAtom = true; }
         if (nodes.length === 0) continue;
 
-        return nodes.slice(0, 12).map(node => {
+        return nodes.slice(0, 20).map(node => {
           const get = (tag) => node.querySelector(tag)?.textContent?.trim() || '';
           let link = get('link');
           if (isAtom) {
@@ -1472,12 +1470,17 @@
           const lead = [...cluster.items].sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))[0];
           return { topic: cluster.topic, outlets, lead, score: outlets.length * 3 + cluster.topic.weight };
         })
-        .filter(c => c.outlets.length >= MIN_BREAKING_OUTLETS && c.lead)
-        .sort((a, b) => b.score - a.score)
+        .filter(c => c.lead)
+        .sort((a, b) => {
+          const aMulti = a.outlets.length >= MIN_BREAKING_OUTLETS ? 1 : 0;
+          const bMulti = b.outlets.length >= MIN_BREAKING_OUTLETS ? 1 : 0;
+          if (aMulti !== bMulti) return bMulti - aMulti;
+          return b.score - a.score;
+        })
         .slice(0, MAX_BREAKING_ITEMS);
 
       if (!ranked.length) {
-        status.textContent = '○ No multi-outlet breaking stories detected right now — check back soon.';
+        status.textContent = '○ No breaking stories detected right now — check back soon.';
         return;
       }
 
@@ -1500,7 +1503,7 @@
           <div class="feed-meta">
             <span class="feed-tag tag-breaking">● Breaking</span>
             <span class="feed-tag ${topic.tagClass}">${topic.label}</span>
-            <span class="feed-tag tag-confirmed">${outlets.length} Outlets Reporting</span>
+            <span class="feed-tag tag-confirmed">${outlets.length} ${outlets.length === 1 ? 'Outlet' : 'Outlets'} Reporting</span>
             <span class="feed-date">${timeAgoLabel(lead.pubDate)}</span>
           </div>
           <div class="feed-title">${lead.title}</div>
