@@ -758,7 +758,6 @@
       transform: translateY(0);
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/matrix-js-sdk@30.2.0/dist/matrix.js"></script>
 </head>
 <body>
 
@@ -1105,7 +1104,7 @@
 <script>
   // ─── CONFIG ───────────────────────────────────────────────────────────────
   // Once your Cloudflare Worker is deployed, paste its URL here:
-  const WORKER_URL = 'dnf.definitelynotpropaganda.workers.dev' ;
+  const WORKER_URL = 'https://dnf.definitelynotpropaganda.workers.dev';
   // ──────────────────────────────────────────────────────────────────────────
 
   // Scroll reveal
@@ -1124,16 +1123,12 @@
   const chatSend     = document.getElementById('chatSend');
   const chatStatus   = document.getElementById('chatStatus');
 
-  // Matrix configuration
-  const MATRIX_HOME_SERVER = 'https://matrix.org';
-  const MATRIX_ROOM_ID = '!bxksvGChRQwBgnuARN:matrix.org';
-
   // Rate limit: one message per 10s per session
   let lastSent = 0;
   const RATE_LIMIT_MS = 10000;
 
-  let matrixClient = null;
-  const messageCache = new Set(); // Track displayed message IDs
+  const messageCache = new Set();
+  let pollInterval = null;
 
   function setStatus(msg, color = 'var(--muted)') {
     chatStatus.style.color = color;
@@ -1160,88 +1155,65 @@
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  async function initMatrix() {
-    try {
-      const sdk = window.matrixcs;
-      matrixClient = sdk.createClient({
-        baseUrl: MATRIX_HOME_SERVER
-      });
-
-      // Register as guest
-      try {
-        await matrixClient.registerGuest();
-      } catch (e) {
-        console.log('Guest registration skipped:', e.message);
-      }
-
-      // Join room
-      try {
-        await matrixClient.joinRoom(MATRIX_ROOM_ID);
-      } catch (e) {
-        console.log('Room join skipped (may already be joined):', e.message);
-      }
-
-      // Load last 3 messages
-      await loadInitialMessages();
-
-      // Listen for new messages
-      matrixClient.on('Room.timeline', (event, room, toStart) => {
-        if (room.roomId === MATRIX_ROOM_ID && event.getType() === 'm.room.message') {
-          const eventId = event.getId();
-          if (messageCache.has(eventId)) return; // Skip duplicates
-          messageCache.add(eventId);
-
-          const content = event.getContent();
-          const sender = event.getSender();
-          const text = content.body;
-
-          // Extract username from @user:domain
-          const username = sender.replace('@', '').split(':')[0];
-          addMessage(username, text, false);
-        }
-      });
-
-      // Start syncing
-      await matrixClient.startClient({ initialSyncLimit: 10 });
-    } catch (e) {
-      console.error('Matrix initialization error:', e);
-      chatMessages.innerHTML = '<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 12px;">Unable to load chat. Check browser console.</div>';
-    }
-  }
-
   async function loadInitialMessages() {
     try {
-      const room = matrixClient.getRoom(MATRIX_ROOM_ID);
-      if (!room) {
-        console.log('Room not loaded yet');
+      const res = await fetch(WORKER_URL + '?action=getMessages&limit=3', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (!data.messages || data.messages.length === 0) {
+        if (chatMessages.children.length === 1) { // Still has loading message
+          chatMessages.innerHTML = '<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 12px;">No messages yet. Be the first to document.</div>';
+        }
         return;
       }
 
-      // Get all message events from the room
-      const timeline = room.getLiveTimeline();
-      const events = timeline.getEvents();
+      chatMessages.innerHTML = '';
+      data.messages.forEach(msg => {
+        const id = msg.event_id || msg.sender + msg.origin_server_ts;
+        messageCache.add(id);
+        addMessage(msg.sender_name || 'anon', msg.body, false);
+      });
+    } catch (e) {
+      console.error('Error loading messages:', e);
+      chatMessages.innerHTML = `<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 11px; line-height: 1.6;">
+        Worker update needed.<br><br>
+        Your Worker needs to support message fetching. See <a href="https://github.com/EagerGoose32/definitelynotpropaganda.github.io/blob/main/WORKER.md" target="_blank" style="color: var(--accent); text-decoration: none;">WORKER.md</a> for setup.<br><br>
+        <span style="color: var(--accent2);">Status: ${e.message}</span>
+      </div>`;
+    }
+  }
 
-      const messages = events
-        .filter(e => e.getType() === 'm.room.message' && e.getContent().msgtype === 'm.text')
-        .slice(-3); // Last 3 messages
+  async function pollNewMessages() {
+    try {
+      const res = await fetch(WORKER_URL + '?action=getMessages&limit=1', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
 
-      if (messages.length === 0) {
-        chatMessages.innerHTML = '<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 12px;">No messages yet. Be the first to document.</div>';
-      } else {
-        chatMessages.innerHTML = ''; // Clear loading message
-        messages.forEach(event => {
-          const eventId = event.getId();
-          messageCache.add(eventId);
+      if (!res.ok) return;
 
-          const content = event.getContent();
-          const sender = event.getSender();
-          const text = content.body;
-          const username = sender.replace('@', '').split(':')[0];
-          addMessage(username, text, false);
-        });
+      const data = await res.json();
+      if (!data.messages || data.messages.length === 0) return;
+
+      const msg = data.messages[0];
+      const id = msg.event_id || msg.sender + msg.origin_server_ts;
+
+      if (!messageCache.has(id)) {
+        messageCache.add(id);
+        addMessage(msg.sender_name || 'anon', msg.body, false);
       }
     } catch (e) {
-      console.error('Error loading initial messages:', e);
+      console.error('Poll error:', e);
     }
   }
 
@@ -1278,13 +1250,13 @@
 
       if (res.ok) {
         lastSent = Date.now();
-        setStatus('✓ Posted to Matrix room', 'var(--accent)');
+        setStatus('✓ Posted', 'var(--accent)');
       } else {
         const err = await res.json().catch(() => ({}));
         setStatus(`Error: ${err.error || res.status}`, 'var(--accent2)');
       }
     } catch (e) {
-      setStatus('Network error — check Worker URL', 'var(--accent2)');
+      setStatus('Network error', 'var(--accent2)');
     } finally {
       chatSend.disabled = false;
     }
@@ -1298,12 +1270,12 @@
     }
   });
 
-  // Initialize Matrix on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMatrix);
-  } else {
-    initMatrix();
-  }
+  // Load initial messages and start polling for new ones
+  (async () => {
+    await loadInitialMessages();
+    // Poll for new messages every 3 seconds
+    pollInterval = setInterval(pollNewMessages, 3000);
+  })();
 
   // Animate stats on load
   document.querySelectorAll('.stat-num').forEach(el => {
