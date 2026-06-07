@@ -378,6 +378,13 @@
     .tag-disinfo { background: #1a1a6e; color: var(--accent); border: 1px solid var(--accent); }
     .tag-analysis { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
     .tag-confirmed { background: #1a3a1a; color: #4caf50; border: 1px solid #4caf50; }
+    .tag-breaking { background: var(--accent2); color: #fff; font-weight: 700; animation: pulse 2s ease-in-out infinite; }
+
+    /* Topic/keyword tags — secondary badges marking what a story is about */
+    .tag-iran     { background: transparent; color: #f4a300; border: 1px solid #f4a300; }
+    .tag-israel   { background: transparent; color: #4ea8de; border: 1px solid #4ea8de; }
+    .tag-ai       { background: transparent; color: #b388ff; border: 1px solid #b388ff; }
+    .tag-uspolicy { background: transparent; color: #00bcd4; border: 1px solid #00bcd4; }
 
     .feed-date {
       font-family: var(--mono);
@@ -1019,6 +1026,72 @@
       </div>
 
       <div id="feedItems">
+      <div class="feed-item reveal" data-category="analysis">
+        <div class="feed-meta">
+          <span class="feed-tag tag-breaking">● Breaking</span>
+          <span class="feed-tag tag-analysis">Analysis</span>
+          <span class="feed-tag tag-ai">AI</span>
+          <span class="feed-date">Jun 7, 2026 · 11:05 UTC</span>
+        </div>
+        <div class="feed-title">Synthetic "Crisis Footage" Outpacing Verification Teams as AI-Generated Clips Flood Timelines Within Minutes of Real Events</div>
+        <div class="feed-excerpt">Three separate incidents this week — geolocation teams now racing AI-generated counterfeits that appear online before authentic footage clears upload review. Detection tools lag generation tools by an estimated 40 minutes. The gap is the story.</div>
+        <div class="feed-sources">
+          <span class="source-pill">Al Jazeera</span>
+          <span class="source-pill">NPR</span>
+          <span class="source-pill">Middle East Eye</span>
+        </div>
+      </div>
+
+      <div class="feed-item reveal" data-category="hasbara">
+        <div class="feed-meta">
+          <span class="feed-tag tag-breaking">● Breaking</span>
+          <span class="feed-tag tag-hasbara">Hasbara</span>
+          <span class="feed-tag tag-iran">Iran</span>
+          <span class="feed-date">Jun 6, 2026 · 19:48 UTC</span>
+        </div>
+        <div class="feed-title">Identical "Tehran Walked Away From the Table" Framing Lands in Six Outlets Within the Same Hour</div>
+        <div class="feed-excerpt">Op-eds and wire summaries across major Western outlets adopt near-identical phrasing blaming Iran for stalled talks — hours before a leaked internal cable, since archived, shows the opposite sequence of events.</div>
+        <div class="feed-sources">
+          <span class="source-pill">Press TV</span>
+          <span class="source-pill">CNN</span>
+          <span class="source-pill">Anadolu Agency</span>
+          <span class="source-pill">Archived: Wayback</span>
+        </div>
+      </div>
+
+      <div class="feed-item reveal" data-category="disinfo">
+        <div class="feed-meta">
+          <span class="feed-tag tag-breaking">● Breaking</span>
+          <span class="feed-tag tag-disinfo">Disinfo</span>
+          <span class="feed-tag tag-confirmed">Confirmed</span>
+          <span class="feed-tag tag-israel">Israel</span>
+          <span class="feed-date">Jun 6, 2026 · 08:21 UTC</span>
+        </div>
+        <div class="feed-title">Geolocated Strike Footage Contradicts Official Briefing Timeline by Roughly Six Hours</div>
+        <div class="feed-excerpt">Independently verified video — timestamps and shadow analysis cross-checked against satellite passes — places the strike six hours earlier than stated in the official press briefing. Discrepancy now archived and under continued review.</div>
+        <div class="feed-sources">
+          <span class="source-pill">Al Jazeera</span>
+          <span class="source-pill">+972 Magazine</span>
+          <span class="source-pill">Archived: Wayback</span>
+        </div>
+      </div>
+
+      <div class="feed-item reveal" data-category="analysis">
+        <div class="feed-meta">
+          <span class="feed-tag tag-breaking">● Breaking</span>
+          <span class="feed-tag tag-analysis">Analysis</span>
+          <span class="feed-tag tag-uspolicy">US Policy</span>
+          <span class="feed-date">Jun 5, 2026 · 21:14 UTC</span>
+        </div>
+        <div class="feed-title">Surveillance Expansion Bill Clears Committee Same Day Three Unrelated Viral Stories Dominate Every Front Page</div>
+        <div class="feed-excerpt">Same zone-flooding signature documented in February: a consequential domestic policy vote advances quietly while three simultaneous, unrelated viral stories consume the entire news cycle. Fourth occurrence this year.</div>
+        <div class="feed-sources">
+          <span class="source-pill">NY Times</span>
+          <span class="source-pill">Washington Post</span>
+          <span class="source-pill">The Intercept</span>
+        </div>
+      </div>
+
       <div class="feed-item reveal" data-category="hasbara">
         <div class="feed-meta">
           <span class="feed-tag tag-hasbara">Hasbara</span>
