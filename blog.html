@@ -604,6 +604,12 @@
         return;
       }
       await user.reload();
+      // Firestore security rules read `email_verified` from the ID token's
+      // claims, not the live account state — that token is cached at login
+      // and won't reflect a verification that happened mid-session. Force a
+      // refresh so a freshly-verified user can actually publish without
+      // having to manually log out and back in.
+      if (user.emailVerified) await user.getIdToken(true);
       authLoggedOut.style.display = 'none';
       authLoggedIn.style.display = 'flex';
       sessionEmail.textContent = user.email;
