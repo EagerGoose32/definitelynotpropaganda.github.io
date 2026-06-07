@@ -9,7 +9,7 @@ Replace your Cloudflare Worker code with this:
 ```javascript
 const MATRIX_HOME_SERVER = 'https://matrix.org';
 const MATRIX_ROOM_ID = '!bxksvGChRQwBgnuARN:matrix.org';
-const MATRIX_BOT_TOKEN = 'your_matrix_bot_token_here'; // Set this as a secret
+const MATRIX_BOT_TOKEN = 'mat_4AdgOw6cu554jMQnVG5iyu30KPys6T_QSTDy1'; // Set this as a secret
 
 export default {
   async fetch(request, env, ctx) {
