@@ -344,15 +344,27 @@
 
 <script>
   // ─── SOURCES ──────────────────────────────────────────────────────────────
-  // RSS feeds fetched and converted to JSON via rss2json.com (handles CORS).
+  // Each source can have multiple RSS URL fallbacks — tries them in order.
   const SOURCES = [
-    { id: 'aljazeera',  name: 'Al Jazeera',       rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-    { id: 'trt',        name: 'TRT World',        rss: 'https://www.trtworld.com/rss' },
-    { id: 'anadolu',    name: 'Anadolu Agency',   rss: 'https://www.aa.com.tr/en/rss/default?cat=guncel' },
-    { id: 'mee',        name: 'Middle East Eye',  rss: 'https://www.middleeasteye.net/rss' },
-    { id: '972mag',     name: '+972 Magazine',    rss: 'https://www.972mag.com/feed/' },
-    { id: 'cgtn',       name: 'CGTN',             rss: 'https://www.cgtn.com/subscribe/rss/section/world.xml' },
-    { id: 'presstv',    name: 'Press TV',         rss: 'https://www.presstv.ir/rss.xml' },
+    { id: 'aljazeera',  name: 'Al Jazeera',       rss: [
+      'https://www.aljazeera.com/xml/rss/all.xml',
+      'https://www.aljazeera.com/feed/',
+      'https://aljazeera.com/feed/',
+    ]},
+    { id: 'trt',        name: 'TRT World',        rss: [
+      'https://www.trtworld.com/rss',
+      'https://www.trtworld.com/feed',
+      'https://trtworld.com/rss',
+    ]},
+    { id: 'anadolu',    name: 'Anadolu Agency',   rss: [
+      'https://www.aa.com.tr/en/rss/default?cat=guncel',
+      'https://www.aa.com.tr/en/feed.xml',
+      'https://aa.com.tr/en/rss',
+    ]},
+    { id: 'mee',        name: 'Middle East Eye',  rss: ['https://www.middleeasteye.net/rss'] },
+    { id: '972mag',     name: '+972 Magazine',    rss: ['https://www.972mag.com/feed/'] },
+    { id: 'cgtn',       name: 'CGTN',             rss: ['https://www.cgtn.com/subscribe/rss/section/world.xml'] },
+    { id: 'presstv',    name: 'Press TV',         rss: ['https://www.presstv.ir/rss.xml'] },
   ];
 
   // CORS proxies tried in order — fall back if one is blocked or down.
@@ -587,36 +599,41 @@
     });
   }
 
-  async function fetchViaProxies(rssUrl) {
+  async function fetchViaProxies(rssUrls) {
+    // rssUrls can be a string or array — try each one with each proxy
+    const urlsToTry = Array.isArray(rssUrls) ? rssUrls : [rssUrls];
     let lastError;
-    for (const buildUrl of PROXIES) {
-      try {
-        const proxyUrl = buildUrl(rssUrl);
-        const res = await fetch(proxyUrl);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        // rss2json returns JSON; the others return raw XML/text
-        if (proxyUrl.includes('rss2json.com')) {
-          const data = await res.json();
-          if (data.status !== 'ok' || !Array.isArray(data.items)) {
-            throw new Error(data.message || 'Feed unavailable');
+    for (const rssUrl of urlsToTry) {
+      for (const buildUrl of PROXIES) {
+        try {
+          const proxyUrl = buildUrl(rssUrl);
+          const res = await fetch(proxyUrl);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          // rss2json returns JSON; the others return raw XML/text
+          if (proxyUrl.includes('rss2json.com')) {
+            const data = await res.json();
+            if (data.status !== 'ok' || !Array.isArray(data.items)) {
+              throw new Error(data.message || 'Feed unavailable');
+            }
+            return data.items.slice(0, 15).map(item => ({
+              title: item.title,
+              description: item.description || item.content,
+              link: item.link,
+              pubDate: item.pubDate,
+            }));
           }
-          return data.items.slice(0, 15).map(item => ({
-            title: item.title,
-            description: item.description || item.content,
-            link: item.link,
-            pubDate: item.pubDate,
-          }));
-        }
 
-        const text = await res.text();
-        if (!text || text.length < 50) throw new Error('Empty response');
-        return text;
-      } catch (err) {
-        lastError = err;
+          const text = await res.text();
+          if (!text || text.length < 50) throw new Error('Empty response');
+          return text;
+        } catch (err) {
+          lastError = err;
+        }
       }
     }
-    throw lastError || new Error('All proxies failed');
+    throw lastError || new Error('All proxies and URLs failed');
   }
 
   async function loadSource(src) {
