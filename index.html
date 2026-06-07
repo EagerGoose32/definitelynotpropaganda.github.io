@@ -1141,6 +1141,25 @@
   let pollInterval = null;
   let consecutivePollFailures = 0;
 
+  // The worker posts to Matrix under the BOT's account, not the typed handle —
+  // so a message we just showed optimistically (under our own handle) reappears
+  // moments later via polling under the bot's name. Track recently-sent text so
+  // we can recognize and skip that echo instead of showing it twice.
+  const recentlySent = []; // { text, time }
+  const RECENTLY_SENT_WINDOW_MS = 20000;
+
+  function rememberSent(text) {
+    recentlySent.push({ text, time: Date.now() });
+  }
+  function consumeIfRecentlySent(text) {
+    const cutoff = Date.now() - RECENTLY_SENT_WINDOW_MS;
+    while (recentlySent.length && recentlySent[0].time < cutoff) recentlySent.shift();
+    const idx = recentlySent.findIndex(r => r.text === text);
+    if (idx === -1) return false;
+    recentlySent.splice(idx, 1);
+    return true;
+  }
+
   function setStatus(msg, color = 'var(--muted)') {
     chatStatus.style.color = color;
     chatStatus.textContent = msg;
@@ -1226,10 +1245,18 @@
       const msg = data.messages[0];
       const id = msg.event_id || msg.sender + msg.origin_server_ts;
 
-      if (!messageCache.has(id)) {
+      if (messageCache.has(id)) return;
+
+      // Echo of something we just posted ourselves (shown optimistically
+      // already, under our own handle) — cache it so it's never re-added,
+      // but don't display the bot-attributed duplicate.
+      if (consumeIfRecentlySent(msg.body)) {
         messageCache.add(id);
-        addMessage(msg.sender_name || 'anon', msg.body, false);
+        return;
       }
+
+      messageCache.add(id);
+      addMessage(msg.sender_name || 'anon', msg.body, false);
     } catch (e) {
       console.error('Poll error:', e);
       consecutivePollFailures++;
@@ -1259,7 +1286,9 @@
       return;
     }
 
-    // Optimistic UI — show immediately
+    // Optimistic UI — show immediately, and remember the body so the
+    // bot-attributed echo of this same message doesn't get shown again
+    rememberSent(text);
     addMessage(handle, text, true);
     chatInput.value = '';
     chatSend.disabled = true;
