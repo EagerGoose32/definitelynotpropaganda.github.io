@@ -772,7 +772,8 @@
 <nav>
   <a href="#" class="logo">DNP<span>.</span></a>
   <ul class="nav-links">
-    <li><a href="#feed">Feed</a></li>
+    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="#feed">Documentation</a></li>
     <li><a href="#methodology">Method</a></li>
     <li><a href="#chat">Room</a></li>
     <li><a href="#submit">Submit</a></li>
@@ -1091,7 +1092,8 @@
 <footer>
   <div class="footer-logo">DNP<span>.</span></div>
   <ul class="footer-links">
-    <li><a href="#feed">Feed</a></li>
+    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="#feed">Documentation</a></li>
     <li><a href="#methodology">Method</a></li>
     <li><a href="#chat">Room</a></li>
     <li><a href="#submit">Submit</a></li>
@@ -1161,7 +1163,7 @@
 
   async function loadInitialMessages() {
     try {
-      const res = await fetch(WORKER_URL + '?action=getMessages&limit=3', {
+      const res = await fetch(WORKER_URL + '?action=getMessages&limit=20', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
