@@ -153,18 +153,22 @@
 
     /* HERO */
     .hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      justify-content: center;
       min-height: 80vh;
       border-bottom: 1px solid var(--border);
     }
 
     .hero-left {
       padding: 60px 40px;
-      border-right: 1px solid var(--border);
+      max-width: 720px;
+      width: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
+      text-align: center;
+      align-items: center;
+      margin: 0 auto;
     }
 
     .hero-label {
@@ -201,8 +205,8 @@
       font-size: 14px;
       color: var(--muted);
       line-height: 1.7;
-      max-width: 400px;
-      margin-top: 32px;
+      max-width: 460px;
+      margin: 32px auto 0;
       font-weight: 300;
     }
 
@@ -211,6 +215,7 @@
       gap: 16px;
       margin-top: 40px;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     .btn-primary {
@@ -248,33 +253,6 @@
     .btn-secondary:hover {
       border-color: var(--accent);
       color: var(--accent);
-    }
-
-    .hero-right {
-      padding: 60px 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .stat-block {
-      border-bottom: 1px solid var(--border);
-      padding: 28px 0;
-    }
-    .stat-block:first-child { padding-top: 0; }
-    .stat-num {
-      font-family: var(--display);
-      font-size: 52px;
-      color: var(--accent);
-      line-height: 1;
-    }
-    .stat-label {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      margin-top: 6px;
     }
 
     /* METHODOLOGY */
@@ -863,9 +841,7 @@
         width: 100%;
       }
       .nav-toggle { display: block; }
-      .hero { grid-template-columns: 1fr; }
-      .hero-left { padding: 40px 20px; border-right: none; border-bottom: 1px solid var(--border); }
-      .hero-right { padding: 40px 20px; }
+      .hero-left { padding: 40px 20px; }
       .method-grid { grid-template-columns: 1fr; }
       .feed-grid { grid-template-columns: 1fr; }
       .chat-container { grid-template-columns: 1fr; }
@@ -906,7 +882,7 @@
   <a href="#" class="logo">DNP<span>.</span></a>
   <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
   <ul class="nav-links" id="navLinks">
-    <li><a href="feed.html">Live News</a></li>
+    <li><a href="feed.html">News Feed</a></li>
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html">Account</a></li>
     <li><a href="submit-tip.html">Submit Tip</a></li>
@@ -919,48 +895,26 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
-    <div>
-      <div class="hero-label">// Counter-Propaganda Documentation Project</div>
-      <h1 class="hero-headline">
-        DEFINITELY<br>
-        <span class="strike">NOT</span><br>
-        PROPAGANDA
-      </h1>
-      <p class="hero-sub">
-        Documenting coordinated influence operations, hasbara networks, and information warfare in real time. Receipts first. Analysis second. No both-sidesing when the evidence is clear.
-      </p>
-      <div class="hero-cta">
-        <a href="#feed" class="btn-primary">View Documentation</a>
-        <a href="#chat" class="btn-secondary">Join the Room</a>
-      </div>
+    <div class="hero-label">// Counter-Propaganda Documentation Project</div>
+    <h1 class="hero-headline">
+      DEFINITELY<br>
+      <span class="strike">NOT</span><br>
+      PROPAGANDA
+    </h1>
+    <p class="hero-sub">
+      Documenting coordinated influence operations, hasbara networks, and information warfare in real time. Receipts first. Analysis second. No both-sidesing when the evidence is clear.
+    </p>
+    <div class="hero-cta">
+      <a href="#feed" class="btn-primary">View Documentation</a>
+      <a href="#chat" class="btn-secondary">Join the Room</a>
     </div>
     <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 40px; line-height: 1.8;">
       MASTODON: @Captured99 &nbsp;·&nbsp; YOUTUBE: @DubbznWubbz99<br>
       ALL CLAIMS SOURCED · ALL RECEIPTS ARCHIVED
     </div>
-  </div>
-  <div class="hero-right">
-    <div class="stat-block">
-      <div class="stat-num">47</div>
-      <div class="stat-label">Coordinated Accounts Documented</div>
-    </div>
-    <div class="stat-block">
-      <div class="stat-num">12</div>
-      <div class="stat-label">Active Campaigns Tracked</div>
-    </div>
-    <div class="stat-block">
-      <div class="stat-num">3</div>
-      <div class="stat-label">Confirmed Silence Patterns</div>
-    </div>
-    <div class="stat-block">
-      <div class="stat-num">0</div>
-      <div class="stat-label">Unverified Claims Published</div>
-    </div>
-    <div class="stat-block" style="border-bottom: none;">
-      <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 1.8;">
-        Sources: Al Jazeera · Middle East Eye · Anadolu Agency · TRT World · +972 Magazine · The Intercept · CGTN · Press TV<br><br>
-        <span style="color: var(--accent);">⚑ Western-only sourcing flagged on every post</span>
-      </div>
+    <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 24px; line-height: 1.8;">
+      Sources: Al Jazeera · Middle East Eye · Anadolu Agency · TRT World · +972 Magazine · The Intercept · CGTN · Press TV<br><br>
+      <span style="color: var(--accent);">⚑ Western-only sourcing flagged on every post</span>
     </div>
   </div>
 </section>
@@ -1246,7 +1200,7 @@
 <footer>
   <div class="footer-logo">DNP<span>.</span></div>
   <ul class="footer-links">
-    <li><a href="feed.html">Live News</a></li>
+    <li><a href="feed.html">News Feed</a></li>
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html">Account</a></li>
     <li><a href="submit-tip.html">Submit Tip</a></li>
@@ -1331,7 +1285,7 @@
     recalcPatternPercentages();
   }
 
-  // ─── Breaking entries: pulled live from the same sources as Live News,
+  // ─── Breaking entries: pulled live from the same sources as the News Feed,
   // clustered by topic, and ranked by how many distinct outlets are currently
   // covering that topic (a proxy for "how big is this story right now"),
   // with a preference bump for Israel/Middle East and US policy & corruption.
@@ -1796,19 +1750,6 @@
     // Poll for new messages every 3 seconds
     pollInterval = setInterval(pollNewMessages, 3000);
   })();
-
-  // Animate stats on load
-  document.querySelectorAll('.stat-num').forEach(el => {
-    const target = parseInt(el.textContent);
-    if (isNaN(target) || target === 0) return;
-    let current = 0;
-    const step = Math.ceil(target / 30);
-    const interval = setInterval(() => {
-      current = Math.min(current + step, target);
-      el.textContent = current;
-      if (current >= target) clearInterval(interval);
-    }, 40);
-  });
 
   // Tip submission form
   const tipForm   = document.getElementById('tipForm');
