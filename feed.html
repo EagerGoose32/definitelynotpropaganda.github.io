@@ -312,7 +312,8 @@
 <div class="source-status-bar" id="sourceStatus"></div>
 
 <!-- FILTERS -->
-<div class="filter-bar" id="filterBar">
+<div class="filter-bar" id="filterBar" style="padding-bottom: 12px;">
+  <span style="font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); display: flex; align-items: center; margin-right: 4px;">Source:</span>
   <button class="filter-pill active" data-filter="all">All Sources</button>
 </div>
 
@@ -362,16 +363,90 @@
   ];
   const REFRESH_MS = 5 * 60 * 1000; // 5 minutes
 
+  // Priority topics — matching items are boosted to the top of the feed.
+  const PRIORITY_TOPICS = [
+    {
+      id: 'israel',
+      label: 'Israel / Palestine',
+      keywords: ['israel', 'israeli', 'gaza', 'palestin', 'idf', 'west bank',
+                 'netanyahu', 'hamas', 'zionis', 'rafah', 'knesset', 'occupied territor', 'settler'],
+    },
+    {
+      id: 'us',
+      label: 'US News',
+      keywords: ['united states', 'u.s.', ' us ', 'washington', 'white house', 'congress',
+                 'senate', 'pentagon', 'biden', 'trump', 'american ', 'capitol hill', 'supreme court'],
+    },
+    {
+      id: 'corruption',
+      label: 'Corruption',
+      keywords: ['corrupt', 'scandal', 'bribery', 'bribe', 'fraud', 'embezzl', 'indict',
+                 'kickback', 'conflict of interest', 'lobby', 'cover-up', 'cover up', 'investigation reveals'],
+    },
+  ];
+
+  function matchedTopics(item) {
+    const haystack = (item.title + ' ' + item.excerpt).toLowerCase();
+    return PRIORITY_TOPICS.filter(topic =>
+      topic.keywords.some(kw => haystack.includes(kw))
+    );
+  }
+
   const newsGrid     = document.getElementById('newsGrid');
   const feedStatus   = document.getElementById('feedStatus');
   const filterBar    = document.getElementById('filterBar');
   const sourceStatus = document.getElementById('sourceStatus');
 
   let allItems = [];
-  let activeFilter = 'all';
+  let activeSourceFilter = 'all';
+  let activeTopicFilter = 'all';
   const sourceState = {};
 
-  // Build filter pills
+  // Topic filter pills (priority row)
+  const topicBar = document.createElement('div');
+  topicBar.className = 'filter-bar';
+  topicBar.id = 'topicBar';
+  topicBar.style.borderBottom = '1px solid var(--border)';
+  topicBar.style.paddingTop = '4px';
+  filterBar.insertAdjacentElement('afterend', topicBar);
+
+  const topicLabel = document.createElement('span');
+  topicLabel.style.cssText = 'font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); display: flex; align-items: center; margin-right: 4px;';
+  topicLabel.textContent = 'Priority:';
+  topicBar.appendChild(topicLabel);
+
+  const allTopicsPill = document.createElement('button');
+  allTopicsPill.className = 'filter-pill active';
+  allTopicsPill.dataset.topic = 'all';
+  allTopicsPill.textContent = '★ All Topics';
+  topicBar.appendChild(allTopicsPill);
+
+  PRIORITY_TOPICS.forEach(topic => {
+    const pill = document.createElement('button');
+    pill.className = 'filter-pill';
+    pill.dataset.topic = topic.id;
+    pill.textContent = `★ ${topic.label}`;
+    pill.style.borderColor = 'var(--accent2)';
+    pill.style.color = 'var(--accent2)';
+    topicBar.appendChild(pill);
+  });
+
+  topicBar.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-pill');
+    if (!btn) return;
+    activeTopicFilter = btn.dataset.topic;
+    topicBar.querySelectorAll('.filter-pill').forEach(p => {
+      const isActive = p === btn;
+      p.classList.toggle('active', isActive);
+      if (p.dataset.topic !== 'all') {
+        p.style.background = isActive ? 'var(--accent2)' : 'transparent';
+        p.style.color = isActive ? '#fff' : 'var(--accent2)';
+      }
+    });
+    renderItems();
+  });
+
+  // Build source filter pills
   SOURCES.forEach(src => {
     const pill = document.createElement('button');
     pill.className = 'filter-pill';
@@ -390,7 +465,7 @@
   filterBar.addEventListener('click', (e) => {
     const btn = e.target.closest('.filter-pill');
     if (!btn) return;
-    activeFilter = btn.dataset.filter;
+    activeSourceFilter = btn.dataset.filter;
     filterBar.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p === btn));
     renderItems();
   });
@@ -414,16 +489,23 @@
   }
 
   function renderItems() {
-    const filtered = activeFilter === 'all'
+    let filtered = activeSourceFilter === 'all'
       ? allItems
-      : allItems.filter(item => item.sourceId === activeFilter);
+      : allItems.filter(item => item.sourceId === activeSourceFilter);
+
+    // Annotate with matched priority topics
+    filtered = filtered.map(item => ({ ...item, _topics: matchedTopics(item) }));
+
+    if (activeTopicFilter !== 'all') {
+      filtered = filtered.filter(item => item._topics.some(t => t.id === activeTopicFilter));
+    }
 
     if (filtered.length === 0) {
       newsGrid.innerHTML = '';
       feedStatus.style.display = 'block';
       feedStatus.textContent = allItems.length === 0
         ? 'No live items loaded yet — sources may be slow to respond.'
-        : 'No items for this source right now.';
+        : 'No items match the current filters yet.';
       return;
     }
 
@@ -431,7 +513,12 @@
     newsGrid.innerHTML = '';
 
     filtered
-      .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+      .sort((a, b) => {
+        // Priority items (more topic matches) bubble to the top, then by recency
+        const scoreDiff = b._topics.length - a._topics.length;
+        if (scoreDiff !== 0) return scoreDiff;
+        return new Date(b.pubDate) - new Date(a.pubDate);
+      })
       .slice(0, 60)
       .forEach(item => {
         const card = document.createElement('a');
@@ -439,12 +526,21 @@
         card.href = item.link;
         card.target = '_blank';
         card.rel = 'noopener noreferrer';
+        if (item._topics.length > 0) {
+          card.style.borderLeft = '2px solid var(--accent2)';
+        }
+
+        const topicTags = item._topics.map(t =>
+          `<span style="font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 6px; border: 1px solid var(--accent2); color: var(--accent2);">★ ${t.label}</span>`
+        ).join(' ');
+
         card.innerHTML = `
           <div class="news-meta">
             <span class="news-source">${item.sourceName}</span>
             <span class="news-time">${timeAgo(item.pubDate)}</span>
           </div>
           <div class="news-title">${item.title}</div>
+          ${topicTags ? `<div style="display: flex; flex-wrap: wrap; gap: 6px;">${topicTags}</div>` : ''}
           <div class="news-excerpt">${item.excerpt}</div>
           <div class="news-link">Read full story →</div>
         `;
