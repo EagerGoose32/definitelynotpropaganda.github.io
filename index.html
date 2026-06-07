@@ -689,6 +689,48 @@
     .form-textarea { min-height: 120px; resize: vertical; }
     .form-select option { background: var(--surface); }
 
+    .form-file-drop {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      text-align: center;
+    }
+    .form-file-drop:hover, .form-file-drop.dragover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .form-file-drop input[type="file"] { display: none; }
+    .form-file-list {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .form-file-list .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      margin: 4px 6px 0 0;
+    }
+    .form-file-list .file-chip button {
+      background: none;
+      border: none;
+      color: var(--accent2);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 0;
+      line-height: 1;
+    }
+
     /* FOOTER */
     footer {
       padding: 48px 40px;
@@ -1052,7 +1094,7 @@
       VERIFIED: All tips cross-referenced before publication.
     </div>
   </div>
-  <form class="submit-form reveal" id="tipForm" action="https://formsubmit.co/ajax/flockofego45@proton.me" method="POST">
+  <form class="submit-form reveal" id="tipForm" action="https://formsubmit.co/ajax/flockofego45@proton.me" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="_subject" value="New Tip Submission — Definitely Not Propaganda">
     <input type="hidden" name="_template" value="table">
     <input type="hidden" name="_captcha" value="false">
@@ -1080,6 +1122,14 @@
     <div class="form-field">
       <label class="form-label">Sources / Archive Links</label>
       <textarea class="form-textarea" style="min-height: 80px;" name="Sources" placeholder="Wayback Machine links, Al Jazeera URLs, primary sources..."></textarea>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Screenshots / Images (optional, up to 4, 8MB total)</label>
+      <label class="form-file-drop" id="tipFileDrop" for="tipFiles">
+        Click to choose images, or drag &amp; drop here — JPG, PNG, WEBP, GIF
+        <input type="file" id="tipFiles" name="attachment" accept="image/png, image/jpeg, image/webp, image/gif" multiple>
+      </label>
+      <div class="form-file-list" id="tipFileList"></div>
     </div>
     <button type="submit" class="btn-primary" style="align-self: flex-start;">Submit Documentation →</button>
     <div id="tipStatus" style="font-family: var(--mono); font-size: 10px; color: var(--muted); min-height: 14px;"></div>
@@ -1408,6 +1458,96 @@
       if (msg) setTimeout(() => { tipStatus.textContent = ''; }, 5000);
     }
 
+    // ─── Image attachments ───────────────────────────────────────────────
+    // FormSubmit accepts file uploads via a multipart form post — name the
+    // input "attachment" and it gets relayed as an email attachment.
+    const MAX_IMAGES = 4;
+    const MAX_TOTAL_BYTES = 8 * 1024 * 1024; // 8MB (FormSubmit caps at 10MB/email)
+    const tipFileInput = document.getElementById('tipFiles');
+    const tipFileDrop  = document.getElementById('tipFileDrop');
+    const tipFileList  = document.getElementById('tipFileList');
+    let selectedFiles = [];
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function syncFileInput() {
+      const dt = new DataTransfer();
+      selectedFiles.forEach(f => dt.items.add(f));
+      tipFileInput.files = dt.files;
+    }
+
+    function renderFileList() {
+      tipFileList.innerHTML = '';
+      selectedFiles.forEach((file, i) => {
+        const chip = document.createElement('span');
+        chip.className = 'file-chip';
+        chip.innerHTML = `${file.name} · ${formatBytes(file.size)} <button type="button" aria-label="Remove">✕</button>`;
+        chip.querySelector('button').addEventListener('click', () => {
+          selectedFiles.splice(i, 1);
+          syncFileInput();
+          renderFileList();
+        });
+        tipFileList.appendChild(chip);
+      });
+      if (selectedFiles.length) {
+        const total = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+        const totalEl = document.createElement('div');
+        totalEl.style.marginTop = '6px';
+        totalEl.textContent = `${selectedFiles.length}/${MAX_IMAGES} images · ${formatBytes(total)} total`;
+        tipFileList.appendChild(totalEl);
+      }
+    }
+
+    function addFiles(fileList) {
+      const incoming = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+      if (incoming.length !== fileList.length) {
+        setTipStatus('Only image files are accepted.', 'var(--accent2)');
+      }
+
+      for (const file of incoming) {
+        if (selectedFiles.length >= MAX_IMAGES) {
+          setTipStatus(`Max ${MAX_IMAGES} images.`, 'var(--accent2)');
+          break;
+        }
+        const alreadyAdded = selectedFiles.some(f => f.name === file.name && f.size === file.size);
+        if (alreadyAdded) continue;
+
+        const total = selectedFiles.reduce((sum, f) => sum + f.size, 0) + file.size;
+        if (total > MAX_TOTAL_BYTES) {
+          setTipStatus(`Images must total under ${formatBytes(MAX_TOTAL_BYTES)}.`, 'var(--accent2)');
+          break;
+        }
+        selectedFiles.push(file);
+      }
+      syncFileInput();
+      renderFileList();
+    }
+
+    if (tipFileInput && tipFileDrop) {
+      tipFileInput.addEventListener('change', () => addFiles(tipFileInput.files));
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        tipFileDrop.addEventListener(evt, (e) => {
+          e.preventDefault();
+          tipFileDrop.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(evt => {
+        tipFileDrop.addEventListener(evt, (e) => {
+          e.preventDefault();
+          tipFileDrop.classList.remove('dragover');
+        });
+      });
+      tipFileDrop.addEventListener('drop', (e) => {
+        if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files);
+      });
+    }
+    // ──────────────────────────────────────────────────────────────────────
+
     tipForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -1426,7 +1566,7 @@
 
       const submitBtn = tipForm.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
-      setTipStatus('Sending...');
+      setTipStatus(selectedFiles.length ? 'Sending with images...' : 'Sending...');
 
       try {
         const res = await fetch(tipForm.action, {
@@ -1438,6 +1578,9 @@
         if (res.ok) {
           setTipStatus('✓ Submitted — thank you. We verify before we publish.', 'var(--accent)');
           tipForm.reset();
+          selectedFiles = [];
+          syncFileInput();
+          renderFileList();
         } else {
           setTipStatus('Error submitting tip. Please try again.', 'var(--accent2)');
         }
