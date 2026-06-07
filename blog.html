@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blog — Definitely Not Propaganda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #2a2a2a;
+      --accent: #c8f135;
+      --accent2: #ff3b3b;
+      --text: #e8e8e8;
+      --muted: #666;
+      --mono: 'Space Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+      --body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      background: var(--accent2);
+      color: #fff;
+      padding: 4px 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    /* HEADER */
+    .feed-header {
+      padding: 56px 40px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .feed-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    .feed-headline {
+      font-family: var(--display);
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+    }
+    .feed-headline span { color: var(--accent); }
+    .feed-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+      margin-top: 20px;
+      font-weight: 300;
+    }
+
+    /* AUTH PANEL */
+    .auth-wrap { padding: 32px 40px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .auth-box { max-width: 460px; }
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .auth-tab {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .auth-tab:hover { color: var(--text); border-color: var(--text); }
+    .auth-tab.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+
+    .auth-field { margin-bottom: 14px; }
+    .auth-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .auth-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 14px;
+      padding: 12px 14px;
+      transition: border-color 0.2s;
+    }
+    .auth-input:focus { outline: none; border-color: var(--accent); }
+
+    .btn-primary {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 13px 24px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--accent2); }
+    .btn-ghost {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 12px 22px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .auth-status {
+      font-family: var(--mono);
+      font-size: 11px;
+      margin-top: 14px;
+      line-height: 1.6;
+      min-height: 1px;
+    }
+
+    .session-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      max-width: 640px;
+    }
+    .session-info { font-family: var(--mono); font-size: 12px; line-height: 1.8; }
+    .session-info .who { color: var(--text); font-size: 14px; }
+    .session-info .role { color: var(--accent); }
+    .session-info .unverified { color: var(--accent2); }
+    .session-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* COMPOSER */
+    .composer-wrap { padding: 32px 40px; border-bottom: 1px solid var(--border); }
+    .composer-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+    }
+    .composer-box { max-width: 680px; }
+    .auth-textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 14px;
+      padding: 14px;
+      min-height: 220px;
+      resize: vertical;
+      line-height: 1.6;
+      transition: border-color 0.2s;
+    }
+    .auth-textarea:focus { outline: none; border-color: var(--accent); }
+
+    /* POSTS */
+    .feed-wrap { padding: 48px 40px 80px; }
+    .post-card {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      padding: 32px;
+      margin-bottom: 1px;
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .post-meta .author { color: var(--accent); }
+    .post-title {
+      font-family: var(--display);
+      font-size: 32px;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .post-body {
+      font-size: 15px;
+      line-height: 1.8;
+      font-weight: 300;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+    .post-actions { margin-top: 18px; display: flex; gap: 10px; }
+    .post-actions button {
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 6px 12px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .post-actions button:hover { color: var(--accent2); border-color: var(--accent2); }
+
+    .feed-status {
+      padding: 60px 40px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .feed-status.error { color: var(--accent2); }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-logo {
+      font-family: var(--display);
+      font-size: 40px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .feed-header { padding: 40px 20px 24px; }
+      .auth-wrap, .composer-wrap { padding: 24px 20px; }
+      .feed-wrap { padding: 32px 20px 60px; }
+      footer { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">DNP<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="blog.html" class="active">Blog</a></li>
+    <li><a href="index.html#feed">Documentation</a></li>
+    <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="index.html#chat">Room</a></li>
+    <li><a href="index.html#submit">Submit</a></li>
+  </ul>
+  <div class="nav-badge">● Live</div>
+</nav>
+
+<!-- HEADER -->
+<div class="feed-header">
+  <div class="feed-eyebrow"><div class="live-dot"></div>Staff Notes &amp; Long-Form</div>
+  <h1 class="feed-headline">THE <span>BLOG</span></h1>
+  <p class="feed-sub">
+    Analysis, dispatches, and behind-the-scenes notes from the team. Sign up to get notified of new posts —
+    or log in if you're already verified. Only the editorial account can publish.
+  </p>
+</div>
+
+<!-- AUTH -->
+<div class="auth-wrap">
+
+  <!-- Logged out: show login/signup -->
+  <div id="authLoggedOut" class="auth-box">
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin">Log In</button>
+      <button class="auth-tab" id="tabSignup">Sign Up</button>
+    </div>
+
+    <form id="loginForm">
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input class="auth-input" type="email" id="loginEmail" autocomplete="email" required>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" type="password" id="loginPassword" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-primary">Log In →</button>
+      <div class="auth-status" id="loginStatus"></div>
+    </form>
+
+    <form id="signupForm" style="display: none;">
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input class="auth-input" type="email" id="signupEmail" autocomplete="email" required>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" type="password" id="signupPassword" autocomplete="new-password" minlength="6" required>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Confirm Password</label>
+        <input class="auth-input" type="password" id="signupPasswordConfirm" autocomplete="new-password" minlength="6" required>
+      </div>
+      <button type="submit" class="btn-primary">Create Account →</button>
+      <div class="auth-status" id="signupStatus"></div>
+    </form>
+  </div>
+
+  <!-- Logged in -->
+  <div id="authLoggedIn" class="session-card" style="display: none;">
+    <div class="session-info">
+      <div class="who">Signed in as <span id="sessionEmail"></span></div>
+      <div id="sessionRole"></div>
+    </div>
+    <div class="session-actions">
+      <button class="btn-ghost" id="resendVerifyBtn" style="display: none;">Resend Verification Email</button>
+      <button class="btn-ghost" id="logoutBtn">Log Out</button>
+    </div>
+  </div>
+  <div class="auth-status" id="sessionStatus"></div>
+</div>
+
+<!-- ADMIN COMPOSER (hidden unless logged in as the editorial account + verified) -->
+<div class="composer-wrap" id="composerWrap" style="display: none;">
+  <div class="composer-eyebrow">★ Editorial Account — New Post</div>
+  <div class="composer-box">
+    <form id="postForm">
+      <div class="auth-field">
+        <label class="auth-label">Title</label>
+        <input class="auth-input" type="text" id="postTitle" required>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Body</label>
+        <textarea class="auth-textarea" id="postBody" required></textarea>
+      </div>
+      <button type="submit" class="btn-primary">Publish →</button>
+      <div class="auth-status" id="postStatus"></div>
+    </form>
+  </div>
+</div>
+
+<!-- POSTS -->
+<div class="feed-wrap">
+  <div id="postsStatus" class="feed-status">Loading posts...</div>
+  <div id="postsList"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DNP<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="index.html#feed">Documentation</a></li>
+    <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="index.html#chat">Room</a></li>
+    <li><a href="index.html#submit">Submit</a></li>
+    <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
+    <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
+  </ul>
+  <div class="footer-note">
+    Definitely Not Propaganda<br>
+    All claims sourced · Receipts archived<br>
+    <span style="color: var(--accent);">Free press or no press.</span>
+  </div>
+</footer>
+
+<!-- Firebase (compat SDK — works with plain <script> tags, no build step) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+  // ─── CONFIGURE ME ──────────────────────────────────────────────────────────
+  // 1. Paste your Firebase project config below (Project Settings → General →
+  //    Your apps → SDK setup and configuration → Config).
+  // 2. Set ADMIN_EMAIL to the single email address allowed to publish posts.
+  //    This MUST match the email on the Firebase Auth account you want to be
+  //    the admin/editorial account, and MUST also be set in your Firestore
+  //    security rules (see BLOG_SETUP.md) — the client-side check below is
+  //    just for showing/hiding the composer UI, the rules are what actually
+  //    enforce it.
+  const FIREBASE_CONFIG = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID",
+  };
+  const ADMIN_EMAIL = 'YOUR_ADMIN_EMAIL@example.com';
+  // ───────────────────────────────────────────────────────────────────────────
+
+  const isConfigured = FIREBASE_CONFIG.apiKey !== 'YOUR_API_KEY';
+
+  const postsStatus = document.getElementById('postsStatus');
+  const postsList = document.getElementById('postsList');
+
+  if (!isConfigured) {
+    postsStatus.textContent = 'Blog backend not configured yet — see BLOG_SETUP.md to connect Firebase.';
+    postsStatus.classList.add('error');
+    document.getElementById('authLoggedOut').style.display = 'none';
+  } else {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // ─── ELEMENTS ────────────────────────────────────────────────────────────
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const loginStatus = document.getElementById('loginStatus');
+    const signupStatus = document.getElementById('signupStatus');
+
+    const authLoggedOut = document.getElementById('authLoggedOut');
+    const authLoggedIn = document.getElementById('authLoggedIn');
+    const sessionEmail = document.getElementById('sessionEmail');
+    const sessionRole = document.getElementById('sessionRole');
+    const sessionStatus = document.getElementById('sessionStatus');
+    const resendVerifyBtn = document.getElementById('resendVerifyBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const composerWrap = document.getElementById('composerWrap');
+    const postForm = document.getElementById('postForm');
+    const postStatus = document.getElementById('postStatus');
+
+    function setStatus(el, msg, color) {
+      el.textContent = msg;
+      el.style.color = color || 'var(--muted)';
+      if (msg) setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 8000);
+    }
+
+    // ─── TABS ────────────────────────────────────────────────────────────────
+    tabLogin.addEventListener('click', () => {
+      tabLogin.classList.add('active');
+      tabSignup.classList.remove('active');
+      loginForm.style.display = '';
+      signupForm.style.display = 'none';
+    });
+    tabSignup.addEventListener('click', () => {
+      tabSignup.classList.add('active');
+      tabLogin.classList.remove('active');
+      signupForm.style.display = '';
+      loginForm.style.display = 'none';
+    });
+
+    // ─── SIGN UP ─────────────────────────────────────────────────────────────
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pw = document.getElementById('signupPassword').value;
+      const pwConfirm = document.getElementById('signupPasswordConfirm').value;
+      if (pw !== pwConfirm) { setStatus(signupStatus, 'Passwords do not match.', 'var(--accent2)'); return; }
+      if (pw.length < 6) { setStatus(signupStatus, 'Password must be at least 6 characters.', 'var(--accent2)'); return; }
+      try {
+        setStatus(signupStatus, 'Creating account...', 'var(--muted)');
+        const cred = await auth.createUserWithEmailAndPassword(email, pw);
+        await cred.user.sendEmailVerification();
+        setStatus(signupStatus, 'Account created — check your inbox for a verification link before you can comment or post.', 'var(--accent)');
+        signupForm.reset();
+      } catch (err) {
+        console.error('[Blog Auth] signup error:', err);
+        setStatus(signupStatus, err.message || 'Sign up failed.', 'var(--accent2)');
+      }
+    });
+
+    // ─── LOG IN ──────────────────────────────────────────────────────────────
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pw = document.getElementById('loginPassword').value;
+      try {
+        setStatus(loginStatus, 'Logging in...', 'var(--muted)');
+        await auth.signInWithEmailAndPassword(email, pw);
+        loginForm.reset();
+        loginStatus.textContent = '';
+      } catch (err) {
+        console.error('[Blog Auth] login error:', err);
+        setStatus(loginStatus, err.message || 'Login failed.', 'var(--accent2)');
+      }
+    });
+
+    // ─── LOG OUT ─────────────────────────────────────────────────────────────
+    logoutBtn.addEventListener('click', () => auth.signOut());
+
+    // ─── RESEND VERIFICATION ─────────────────────────────────────────────────
+    resendVerifyBtn.addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      try {
+        await user.sendEmailVerification();
+        setStatus(sessionStatus, 'Verification email sent — check your inbox (and spam folder).', 'var(--accent)');
+      } catch (err) {
+        console.error('[Blog Auth] resend verification error:', err);
+        setStatus(sessionStatus, err.message || 'Could not send verification email.', 'var(--accent2)');
+      }
+    });
+
+    // ─── AUTH STATE ──────────────────────────────────────────────────────────
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        authLoggedOut.style.display = '';
+        authLoggedIn.style.display = 'none';
+        composerWrap.style.display = 'none';
+        return;
+      }
+      await user.reload();
+      authLoggedOut.style.display = 'none';
+      authLoggedIn.style.display = 'flex';
+      sessionEmail.textContent = user.email;
+
+      const isAdmin = user.email === ADMIN_EMAIL;
+
+      if (!user.emailVerified) {
+        sessionRole.innerHTML = '<span class="unverified">Email not verified — verify to unlock full access.</span>';
+        resendVerifyBtn.style.display = '';
+        composerWrap.style.display = 'none';
+      } else {
+        resendVerifyBtn.style.display = 'none';
+        if (isAdmin) {
+          sessionRole.innerHTML = '<span class="role">★ Editorial / Admin Account — verified</span>';
+          composerWrap.style.display = '';
+        } else {
+          sessionRole.innerHTML = '<span style="color: var(--text);">Verified reader</span>';
+          composerWrap.style.display = 'none';
+        }
+      }
+    });
+
+    // ─── PUBLISH POST (admin only — also enforced server-side by Firestore rules) ──
+    postForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL || !user.emailVerified) {
+        setStatus(postStatus, 'Not authorized to publish.', 'var(--accent2)');
+        return;
+      }
+      const title = document.getElementById('postTitle').value.trim();
+      const body = document.getElementById('postBody').value.trim();
+      if (!title || !body) { setStatus(postStatus, 'Title and body are required.', 'var(--accent2)'); return; }
+      try {
+        setStatus(postStatus, 'Publishing...', 'var(--muted)');
+        await db.collection('posts').add({
+          title,
+          body,
+          author: user.email,
+          authorName: user.email.split('@')[0],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+        postForm.reset();
+        setStatus(postStatus, 'Published.', 'var(--accent)');
+      } catch (err) {
+        console.error('[Blog] publish error:', err);
+        setStatus(postStatus, err.message || 'Publish failed.', 'var(--accent2)');
+      }
+    });
+
+    // ─── DELETE POST (admin only) ────────────────────────────────────────────
+    async function deletePost(id) {
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL) return;
+      if (!confirm('Delete this post?')) return;
+      try {
+        await db.collection('posts').doc(id).delete();
+      } catch (err) {
+        console.error('[Blog] delete error:', err);
+        alert(err.message || 'Delete failed.');
+      }
+    }
+    window.dnpDeletePost = deletePost;
+
+    // ─── LOAD POSTS (public — anyone can read) ──────────────────────────────
+    function timeAgo(ts) {
+      if (!ts || !ts.toDate) return '';
+      const diff = Date.now() - ts.toDate().getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return `${mins}m ago`;
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return `${hrs}h ago`;
+      const days = Math.floor(hrs / 24);
+      if (days < 30) return `${days}d ago`;
+      return ts.toDate().toLocaleDateString();
+    }
+
+    function renderPosts(snapshot) {
+      if (snapshot.empty) {
+        postsStatus.textContent = 'No posts yet — check back soon.';
+        postsStatus.style.display = '';
+        postsList.innerHTML = '';
+        return;
+      }
+      postsStatus.style.display = 'none';
+      postsList.innerHTML = '';
+      snapshot.forEach(doc => {
+        const post = doc.data();
+        const card = document.createElement('article');
+        card.className = 'post-card';
+        const isAdmin = auth.currentUser && auth.currentUser.email === ADMIN_EMAIL;
+        card.innerHTML = `
+          <div class="post-meta">
+            <span class="author">${escapeHtml(post.authorName || 'staff')}</span>
+            <span>·</span>
+            <span>${timeAgo(post.createdAt)}</span>
+          </div>
+          <h2 class="post-title">${escapeHtml(post.title || 'Untitled')}</h2>
+          <div class="post-body">${escapeHtml(post.body || '')}</div>
+          ${isAdmin ? `<div class="post-actions"><button onclick="dnpDeletePost('${doc.id}')">Delete</button></div>` : ''}
+        `;
+        postsList.appendChild(card);
+      });
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    db.collection('posts').orderBy('createdAt', 'desc').limit(30)
+      .onSnapshot(renderPosts, (err) => {
+        console.error('[Blog] posts load error:', err);
+        postsStatus.textContent = 'Could not load posts. Check the console for details.';
+        postsStatus.classList.add('error');
+      });
+  }
+</script>
+
+</body>
+</html>
