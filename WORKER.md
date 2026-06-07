@@ -9,7 +9,6 @@ Replace your Cloudflare Worker code with this:
 ```javascript
 const MATRIX_HOME_SERVER = 'https://matrix.org';
 const MATRIX_ROOM_ID = '!bxksvGChRQwBgnuARN:matrix.org';
-const MATRIX_BOT_TOKEN = 'mat_4AdgOw6cu554jMQnVG5iyu30KPys6T_QSTDy1'; // Set this as a secret
 
 export default {
   async fetch(request, env, ctx) {
@@ -29,28 +28,33 @@ export default {
     // Fetch messages from Matrix room
     if (request.method === 'GET' && url.searchParams.get('action') === 'getMessages') {
       const limit = parseInt(url.searchParams.get('limit')) || 10;
-      return handleGetMessages(limit);
+      return handleGetMessages(limit, env);
     }
 
     // Post message to Matrix
     if (request.method === 'POST') {
       const body = await request.json();
-      return handlePostMessage(body);
+      return handlePostMessage(body, env);
     }
 
     return new Response('Not Found', { status: 404 });
   },
 };
 
-async function handleGetMessages(limit) {
+async function handleGetMessages(limit, env) {
   try {
+    const token = env.MATRIX_BOT_TOKEN;
+    if (!token) {
+      throw new Error('MATRIX_BOT_TOKEN not configured');
+    }
+
     // Fetch messages from Matrix room
     const response = await fetch(
       `${MATRIX_HOME_SERVER}/_matrix/client/v3/rooms/${encodeURIComponent(MATRIX_ROOM_ID)}/messages?dir=b&limit=${limit}`,
       {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${MATRIX_BOT_TOKEN}`,
+          'Authorization': `Bearer ${token}`,
         },
       }
     );
@@ -66,7 +70,7 @@ async function handleGetMessages(limit) {
       .map(event => ({
         event_id: event.event_id,
         sender: event.sender,
-        sender_name: event.content.displayname || event.sender.split(':')[0].substring(1),
+        sender_name: event.sender.replace('@', '').split(':')[0],
         body: event.content.body,
         origin_server_ts: event.origin_server_ts,
       }));
@@ -88,7 +92,7 @@ async function handleGetMessages(limit) {
   }
 }
 
-async function handlePostMessage(body) {
+async function handlePostMessage(body, env) {
   const { message, handle } = body;
 
   if (!message || !handle) {
@@ -102,19 +106,23 @@ async function handlePostMessage(body) {
   }
 
   try {
+    const token = env.MATRIX_BOT_TOKEN;
+    if (!token) {
+      throw new Error('MATRIX_BOT_TOKEN not configured');
+    }
+
     // Post message to Matrix as bot
     const response = await fetch(
       `${MATRIX_HOME_SERVER}/_matrix/client/v3/rooms/${encodeURIComponent(MATRIX_ROOM_ID)}/send/m.room.message`,
       {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${MATRIX_BOT_TOKEN}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           msgtype: 'm.text',
           body: message,
-          displayname: handle,
         }),
       }
     );
