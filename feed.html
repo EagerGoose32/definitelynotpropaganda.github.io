@@ -619,6 +619,15 @@
     });
   }
 
+  // r.jina.ai (and similar "reader" services) return HTTP 200 with readable
+  // text/markdown instead of the actual feed XML for some sites — that looks
+  // like a success but fails to parse. Reject anything that doesn't actually
+  // look like an RSS/Atom/XML document so the chain keeps trying.
+  function looksLikeXml(text) {
+    const head = text.slice(0, 300).toLowerCase();
+    return head.includes('<?xml') || head.includes('<rss') || head.includes('<feed') || head.includes('<rdf');
+  }
+
   async function fetchViaProxies(rssUrls, sourceName) {
     // rssUrls can be a string or array — try each one with each proxy
     const urlsToTry = Array.isArray(rssUrls) ? rssUrls : [rssUrls];
@@ -639,6 +648,10 @@
         if (!text || text.length < 50 || text.trim().startsWith('{"error"')) {
           console.warn(`${workerLabel} → empty/error response`);
           throw new Error('Empty response');
+        }
+        if (!looksLikeXml(text)) {
+          console.warn(`${workerLabel} → response doesn't look like XML`);
+          throw new Error('Non-XML response');
         }
         console.log(`${workerLabel} → OK (${text.length} chars)`);
         return text;
@@ -677,6 +690,10 @@
           if (!text || text.length < 50) {
             console.warn(`${label} → empty/short response (${text.length} chars)`);
             throw new Error('Empty response');
+          }
+          if (!looksLikeXml(text)) {
+            console.warn(`${label} → response doesn't look like XML`);
+            throw new Error('Non-XML response');
           }
           console.log(`${label} → OK (${text.length} chars)`);
           return text;
