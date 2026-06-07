@@ -28,6 +28,13 @@ const ALLOWED_FEED_HOSTS = [
   '972mag.com', 'www.972mag.com',
   'cgtn.com', 'www.cgtn.com',
   'presstv.ir', 'www.presstv.ir',
+
+  // US / Western outlets — added so the Live Feed can show their reporting
+  // side-by-side with the independent sources above (flagged on the page).
+  'feeds.npr.org',
+  'rss.nytimes.com',
+  'feeds.washingtonpost.com',
+  'rss.cnn.com',
 ];
 
 export default {

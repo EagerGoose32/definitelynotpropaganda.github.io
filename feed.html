@@ -197,6 +197,15 @@
       border: 1px solid var(--accent);
       color: var(--accent);
     }
+    .flag-western {
+      font-family: var(--mono);
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+    }
     .news-time {
       font-family: var(--mono);
       font-size: 9px;
@@ -340,7 +349,7 @@
   <div class="feed-eyebrow"><div class="live-dot"></div>Aggregated In Real Time</div>
   <h1 class="feed-headline">LIVE <span>NEWS</span> FEED</h1>
   <p class="feed-sub">
-    Pulled directly from non-Western and independent sources, prioritized over wire-service narratives. Al Jazeera, TRT World, Anadolu Agency, Middle East Eye, +972 Magazine, CGTN, and Press TV — refreshed automatically. Click through to read the original reporting.
+    Pulled directly from non-Western and independent sources, prioritized over wire-service narratives — Al Jazeera, TRT World, Anadolu Agency, Middle East Eye, +972 Magazine, CGTN, and Press TV. US/Western legacy outlets (NPR, NY Times, Washington Post, CNN) are also included side-by-side and clearly flagged <span class="flag-western" style="display: inline-block; vertical-align: middle;">⚑ Western Media</span> so you can compare framing directly. Refreshed automatically — click through to read the original reporting.
   </p>
 </div>
 
@@ -412,6 +421,14 @@
     { id: '972mag',     name: '+972 Magazine',    rss: ['https://www.972mag.com/feed/'] },
     { id: 'cgtn',       name: 'CGTN',             rss: ['https://www.cgtn.com/subscribe/rss/section/world.xml'] },
     { id: 'presstv',    name: 'Press TV',         rss: ['https://www.presstv.ir/rss.xml'] },
+
+    // US / Western wire & legacy outlets — included for comparison so readers
+    // can see how the same stories get framed on each side. Flagged below so
+    // they're never mistaken for the independent/alternative sources above.
+    { id: 'npr',        name: 'NPR',              flag: 'western', rss: ['https://feeds.npr.org/1001/rss.xml'] },
+    { id: 'nytimes',    name: 'NY Times',         flag: 'western', rss: ['https://rss.nytimes.com/services/xml/rss/nyt/World.xml'] },
+    { id: 'washpost',   name: 'Washington Post',  flag: 'western', rss: ['https://feeds.washingtonpost.com/rss/world'] },
+    { id: 'cnn',        name: 'CNN',              flag: 'western', rss: ['https://rss.cnn.com/rss/cnn_topstories.rss', 'http://rss.cnn.com/rss/cnn_topstories.rss'] },
   ];
 
   // Our own Cloudflare Worker fetches feeds server-side — no CORS, no
@@ -457,6 +474,25 @@
       label: 'Corruption',
       keywords: ['corrupt', 'scandal', 'bribery', 'bribe', 'fraud', 'embezzl', 'indict',
                  'kickback', 'conflict of interest', 'lobby', 'cover-up', 'cover up', 'investigation reveals'],
+    },
+    {
+      id: 'media',
+      label: 'Media & Propaganda',
+      keywords: ['propaganda', 'disinformation', 'misinformation', 'narrative', 'hasbara',
+                 'astroturf', 'coordinated inauthentic', 'talking points', 'state media',
+                 'media bias', 'press freedom', 'censorship', 'fact-check', 'bot network'],
+    },
+    {
+      id: 'china',
+      label: 'China / Asia-Pacific',
+      keywords: ['china', 'chinese', 'beijing', 'taiwan', 'hong kong', 'xinjiang',
+                 'uyghur', 'ccp', 'xi jinping', 'south china sea', 'asia-pacific'],
+    },
+    {
+      id: 'iran',
+      label: 'Iran',
+      keywords: ['iran', 'iranian', 'tehran', 'ayatollah', 'khamenei', 'irgc',
+                 'nuclear deal', 'sanctions on iran', 'persian gulf', 'revolutionary guard'],
     },
   ];
 
@@ -611,7 +647,10 @@
 
         card.innerHTML = `
           <div class="news-meta">
-            <span class="news-source">${item.sourceName}</span>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span class="news-source">${item.sourceName}</span>
+              ${item.sourceFlag === 'western' ? '<span class="flag-western">⚑ Western Media</span>' : ''}
+            </div>
             <span class="news-time">${timeAgo(item.pubDate)}</span>
           </div>
           <div class="news-title">${item.title}</div>
@@ -654,6 +693,7 @@
       return {
         sourceId: src.id,
         sourceName: src.name,
+        sourceFlag: src.flag || null,
         title: stripHtml(get('title')),
         excerpt: stripHtml(description).slice(0, 220),
         link,
@@ -761,6 +801,7 @@
         items = result.map(item => ({
           sourceId: src.id,
           sourceName: src.name,
+          sourceFlag: src.flag || null,
           title: stripHtml(item.title),
           excerpt: stripHtml(item.description).slice(0, 220),
           link: item.link,
