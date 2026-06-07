@@ -8,7 +8,7 @@ Replace your Cloudflare Worker code with this:
 
 ```javascript
 const MATRIX_HOME_SERVER = 'https://matrix.org';
-const MATRIX_ROOM_ID = '!bxksvGChRQwBgnuARN:matrix.org';
+const MATRIX_ROOM_ID = '!wqmkZHnfQmDMgBKkDl:matrix.org';
 
 export default {
   async fetch(request, env, ctx) {
