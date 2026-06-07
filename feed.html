@@ -371,6 +371,15 @@
     { id: 'presstv',    name: 'Press TV',         rss: ['https://www.presstv.ir/rss.xml'] },
   ];
 
+  // Our own Cloudflare Worker fetches feeds server-side — no CORS, no
+  // dependency on flaky free third-party proxy uptime. Tried first; if it's
+  // unreachable (e.g. not yet deployed with the fetchFeed action) we fall
+  // back to the old proxy chain below so the page still works either way.
+  const WORKER_URL = 'https://dnf.definitelynotpropaganda.workers.dev';
+  function workerFeedUrl(url) {
+    return `${WORKER_URL}?action=fetchFeed&url=${encodeURIComponent(url)}`;
+  }
+
   // Direct fetch tried first (some feeds allow CORS); proxies as fallback.
   // r.jina.ai is a "reader" proxy that often gets through bot-blocking that
   // standard CORS proxies can't — useful for sites like Al Jazeera/TRT that
@@ -616,6 +625,28 @@
     let lastError;
 
     for (const rssUrl of urlsToTry) {
+      // Try our Worker proxy first — server-side fetch, no CORS, cached at
+      // the edge, and under our control (unlike third-party proxies).
+      const workerUrl = workerFeedUrl(rssUrl);
+      const workerLabel = `[${sourceName}] worker → ${rssUrl.slice(0, 70)}`;
+      try {
+        const res = await fetch(workerUrl);
+        if (!res.ok) {
+          console.warn(`${workerLabel} → HTTP ${res.status}`);
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const text = await res.text();
+        if (!text || text.length < 50 || text.trim().startsWith('{"error"')) {
+          console.warn(`${workerLabel} → empty/error response`);
+          throw new Error('Empty response');
+        }
+        console.log(`${workerLabel} → OK (${text.length} chars)`);
+        return text;
+      } catch (err) {
+        console.warn(`${workerLabel} → ${err.message}`);
+        lastError = err;
+      }
+
       for (const buildUrl of PROXIES) {
         const proxyUrl = buildUrl(rssUrl);
         const label = `[${sourceName}] ${proxyUrl.slice(0, 80)}`;
