@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Documentation Archive — Definitely Not Propaganda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #2a2a2a;
+      --accent: #c8f135;
+      --accent2: #ff3b3b;
+      --text: #e8e8e8;
+      --muted: #666;
+      --mono: 'Space Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+      --body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .logo {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .nav-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding: 64px 40px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+    }
+    .page-title {
+      font-family: var(--display);
+      font-size: clamp(48px, 8vw, 84px);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+    }
+    .page-sub {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+      font-weight: 300;
+    }
+
+    /* FEED LIST (single column — reuses Documentation Feed card styles) */
+    .archive-wrap { max-width: 920px; margin: 0 auto; }
+    .feed-item {
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+      cursor: default;
+    }
+    .feed-item:hover { background: var(--surface); }
+    .feed-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+    .feed-tag {
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 3px 8px;
+    }
+    .tag-hasbara { background: var(--accent2); color: #fff; }
+    .tag-disinfo { background: #1a1a6e; color: var(--accent); border: 1px solid var(--accent); }
+    .tag-analysis { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+    .tag-confirmed { background: #1a3a1a; color: #4caf50; border: 1px solid #4caf50; }
+    .feed-date { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+    .feed-title { font-size: 17px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
+    .feed-excerpt { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .feed-sources { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .source-pill {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-logo { font-family: var(--display); font-size: 24px; letter-spacing: 0.08em; }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 200;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 16px 20px; border-bottom: 1px solid var(--border); width: 100%; }
+      .nav-toggle { display: block; }
+      .page-header { padding: 40px 20px 28px; }
+      .feed-item { padding: 20px; }
+      footer { padding: 32px 20px; }
+      .footer-note { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">DNP<span>.</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html">Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html" class="active">Archive</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<section class="page-header reveal">
+  <div class="page-eyebrow">// Full Documentation Record</div>
+  <h1 class="page-title">DOCUMENTATION ARCHIVE</h1>
+  <p class="page-sub">
+    Every entry from the Documentation Feed, in one place — coordinated account
+    behavior, zone-flooding events, TACO cycles, and confirmed pattern matches,
+    each one sourced and cross-referenced before publication. Newest first.
+  </p>
+</section>
+
+<!-- ARCHIVE LIST -->
+<div class="archive-wrap">
+
+  <div class="feed-item reveal">
+    <div class="feed-meta">
+      <span class="feed-tag tag-hasbara">Hasbara</span>
+      <span class="feed-tag tag-confirmed">Confirmed</span>
+      <span class="feed-date">Jun 4, 2026 · 14:32 UTC</span>
+    </div>
+    <div class="feed-title">Coordinated Comment Surge: "Human Shield" Narrative Deployed Across 6 Platforms Simultaneously</div>
+    <div class="feed-excerpt">Identical phrasing appearing within 4-minute window across Twitter/X, Facebook, Reddit, YouTube, Telegram, and TikTok. Account creation dates cluster 2021–2022. All accounts go silent 6 hours after initial burst.</div>
+    <div class="feed-sources">
+      <span class="source-pill">Al Jazeera</span>
+      <span class="source-pill">+972 Magazine</span>
+      <span class="source-pill">Middle East Eye</span>
+      <span class="source-pill">Archived: Wayback</span>
+    </div>
+  </div>
+
+  <div class="feed-item reveal">
+    <div class="feed-meta">
+      <span class="feed-tag tag-disinfo">Disinfo</span>
+      <span class="feed-date">Jun 3, 2026 · 09:17 UTC</span>
+    </div>
+    <div class="feed-title">Zone Flooding in Action: Epstein Adjacent Story Buried Under Four Simultaneous Domestic News Cycles</div>
+    <div class="feed-excerpt">Pattern documented: major accountability story drops, then within 90 minutes four unrelated breaking stories appear across major outlets. Third time this month. Information velocity as a burial mechanism.</div>
+    <div class="feed-sources">
+      <span class="source-pill">The Intercept</span>
+      <span class="source-pill">TRT World</span>
+      <span class="source-pill">⚑ Western-sourced only</span>
+    </div>
+  </div>
+
+  <div class="feed-item reveal">
+    <div class="feed-meta">
+      <span class="feed-tag tag-analysis">Analysis</span>
+      <span class="feed-date">Jun 1, 2026 · 18:44 UTC</span>
+    </div>
+    <div class="feed-title">TACO Pattern Cycle 7: Maximum Escalation Rhetoric Followed by Quiet Reversal, Face-Saving Framing Applied</div>
+    <div class="feed-excerpt">Documented cycle: threat issued at maximum volume, then reversed quietly with rebranding. Media covers the threat, ignores the reversal. Called this pattern in February. The framing shift is the tell.</div>
+    <div class="feed-sources">
+      <span class="source-pill">Anadolu Agency</span>
+      <span class="source-pill">CGTN</span>
+      <span class="source-pill">Al Jazeera</span>
+    </div>
+  </div>
+
+  <div class="feed-item reveal">
+    <div class="feed-meta">
+      <span class="feed-tag tag-analysis">Analysis</span>
+      <span class="feed-date">May 30, 2026 · 12:08 UTC</span>
+    </div>
+    <div class="feed-title">TACO Cycle 6: Threat Escalation Walked Back Within 72 Hours, Coverage Ratio Roughly 40:1 in Favor of the Threat</div>
+    <div class="feed-excerpt">For every story covering the eventual quiet reversal, roughly forty covered the original maximum-volume threat. The reversal ran as a brief wire update; the threat ran as a headline for three straight days.</div>
+    <div class="feed-sources">
+      <span class="source-pill">Anadolu Agency</span>
+      <span class="source-pill">TRT World</span>
+    </div>
+  </div>
+
+  <div class="feed-item reveal">
+    <div class="feed-meta">
+      <span class="feed-tag tag-hasbara">Hasbara</span>
+      <span class="feed-tag tag-confirmed">Confirmed</span>
+      <span class="feed-date">May 27, 2026 · 17:51 UTC</span>
+    </div>
+    <div class="feed-title">Verified: Same Six Phrases Appear in 200+ Replies Within Two Hours of a Press Briefing Ending</div>
+    <div class="feed-excerpt">Cross-platform scrape confirms identical six-phrase rotation deployed by accounts with overlapping registration windows. Reply timing clusters within seconds of each other — not the cadence of independent users.</div>
+    <div class="feed-sources">
+      <span class="source-pill">Al Jazeera</span>
+      <span class="source-pill">+972 Magazine</span>
+      <span class="source-pill">Archived: Wayback</span>
+    </div>
+  </div>
+
+  <div class="feed-item reveal">
+    <div class="feed-meta">
+      <span class="feed-tag tag-disinfo">Disinfo</span>
+      <span class="feed-date">May 22, 2026 · 10:36 UTC</span>
+    </div>
+    <div class="feed-title">Closed-Loop Sourcing: Five Linked Wire Stories Cite Each Other With Zero Independent Verification</div>
+    <div class="feed-excerpt">Traced the citation chain on five widely-syndicated stories this week — each one's "independent confirmation" turned out to be another outlet quoting the first. No primary sourcing found anywhere in the loop.</div>
+    <div class="feed-sources">
+      <span class="source-pill">The Intercept</span>
+      <span class="source-pill">⚑ Western-sourced only</span>
+    </div>
+  </div>
+
+  <div class="feed-item reveal">
+    <div class="feed-meta">
+      <span class="feed-tag tag-analysis">Analysis</span>
+      <span class="feed-date">May 18, 2026 · 15:27 UTC</span>
+    </div>
+    <div class="feed-title">Selection Architecture: Three Consecutive Cycles Produce Identical Policy Outcomes Despite Opposing Campaign Rhetoric</div>
+    <div class="feed-excerpt">Mapped the candidate-selection pipeline across three election cycles — wildly different rhetoric on the way in, near-identical donor rosters and policy outcomes on the way out. The architecture, not the individuals, is the mechanism.</div>
+    <div class="feed-sources">
+      <span class="source-pill">CGTN</span>
+      <span class="source-pill">Press TV</span>
+    </div>
+  </div>
+
+  <div class="feed-item reveal">
+    <div class="feed-meta">
+      <span class="feed-tag tag-hasbara">Hasbara</span>
+      <span class="feed-tag tag-confirmed">Confirmed</span>
+      <span class="feed-date">May 12, 2026 · 21:03 UTC</span>
+    </div>
+    <div class="feed-title">Bot Network Resurfaces Under New Handles — 80% Overlap in Posting Cadence With March Cluster</div>
+    <div class="feed-excerpt">Same posting-time fingerprints, same phrase rotation, same silence windows — just new account names and avatars. Archived comparison side-by-side with the March cluster shows an 80% cadence overlap.</div>
+    <div class="feed-sources">
+      <span class="source-pill">Middle East Eye</span>
+      <span class="source-pill">Archived: Wayback</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DNP<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html">Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="index.html#feed">Documentation</a></li>
+    <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
+    <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
+  </ul>
+  <div class="footer-note">
+    Definitely Not Propaganda<br>
+    All claims sourced · Receipts archived<br>
+    <span style="color: var(--accent);">Free press or no press.</span>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks  = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) el.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
