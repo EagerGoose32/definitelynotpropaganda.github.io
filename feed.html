@@ -354,7 +354,12 @@
     { id: 'presstv',    name: 'Press TV',         rss: 'https://www.presstv.ir/rss.xml' },
   ];
 
-  const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
+  // CORS proxies tried in order — fall back if one is blocked or down.
+  const PROXIES = [
+    url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    url => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`,
+    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  ];
   const REFRESH_MS = 5 * 60 * 1000; // 5 minutes
 
   const newsGrid     = document.getElementById('newsGrid');
@@ -447,24 +452,97 @@
       });
   }
 
-  async function loadSource(src) {
-    try {
-      const res = await fetch(RSS2JSON + encodeURIComponent(src.rss));
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  function parseRssXml(xmlText, src) {
+    const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+    if (doc.querySelector('parsererror')) throw new Error('XML parse error');
 
-      const data = await res.json();
-      if (data.status !== 'ok' || !Array.isArray(data.items)) {
-        throw new Error(data.message || 'Feed unavailable');
+    // Support both RSS (<item>) and Atom (<entry>) feeds
+    let nodes = Array.from(doc.querySelectorAll('item'));
+    let isAtom = false;
+    if (nodes.length === 0) {
+      nodes = Array.from(doc.querySelectorAll('entry'));
+      isAtom = true;
+    }
+    if (nodes.length === 0) throw new Error('No items in feed');
+
+    return nodes.slice(0, 15).map(node => {
+      const get = (tag) => node.querySelector(tag)?.textContent?.trim() || '';
+
+      let link = get('link');
+      if (isAtom) {
+        const linkEl = node.querySelector('link[href]');
+        link = linkEl ? linkEl.getAttribute('href') : link;
       }
 
-      const items = data.items.slice(0, 15).map(item => ({
+      const description = isAtom
+        ? (get('summary') || get('content'))
+        : (get('description') || get('content\\:encoded'));
+
+      const pubDate = get('pubDate') || get('published') || get('updated') || get('date');
+
+      return {
         sourceId: src.id,
         sourceName: src.name,
-        title: stripHtml(item.title),
-        excerpt: stripHtml(item.description || item.content).slice(0, 220),
-        link: item.link,
-        pubDate: item.pubDate,
-      }));
+        title: stripHtml(get('title')),
+        excerpt: stripHtml(description).slice(0, 220),
+        link,
+        pubDate,
+      };
+    });
+  }
+
+  async function fetchViaProxies(rssUrl) {
+    let lastError;
+    for (const buildUrl of PROXIES) {
+      try {
+        const proxyUrl = buildUrl(rssUrl);
+        const res = await fetch(proxyUrl);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        // rss2json returns JSON; the others return raw XML/text
+        if (proxyUrl.includes('rss2json.com')) {
+          const data = await res.json();
+          if (data.status !== 'ok' || !Array.isArray(data.items)) {
+            throw new Error(data.message || 'Feed unavailable');
+          }
+          return data.items.slice(0, 15).map(item => ({
+            title: item.title,
+            description: item.description || item.content,
+            link: item.link,
+            pubDate: item.pubDate,
+          }));
+        }
+
+        const text = await res.text();
+        if (!text || text.length < 50) throw new Error('Empty response');
+        return text;
+      } catch (err) {
+        lastError = err;
+      }
+    }
+    throw lastError || new Error('All proxies failed');
+  }
+
+  async function loadSource(src) {
+    try {
+      const result = await fetchViaProxies(src.rss);
+
+      let items;
+      if (typeof result === 'string') {
+        items = parseRssXml(result, src);
+      } else {
+        // Already-normalized items from rss2json fallback
+        items = result.map(item => ({
+          sourceId: src.id,
+          sourceName: src.name,
+          title: stripHtml(item.title),
+          excerpt: stripHtml(item.description).slice(0, 220),
+          link: item.link,
+          pubDate: item.pubDate,
+        }));
+      }
+
+      if (!items.length) throw new Error('No items returned');
 
       allItems = allItems.concat(items);
       sourceState[src.id].className = 'ok';
