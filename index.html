@@ -416,6 +416,33 @@
       letter-spacing: 0.1em;
     }
 
+    .feed-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-pill {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-pill:hover { color: var(--text); border-color: var(--text); }
+    .filter-pill.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
     /* SIDEBAR */
     .sidebar-block {
       padding: 24px;
@@ -984,7 +1011,15 @@
   <div class="feed-grid">
     <div class="feed-main">
 
-      <div class="feed-item reveal">
+      <div class="feed-filter-bar" id="feedFilterBar">
+        <button class="filter-pill active" data-filter="all">All Entries</button>
+        <button class="filter-pill" data-filter="hasbara">Hasbara</button>
+        <button class="filter-pill" data-filter="disinfo">Disinfo</button>
+        <button class="filter-pill" data-filter="analysis">Analysis</button>
+      </div>
+
+      <div id="feedItems">
+      <div class="feed-item reveal" data-category="hasbara">
         <div class="feed-meta">
           <span class="feed-tag tag-hasbara">Hasbara</span>
           <span class="feed-tag tag-confirmed">Confirmed</span>
@@ -1000,7 +1035,7 @@
         </div>
       </div>
 
-      <div class="feed-item reveal">
+      <div class="feed-item reveal" data-category="disinfo">
         <div class="feed-meta">
           <span class="feed-tag tag-disinfo">Disinfo</span>
           <span class="feed-date">Jun 3, 2026 · 09:17 UTC</span>
@@ -1014,7 +1049,7 @@
         </div>
       </div>
 
-      <div class="feed-item reveal">
+      <div class="feed-item reveal" data-category="analysis">
         <div class="feed-meta">
           <span class="feed-tag tag-analysis">Analysis</span>
           <span class="feed-date">Jun 1, 2026 · 18:44 UTC</span>
@@ -1027,6 +1062,7 @@
           <span class="source-pill">Al Jazeera</span>
         </div>
       </div>
+      </div>
 
       <div style="padding: 24px 32px; border-bottom: 1px solid var(--border);">
         <a href="#" class="btn-secondary" style="display: inline-block;">Load More Entries →</a>
@@ -1036,22 +1072,22 @@
     <div class="feed-sidebar">
       <div class="sidebar-block">
         <div class="sidebar-title">// Active Patterns</div>
-        <div class="pattern-item">
+        <div class="pattern-item" data-pattern="hasbara">
           <span style="font-size: 11px;">Hasbara Ops</span>
           <div class="pattern-bar"><div class="pattern-fill" style="width: 78%;"></div></div>
           <span class="pattern-count">78%</span>
         </div>
-        <div class="pattern-item">
+        <div class="pattern-item" data-pattern="zoneflood">
           <span style="font-size: 11px;">Zone Flood</span>
           <div class="pattern-bar"><div class="pattern-fill" style="width: 54%;"></div></div>
           <span class="pattern-count">54%</span>
         </div>
-        <div class="pattern-item">
+        <div class="pattern-item" data-pattern="taco">
           <span style="font-size: 11px;">TACO Cycle</span>
           <div class="pattern-bar"><div class="pattern-fill" style="width: 91%;"></div></div>
           <span class="pattern-count">91%</span>
         </div>
-        <div class="pattern-item">
+        <div class="pattern-item" data-pattern="botsilence">
           <span style="font-size: 11px;">Bot Silence</span>
           <div class="pattern-bar"><div class="pattern-fill" style="width: 63%;"></div></div>
           <span class="pattern-count">63%</span>
@@ -1077,6 +1113,8 @@
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <a href="https://mastodon.social/@Captured99" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">Mastodon @Captured99</a>
           <a href="https://youtube.com/@DubbznWubbz99" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">YouTube @DubbznWubbz99</a>
+          <a href="https://signal.me/#eu/J-Fk4fjil_-I2ZpKakms3PXeCLLDVShWDFFwWST6tiMz4IsBTJ1Edr-GyhCNEJ3Q" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">Signal: Message the Owner</a>
+          <a href="https://matrix.to/#/@eagergoose32:matrix.org" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">Matrix: @eagergoose32</a>
         </div>
       </div>
     </div>
@@ -1229,6 +1267,61 @@
   if (navToggle && navLinks) {
     navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
     navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
+
+  // ─── Documentation Feed: filter tabs + dynamic pattern percentages ────────
+  const FEED_PATTERNS = [
+    { id: 'hasbara',    keywords: ['hasbara', 'comment surge', 'coordinated', 'narrative deployed', 'platforms simultaneously'] },
+    { id: 'zoneflood',  keywords: ['zone flood', 'flooding', 'buried', 'burial', 'simultaneous', 'news cycles'] },
+    { id: 'taco',       keywords: ['taco', 'escalation', 'reversal', 'cycle', 'face-saving', 'rebrand'] },
+    { id: 'botsilence', keywords: ['bot', 'silence', 'silent', 'account creation', 'go silent'] },
+  ];
+
+  const feedFilterBar = document.getElementById('feedFilterBar');
+  const feedItemsWrap = document.getElementById('feedItems');
+
+  function feedItemText(item) {
+    const title   = item.querySelector('.feed-title')?.textContent || '';
+    const excerpt = item.querySelector('.feed-excerpt')?.textContent || '';
+    const tags    = [...item.querySelectorAll('.feed-tag')].map(t => t.textContent).join(' ');
+    return (title + ' ' + excerpt + ' ' + tags).toLowerCase();
+  }
+
+  function recalcPatternPercentages() {
+    if (!feedItemsWrap) return;
+    const visibleItems = [...feedItemsWrap.querySelectorAll('.feed-item')]
+      .filter(item => item.style.display !== 'none');
+    if (!visibleItems.length) return;
+
+    const haystacks = visibleItems.map(feedItemText);
+
+    FEED_PATTERNS.forEach(pattern => {
+      const matches = haystacks.filter(text => pattern.keywords.some(kw => text.includes(kw))).length;
+      const pct = Math.round((matches / haystacks.length) * 100);
+      const row = document.querySelector(`.pattern-item[data-pattern="${pattern.id}"]`);
+      if (!row) return;
+      const fill  = row.querySelector('.pattern-fill');
+      const count = row.querySelector('.pattern-count');
+      if (fill)  fill.style.width = pct + '%';
+      if (count) count.textContent = pct + '%';
+    });
+  }
+
+  if (feedFilterBar && feedItemsWrap) {
+    feedFilterBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-pill');
+      if (!btn) return;
+      feedFilterBar.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p === btn));
+
+      const filter = btn.dataset.filter;
+      feedItemsWrap.querySelectorAll('.feed-item').forEach(item => {
+        const show = filter === 'all' || item.dataset.category === filter;
+        item.style.display = show ? '' : 'none';
+      });
+      recalcPatternPercentages();
+    });
+
+    recalcPatternPercentages();
   }
 
   // Scroll reveal
