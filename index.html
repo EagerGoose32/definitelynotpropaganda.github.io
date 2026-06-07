@@ -1059,7 +1059,7 @@
     <input type="hidden" name="_captcha" value="false">
     <div class="form-field">
       <label class="form-label">Pattern Type</label>
-      <select class="form-select" name="Pattern Type" required>
+      <select class="form-select" name="Pattern Type">
         <option value="">Select type...</option>
         <option>Coordinated Account Behavior</option>
         <option>Hasbara Operation</option>
@@ -1076,7 +1076,7 @@
     </div>
     <div class="form-field">
       <label class="form-label">Description</label>
-      <textarea class="form-textarea" name="Description" placeholder="What did you observe? Be specific. Include timestamps if possible." required></textarea>
+      <textarea class="form-textarea" name="Description" placeholder="What did you observe? Be specific. Include timestamps if possible."></textarea>
     </div>
     <div class="form-field">
       <label class="form-label">Sources / Archive Links</label>
@@ -1298,37 +1298,54 @@
   const tipForm   = document.getElementById('tipForm');
   const tipStatus = document.getElementById('tipStatus');
 
-  function setTipStatus(msg, color = 'var(--muted)') {
-    tipStatus.style.color = color;
-    tipStatus.textContent = msg;
-  }
-
-  tipForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const submitBtn = tipForm.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    setTipStatus('Sending...');
-
-    try {
-      const res = await fetch(tipForm.action, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: new FormData(tipForm)
-      });
-
-      if (res.ok) {
-        setTipStatus('✓ Submitted — thank you. We verify before we publish.', 'var(--accent)');
-        tipForm.reset();
-      } else {
-        setTipStatus('Error submitting tip. Please try again.', 'var(--accent2)');
-      }
-    } catch (err) {
-      setTipStatus('Network error. Please try again.', 'var(--accent2)');
-    } finally {
-      submitBtn.disabled = false;
+  if (tipForm) {
+    function setTipStatus(msg, color = 'var(--muted)') {
+      tipStatus.style.color = color;
+      tipStatus.textContent = msg;
+      if (msg) setTimeout(() => { tipStatus.textContent = ''; }, 5000);
     }
-  });
+
+    tipForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const patternType = tipForm.querySelector('select[name="Pattern Type"]').value;
+      const description = tipForm.querySelector('textarea[name="Description"]').value.trim();
+
+      if (!patternType) {
+        setTipStatus('Select a pattern type.', 'var(--accent2)');
+        return;
+      }
+
+      if (!description) {
+        setTipStatus('Description required.', 'var(--accent2)');
+        return;
+      }
+
+      const submitBtn = tipForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      setTipStatus('Sending...');
+
+      try {
+        const res = await fetch(tipForm.action, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(tipForm)
+        });
+
+        if (res.ok) {
+          setTipStatus('✓ Submitted — thank you. We verify before we publish.', 'var(--accent)');
+          tipForm.reset();
+        } else {
+          setTipStatus('Error submitting tip. Please try again.', 'var(--accent2)');
+        }
+      } catch (err) {
+        console.error('Submission error:', err);
+        setTipStatus('Network error. Please try again.', 'var(--accent2)');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
 </script>
 
 </body>
