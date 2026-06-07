@@ -1024,12 +1024,8 @@
       </div>
     </div>
     <div class="chat-sidebar">
-      <div class="online-label">Online Now</div>
-      <div class="online-user"><div class="user-dot"></div><span>reader_7</span></div>
-      <div class="online-user"><div class="user-dot"></div><span>northkeep</span></div>
-      <div class="online-user"><div class="user-dot"></div><span>mzaatar</span></div>
-      <div class="online-user"><div class="user-dot" style="background: var(--muted);"></div><span>lurker_99</span></div>
-      <div class="online-user"><div class="user-dot" style="background: var(--muted);"></div><span>anon_44</span></div>
+      <div class="online-label">Active In Room (Last 15 Min)</div>
+      <div id="onlineUsers"><div class="online-user" style="border-bottom: none; color: var(--muted);">Watching for activity...</div></div>
 
       <div class="chat-matrix-note">
         Messages post anonymously to the live Matrix room. No account needed.<br><br>
@@ -1132,6 +1128,7 @@
   const chatHandle   = document.getElementById('chatHandle');
   const chatSend     = document.getElementById('chatSend');
   const chatStatus   = document.getElementById('chatStatus');
+  const onlineUsers  = document.getElementById('onlineUsers');
 
   // Rate limit: one message per 10s per session
   let lastSent = 0;
@@ -1159,6 +1156,59 @@
     recentlySent.splice(idx, 1);
     return true;
   }
+
+  // ─── ACTIVE-IN-ROOM SIDEBAR ───────────────────────────────────────────────
+  // Driven entirely by real chat activity from the Matrix room — anyone who
+  // has posted in the last 15 minutes shows up, sorted most-recent first.
+  const ACTIVE_WINDOW_MS = 15 * 60 * 1000;
+  const RECENT_DOT_MS = 5 * 60 * 1000;
+  const activeSenders = new Map(); // senderName -> last origin_server_ts seen
+
+  // Optional: if you know your relay bot's Matrix username (check the room's
+  // member list), set it here so it's excluded from the list immediately.
+  // Otherwise it's auto-detected the first time one of your own messages
+  // round-trips back through polling, then remembered for next time.
+  const SITE_BOT_USERNAME = '';
+  let siteBotSender = SITE_BOT_USERNAME || localStorage.getItem('dnp_site_bot_sender') || null;
+
+  function markAsSiteBot(senderName) {
+    if (!senderName || siteBotSender === senderName) return;
+    siteBotSender = senderName;
+    try { localStorage.setItem('dnp_site_bot_sender', senderName); } catch (e) {}
+    activeSenders.delete(senderName);
+    renderOnlineUsers();
+  }
+
+  function recordActivity(senderName, ts) {
+    if (!senderName || senderName === siteBotSender || !ts) return;
+    const prev = activeSenders.get(senderName);
+    if (!prev || ts > prev) activeSenders.set(senderName, ts);
+    renderOnlineUsers();
+  }
+
+  function renderOnlineUsers() {
+    const cutoff = Date.now() - ACTIVE_WINDOW_MS;
+    const recentCutoff = Date.now() - RECENT_DOT_MS;
+    const entries = [...activeSenders.entries()]
+      .filter(([, ts]) => ts >= cutoff)
+      .sort((a, b) => b[1] - a[1]);
+
+    if (entries.length === 0) {
+      onlineUsers.innerHTML = '<div class="online-user" style="border-bottom: none; color: var(--muted);">No one’s chatted in the last 15 min — be the first.</div>';
+      return;
+    }
+
+    onlineUsers.innerHTML = entries.map(([name, ts]) => `
+      <div class="online-user">
+        <div class="user-dot" style="${ts >= recentCutoff ? '' : 'background: var(--muted);'}"></div>
+        <span>${name.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+      </div>
+    `).join('');
+  }
+
+  // Periodically re-render so people drop off the list once they go quiet,
+  // even if no new messages arrive to trigger a refresh.
+  setInterval(renderOnlineUsers, 60000);
 
   function setStatus(msg, color = 'var(--muted)') {
     chatStatus.style.color = color;
@@ -1212,6 +1262,7 @@
         const id = msg.event_id || msg.sender + msg.origin_server_ts;
         messageCache.add(id);
         addMessage(msg.sender_name || 'anon', msg.body, false);
+        recordActivity(msg.sender_name, msg.origin_server_ts);
       });
     } catch (e) {
       console.error('Error loading messages:', e);
@@ -1252,11 +1303,13 @@
       // but don't display the bot-attributed duplicate.
       if (consumeIfRecentlySent(msg.body)) {
         messageCache.add(id);
+        markAsSiteBot(msg.sender_name);
         return;
       }
 
       messageCache.add(id);
       addMessage(msg.sender_name || 'anon', msg.body, false);
+      recordActivity(msg.sender_name, msg.origin_server_ts);
     } catch (e) {
       console.error('Poll error:', e);
       consecutivePollFailures++;
@@ -1289,6 +1342,7 @@
     // Optimistic UI — show immediately, and remember the body so the
     // bot-attributed echo of this same message doesn't get shown again
     rememberSent(text);
+    recordActivity(handle, Date.now());
     addMessage(handle, text, true);
     chatInput.value = '';
     chatSend.disabled = true;
