@@ -368,8 +368,12 @@
   ];
 
   // Direct fetch tried first (some feeds allow CORS); proxies as fallback.
+  // r.jina.ai is a "reader" proxy that often gets through bot-blocking that
+  // standard CORS proxies can't — useful for sites like Al Jazeera/TRT that
+  // actively block scraper traffic.
   const PROXIES = [
     url => url, // direct — works if the feed sends CORS headers
+    url => `https://r.jina.ai/${url}`,
     url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
     url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
