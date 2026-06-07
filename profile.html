@@ -46,6 +46,7 @@
       justify-content: space-between;
       padding: 20px 40px;
       border-bottom: 1px solid var(--border);
+      position: relative;
     }
     .logo {
       font-family: var(--display);
@@ -67,6 +68,19 @@
       transition: color 0.2s;
     }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .nav-toggle:hover { border-color: var(--accent); color: var(--accent); }
     .nav-badge {
       font-family: var(--mono);
       font-size: 10px;
@@ -258,8 +272,26 @@
     }
 
     @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      .nav-links { display: none; }
+      nav { padding: 16px 20px; flex-wrap: wrap; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 200;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        width: 100%;
+      }
+      .nav-toggle { display: block; }
       .feed-header { padding: 40px 20px 24px; }
       .acct-wrap { padding: 32px 20px 60px; }
       .acct-section { padding: 24px; }
@@ -272,10 +304,12 @@
 <!-- NAV -->
 <nav>
   <a href="index.html" class="logo">DNP<span>.</span></a>
-  <ul class="nav-links">
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="feed.html">Live Feed</a></li>
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html" class="active">Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
     <li><a href="index.html#feed">Documentation</a></li>
     <li><a href="index.html#chat">Room</a></li>
     <li><a href="index.html#submit">Submit</a></li>
@@ -375,6 +409,7 @@
     <li><a href="feed.html">Live Feed</a></li>
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html">Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
     <li><a href="index.html#feed">Documentation</a></li>
     <li><a href="index.html#methodology">Method</a></li>
     <li><a href="index.html#chat">Room</a></li>
@@ -393,6 +428,14 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script>
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks  = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
+
   // Same Firebase project config used on blog.html — this is not a secret,
   // Firebase web config is meant to be public; access is enforced by rules.
   const FIREBASE_CONFIG = {

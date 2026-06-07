@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit a Tip — Definitely Not Propaganda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #2a2a2a;
+      --accent: #c8f135;
+      --accent2: #ff3b3b;
+      --text: #e8e8e8;
+      --muted: #666;
+      --mono: 'Space Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+      --body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .logo {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .nav-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding: 64px 40px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+    }
+    .page-title {
+      font-family: var(--display);
+      font-size: clamp(48px, 8vw, 84px);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+    }
+    .page-sub {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+      font-weight: 300;
+    }
+
+    /* SUBMIT */
+    .submit-section {
+      padding: 64px 40px 96px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 80px;
+    }
+
+    .submit-left p {
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .submit-form { display: flex; flex-direction: column; gap: 16px; }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+    .form-input, .form-textarea, .form-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      font-family: var(--body);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--accent); }
+    .form-textarea { min-height: 120px; resize: vertical; }
+    .form-select option { background: var(--surface); }
+
+    .form-file-drop {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      text-align: center;
+      display: block;
+    }
+    .form-file-drop:hover, .form-file-drop.dragover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .form-file-drop input[type="file"] { display: none; }
+    .form-file-list {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .form-file-list .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      margin: 4px 6px 0 0;
+    }
+    .form-file-list .file-chip button {
+      background: none;
+      border: none;
+      color: var(--accent2);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .btn-primary {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--accent2);
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-logo {
+      font-family: var(--display);
+      font-size: 40px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 200;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        width: 100%;
+      }
+      .nav-toggle { display: block; }
+      .page-header { padding: 40px 20px 28px; }
+      .submit-section { grid-template-columns: 1fr; gap: 40px; padding: 40px 20px 64px; }
+      footer { padding: 32px 20px; }
+      .footer-note { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">DNP<span>.</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html">Account</a></li>
+    <li><a href="submit-tip.html" class="active">Submit Tip</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<section class="page-header reveal">
+  <div class="page-eyebrow">// Documentation Intake</div>
+  <h1 class="page-title">SUBMIT A TIP</h1>
+  <p class="page-sub">
+    Got receipts? Documentation, screenshots, leaked material, a coordinated
+    pattern you've spotted — send it here. Anonymous by default, encrypted on
+    request, and every submission gets cross-referenced before anything is
+    published.
+  </p>
+</section>
+
+<!-- SUBMIT -->
+<section class="submit-section">
+  <div class="submit-left reveal">
+    <p>
+      See a coordinated account pattern? Catch a zone flood in progress?
+      Document it and send it here. Include sources. Screenshots archived to
+      Wayback. We verify before we publish.
+    </p>
+    <div style="margin-top: 32px; font-family: var(--mono); font-size: 13px; color: var(--muted); line-height: 2.1;">
+      ENCRYPTED: Message the owner via <a href="https://signal.me/#eu/J-Fk4fjil_-I2ZpKakms3PXeCLLDVShWDFFwWST6tiMz4IsBTJ1Edr-GyhCNEJ3Q" target="_blank" style="color: var(--accent); text-decoration: none;">Signal</a> or Matrix for sensitive submissions.<br>
+      ANONYMOUS: No identifying info required.<br>
+      VERIFIED: All tips cross-referenced before publication.
+    </div>
+  </div>
+  <form class="submit-form reveal" id="tipForm" action="https://formsubmit.co/ajax/flockofego45@proton.me" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_subject" value="New Tip Submission — Definitely Not Propaganda">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
+    <div class="form-field">
+      <label class="form-label">Pattern Type</label>
+      <select class="form-select" name="Pattern Type">
+        <option value="">Select type...</option>
+        <option>Coordinated Account Behavior</option>
+        <option>Hasbara Operation</option>
+        <option>Zone Flooding</option>
+        <option>TACO Cycle</option>
+        <option>Silence Pattern</option>
+        <option>Narrative Injection</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Platform(s)</label>
+      <input type="text" class="form-input" name="Platforms" placeholder="Twitter/X, Facebook, Reddit..." />
+    </div>
+    <div class="form-field">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" name="Description" placeholder="What did you observe? Be specific. Include timestamps if possible."></textarea>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Sources / Archive Links</label>
+      <textarea class="form-textarea" style="min-height: 80px;" name="Sources" placeholder="Wayback Machine links, Al Jazeera URLs, primary sources..."></textarea>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Screenshots / Images (optional, up to 4, 8MB total)</label>
+      <label class="form-file-drop" id="tipFileDrop" for="tipFiles">
+        Click to choose images, or drag &amp; drop here — JPG, PNG, WEBP, GIF
+        <input type="file" id="tipFiles" name="attachment" accept="image/png, image/jpeg, image/webp, image/gif" multiple>
+      </label>
+      <div class="form-file-list" id="tipFileList"></div>
+    </div>
+    <button type="submit" class="btn-primary" style="align-self: flex-start;">Submit Documentation →</button>
+    <div id="tipStatus" style="font-family: var(--mono); font-size: 10px; color: var(--muted); min-height: 14px;"></div>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DNP<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="feed.html">Live Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html">Account</a></li>
+    <li><a href="index.html#submit">Submit (on site)</a></li>
+    <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
+    <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
+  </ul>
+  <div class="footer-note">
+    Definitely Not Propaganda<br>
+    All claims sourced · Receipts archived<br>
+    <span style="color: var(--accent);">Free press or no press.</span>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks  = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) el.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // ─── TIP FORM ─────────────────────────────────────────────────────────────
+  const tipForm   = document.getElementById('tipForm');
+  const tipStatus = document.getElementById('tipStatus');
+
+  if (tipForm) {
+    function setTipStatus(msg, color = 'var(--muted)') {
+      tipStatus.style.color = color;
+      tipStatus.textContent = msg;
+      if (msg) setTimeout(() => { tipStatus.textContent = ''; }, 5000);
+    }
+
+    // ─── Image attachments ───────────────────────────────────────────────
+    // FormSubmit accepts file uploads via a multipart form post — name the
+    // input "attachment" and it gets relayed as an email attachment.
+    const MAX_IMAGES = 4;
+    const MAX_TOTAL_BYTES = 8 * 1024 * 1024; // 8MB (FormSubmit caps at 10MB/email)
+    const tipFileInput = document.getElementById('tipFiles');
+    const tipFileDrop  = document.getElementById('tipFileDrop');
+    const tipFileList  = document.getElementById('tipFileList');
+    let selectedFiles = [];
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function syncFileInput() {
+      const dt = new DataTransfer();
+      selectedFiles.forEach(f => dt.items.add(f));
+      tipFileInput.files = dt.files;
+    }
+
+    function renderFileList() {
+      tipFileList.innerHTML = '';
+      selectedFiles.forEach((file, i) => {
+        const chip = document.createElement('span');
+        chip.className = 'file-chip';
+        chip.innerHTML = `${file.name} · ${formatBytes(file.size)} <button type="button" aria-label="Remove">✕</button>`;
+        chip.querySelector('button').addEventListener('click', () => {
+          selectedFiles.splice(i, 1);
+          syncFileInput();
+          renderFileList();
+        });
+        tipFileList.appendChild(chip);
+      });
+      if (selectedFiles.length) {
+        const total = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+        const totalEl = document.createElement('div');
+        totalEl.style.marginTop = '6px';
+        totalEl.textContent = `${selectedFiles.length}/${MAX_IMAGES} images · ${formatBytes(total)} total`;
+        tipFileList.appendChild(totalEl);
+      }
+    }
+
+    function addFiles(fileList) {
+      const incoming = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+      if (incoming.length !== fileList.length) {
+        setTipStatus('Only image files are accepted.', 'var(--accent2)');
+      }
+
+      for (const file of incoming) {
+        if (selectedFiles.length >= MAX_IMAGES) {
+          setTipStatus(`Max ${MAX_IMAGES} images.`, 'var(--accent2)');
+          break;
+        }
+        const alreadyAdded = selectedFiles.some(f => f.name === file.name && f.size === file.size);
+        if (alreadyAdded) continue;
+
+        const total = selectedFiles.reduce((sum, f) => sum + f.size, 0) + file.size;
+        if (total > MAX_TOTAL_BYTES) {
+          setTipStatus(`Images must total under ${formatBytes(MAX_TOTAL_BYTES)}.`, 'var(--accent2)');
+          break;
+        }
+        selectedFiles.push(file);
+      }
+      syncFileInput();
+      renderFileList();
+    }
+
+    if (tipFileInput && tipFileDrop) {
+      tipFileInput.addEventListener('change', () => addFiles(tipFileInput.files));
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        tipFileDrop.addEventListener(evt, (e) => {
+          e.preventDefault();
+          tipFileDrop.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(evt => {
+        tipFileDrop.addEventListener(evt, (e) => {
+          e.preventDefault();
+          tipFileDrop.classList.remove('dragover');
+        });
+      });
+      tipFileDrop.addEventListener('drop', (e) => {
+        if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files);
+      });
+    }
+    // ──────────────────────────────────────────────────────────────────────
+
+    tipForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const patternType = tipForm.querySelector('select[name="Pattern Type"]').value;
+      const description = tipForm.querySelector('textarea[name="Description"]').value.trim();
+
+      if (!patternType) {
+        setTipStatus('Select a pattern type.', 'var(--accent2)');
+        return;
+      }
+
+      if (!description) {
+        setTipStatus('Description required.', 'var(--accent2)');
+        return;
+      }
+
+      const submitBtn = tipForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      setTipStatus(selectedFiles.length ? 'Sending with images...' : 'Sending...');
+
+      try {
+        const res = await fetch(tipForm.action, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(tipForm)
+        });
+
+        if (res.ok) {
+          setTipStatus('✓ Submitted — thank you. We verify before we publish.', 'var(--accent)');
+          tipForm.reset();
+          selectedFiles = [];
+          syncFileInput();
+          renderFileList();
+        } else {
+          setTipStatus('Error submitting tip. Please try again.', 'var(--accent2)');
+        }
+      } catch (err) {
+        console.error('Submission error:', err);
+        setTipStatus('Network error. Please try again.', 'var(--accent2)');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

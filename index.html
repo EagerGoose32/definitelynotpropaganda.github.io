@@ -61,6 +61,26 @@
       display: inline-block;
       animation: ticker 30s linear infinite;
     }
+
+    /* TIP BANNER */
+    .tip-banner {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      padding: 10px 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .tip-banner a {
+      color: var(--accent2);
+      text-decoration: none;
+      font-weight: 700;
+      border-bottom: 1px solid var(--accent2);
+      padding-bottom: 1px;
+    }
+    .tip-banner a:hover { color: var(--text); border-color: var(--text); }
     @keyframes ticker {
       0% { transform: translateX(100vw); }
       100% { transform: translateX(-100%); }
@@ -101,6 +121,20 @@
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--accent); }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .nav-toggle:hover { border-color: var(--accent); color: var(--accent); }
 
     .nav-badge {
       font-family: var(--mono);
@@ -650,7 +684,7 @@
     }
 
     .submit-left p {
-      font-size: 14px;
+      font-size: 17px;
       color: var(--muted);
       line-height: 1.7;
       font-weight: 300;
@@ -775,8 +809,26 @@
 
     /* RESPONSIVE */
     @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      .nav-links { display: none; }
+      nav { padding: 16px 20px; flex-wrap: wrap; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 200;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        width: 100%;
+      }
+      .nav-toggle { display: block; }
       .hero { grid-template-columns: 1fr; }
       .hero-left { padding: 40px 20px; border-right: none; border-bottom: 1px solid var(--border); }
       .hero-right { padding: 40px 20px; }
@@ -810,13 +862,20 @@
   </span>
 </div>
 
+<!-- TIP BANNER -->
+<div class="tip-banner">
+  SEEN SOMETHING WORTH DOCUMENTING? <a href="submit-tip.html">SUBMIT A TIP →</a> · ANONYMOUS · ENCRYPTED · VERIFIED BEFORE PUBLICATION
+</div>
+
 <!-- NAV -->
 <nav>
   <a href="#" class="logo">DNP<span>.</span></a>
-  <ul class="nav-links">
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="feed.html">Live Feed</a></li>
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html">Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
     <li><a href="#feed">Documentation</a></li>
     <li><a href="#methodology">Method</a></li>
     <li><a href="#chat">Room</a></li>
@@ -1088,7 +1147,7 @@
     <p style="font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300;">
       See a coordinated account pattern? Catch a zone flood in progress? Document it and send it here. Include sources. Screenshots archived to Wayback. We verify before we publish.
     </p>
-    <div style="margin-top: 32px; font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 2;">
+    <div style="margin-top: 32px; font-family: var(--mono); font-size: 13px; color: var(--muted); line-height: 2.1;">
       ENCRYPTED: Message the owner via <a href="https://signal.me/#eu/J-Fk4fjil_-I2ZpKakms3PXeCLLDVShWDFFwWST6tiMz4IsBTJ1Edr-GyhCNEJ3Q" target="_blank" style="color: var(--accent); text-decoration: none;">Signal</a> or Matrix for sensitive submissions.<br>
       ANONYMOUS: No identifying info required.<br>
       VERIFIED: All tips cross-referenced before publication.
@@ -1143,6 +1202,7 @@
     <li><a href="feed.html">Live Feed</a></li>
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html">Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
     <li><a href="#feed">Documentation</a></li>
     <li><a href="#methodology">Method</a></li>
     <li><a href="#chat">Room</a></li>
@@ -1162,6 +1222,14 @@
   // Once your Cloudflare Worker is deployed, paste its URL here:
   const WORKER_URL = 'https://dnf.definitelynotpropaganda.workers.dev';
   // ──────────────────────────────────────────────────────────────────────────
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks  = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
 
   // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
