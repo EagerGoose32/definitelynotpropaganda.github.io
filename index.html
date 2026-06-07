@@ -1139,6 +1139,7 @@
 
   const messageCache = new Set();
   let pollInterval = null;
+  let consecutivePollFailures = 0;
 
   function setStatus(msg, color = 'var(--muted)') {
     chatStatus.style.color = color;
@@ -1210,9 +1211,16 @@
         headers: { 'Content-Type': 'application/json' }
       });
 
-      if (!res.ok) return;
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        throw new Error(`HTTP ${res.status} ${body.slice(0, 200)}`);
+      }
 
       const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      consecutivePollFailures = 0;
+
       if (!data.messages || data.messages.length === 0) return;
 
       const msg = data.messages[0];
@@ -1224,6 +1232,12 @@
       }
     } catch (e) {
       console.error('Poll error:', e);
+      consecutivePollFailures++;
+      // Surface it after a few consecutive misses so visitors aren't left
+      // staring at a chat that looks alive but has silently stopped updating.
+      if (consecutivePollFailures === 3) {
+        setStatus(`Live updates interrupted (${e.message}) — refresh to retry.`, 'var(--accent2)');
+      }
     }
   }
 
