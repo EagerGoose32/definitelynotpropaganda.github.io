@@ -131,6 +131,15 @@
     .tag-disinfo { background: #1a1a6e; color: var(--accent); border: 1px solid var(--accent); }
     .tag-analysis { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
     .tag-confirmed { background: #1a3a1a; color: #4caf50; border: 1px solid #4caf50; }
+    .tag-breaking { background: var(--accent2); color: #fff; font-weight: 700; animation: pulse 2s ease-in-out infinite; }
+    .tag-iran     { background: transparent; color: #f4a300; border: 1px solid #f4a300; }
+    .tag-israel   { background: transparent; color: #4ea8de; border: 1px solid #4ea8de; }
+    .tag-ai       { background: transparent; color: #b388ff; border: 1px solid #b388ff; }
+    .tag-uspolicy { background: transparent; color: #00bcd4; border: 1px solid #00bcd4; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
     .feed-date { font-family: var(--mono); font-size: 10px; color: var(--muted); }
     .feed-title { font-size: 17px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
     .feed-excerpt { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
@@ -144,6 +153,28 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
+
+    .archive-pagination {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 32px 32px 8px;
+    }
+    .page-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+    .page-btn:disabled { opacity: 0.3; cursor: default; }
 
     /* FOOTER */
     footer {
@@ -216,7 +247,7 @@
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html">My Account</a></li>
     <li><a href="submit-tip.html">Submit Tip</a></li>
-    <li><a href="feed-archive.html" class="active">Archive</a></li>
+    <li><a href="feed-archive.html" class="active">Feed Archive</a></li>
   </ul>
 </nav>
 
@@ -225,127 +256,17 @@
   <div class="page-eyebrow">// Full Documentation Record</div>
   <h1 class="page-title">DOCUMENTATION ARCHIVE</h1>
   <p class="page-sub">
-    Every entry from the Documentation Feed, in one place — coordinated account
-    behavior, zone-flooding events, TACO cycles, and confirmed pattern matches,
-    each one sourced and cross-referenced before publication. Newest first.
+    Every entry from the Documentation Feed, in one place — pulled live from the
+    same outlets as the News Feed, timestamped, and cross-referenced before
+    publication. Newest first, 15 entries per page.
   </p>
 </section>
 
 <!-- ARCHIVE LIST -->
 <div class="archive-wrap">
-
-  <div class="feed-item reveal">
-    <div class="feed-meta">
-      <span class="feed-tag tag-hasbara">Hasbara</span>
-      <span class="feed-tag tag-confirmed">Confirmed</span>
-      <span class="feed-date">Jun 4, 2026 · 14:32 UTC</span>
-    </div>
-    <div class="feed-title">Coordinated Comment Surge: "Human Shield" Narrative Deployed Across 6 Platforms Simultaneously</div>
-    <div class="feed-excerpt">Identical phrasing appearing within 4-minute window across Twitter/X, Facebook, Reddit, YouTube, Telegram, and TikTok. Account creation dates cluster 2021–2022. All accounts go silent 6 hours after initial burst.</div>
-    <div class="feed-sources">
-      <span class="source-pill">Al Jazeera</span>
-      <span class="source-pill">+972 Magazine</span>
-      <span class="source-pill">Middle East Eye</span>
-      <span class="source-pill">Archived: Wayback</span>
-    </div>
-  </div>
-
-  <div class="feed-item reveal">
-    <div class="feed-meta">
-      <span class="feed-tag tag-disinfo">Disinfo</span>
-      <span class="feed-date">Jun 3, 2026 · 09:17 UTC</span>
-    </div>
-    <div class="feed-title">Zone Flooding in Action: Epstein Adjacent Story Buried Under Four Simultaneous Domestic News Cycles</div>
-    <div class="feed-excerpt">Pattern documented: major accountability story drops, then within 90 minutes four unrelated breaking stories appear across major outlets. Third time this month. Information velocity as a burial mechanism.</div>
-    <div class="feed-sources">
-      <span class="source-pill">The Intercept</span>
-      <span class="source-pill">TRT World</span>
-      <span class="source-pill">⚑ Western-sourced only</span>
-    </div>
-  </div>
-
-  <div class="feed-item reveal">
-    <div class="feed-meta">
-      <span class="feed-tag tag-analysis">Analysis</span>
-      <span class="feed-date">Jun 1, 2026 · 18:44 UTC</span>
-    </div>
-    <div class="feed-title">TACO Pattern Cycle 7: Maximum Escalation Rhetoric Followed by Quiet Reversal, Face-Saving Framing Applied</div>
-    <div class="feed-excerpt">Documented cycle: threat issued at maximum volume, then reversed quietly with rebranding. Media covers the threat, ignores the reversal. Called this pattern in February. The framing shift is the tell.</div>
-    <div class="feed-sources">
-      <span class="source-pill">Anadolu Agency</span>
-      <span class="source-pill">CGTN</span>
-      <span class="source-pill">Al Jazeera</span>
-    </div>
-  </div>
-
-  <div class="feed-item reveal">
-    <div class="feed-meta">
-      <span class="feed-tag tag-analysis">Analysis</span>
-      <span class="feed-date">May 30, 2026 · 12:08 UTC</span>
-    </div>
-    <div class="feed-title">TACO Cycle 6: Threat Escalation Walked Back Within 72 Hours, Coverage Ratio Roughly 40:1 in Favor of the Threat</div>
-    <div class="feed-excerpt">For every story covering the eventual quiet reversal, roughly forty covered the original maximum-volume threat. The reversal ran as a brief wire update; the threat ran as a headline for three straight days.</div>
-    <div class="feed-sources">
-      <span class="source-pill">Anadolu Agency</span>
-      <span class="source-pill">TRT World</span>
-    </div>
-  </div>
-
-  <div class="feed-item reveal">
-    <div class="feed-meta">
-      <span class="feed-tag tag-hasbara">Hasbara</span>
-      <span class="feed-tag tag-confirmed">Confirmed</span>
-      <span class="feed-date">May 27, 2026 · 17:51 UTC</span>
-    </div>
-    <div class="feed-title">Verified: Same Six Phrases Appear in 200+ Replies Within Two Hours of a Press Briefing Ending</div>
-    <div class="feed-excerpt">Cross-platform scrape confirms identical six-phrase rotation deployed by accounts with overlapping registration windows. Reply timing clusters within seconds of each other — not the cadence of independent users.</div>
-    <div class="feed-sources">
-      <span class="source-pill">Al Jazeera</span>
-      <span class="source-pill">+972 Magazine</span>
-      <span class="source-pill">Archived: Wayback</span>
-    </div>
-  </div>
-
-  <div class="feed-item reveal">
-    <div class="feed-meta">
-      <span class="feed-tag tag-disinfo">Disinfo</span>
-      <span class="feed-date">May 22, 2026 · 10:36 UTC</span>
-    </div>
-    <div class="feed-title">Closed-Loop Sourcing: Five Linked Wire Stories Cite Each Other With Zero Independent Verification</div>
-    <div class="feed-excerpt">Traced the citation chain on five widely-syndicated stories this week — each one's "independent confirmation" turned out to be another outlet quoting the first. No primary sourcing found anywhere in the loop.</div>
-    <div class="feed-sources">
-      <span class="source-pill">The Intercept</span>
-      <span class="source-pill">⚑ Western-sourced only</span>
-    </div>
-  </div>
-
-  <div class="feed-item reveal">
-    <div class="feed-meta">
-      <span class="feed-tag tag-analysis">Analysis</span>
-      <span class="feed-date">May 18, 2026 · 15:27 UTC</span>
-    </div>
-    <div class="feed-title">Selection Architecture: Three Consecutive Cycles Produce Identical Policy Outcomes Despite Opposing Campaign Rhetoric</div>
-    <div class="feed-excerpt">Mapped the candidate-selection pipeline across three election cycles — wildly different rhetoric on the way in, near-identical donor rosters and policy outcomes on the way out. The architecture, not the individuals, is the mechanism.</div>
-    <div class="feed-sources">
-      <span class="source-pill">CGTN</span>
-      <span class="source-pill">Press TV</span>
-    </div>
-  </div>
-
-  <div class="feed-item reveal">
-    <div class="feed-meta">
-      <span class="feed-tag tag-hasbara">Hasbara</span>
-      <span class="feed-tag tag-confirmed">Confirmed</span>
-      <span class="feed-date">May 12, 2026 · 21:03 UTC</span>
-    </div>
-    <div class="feed-title">Bot Network Resurfaces Under New Handles — 80% Overlap in Posting Cadence With March Cluster</div>
-    <div class="feed-excerpt">Same posting-time fingerprints, same phrase rotation, same silence windows — just new account names and avatars. Archived comparison side-by-side with the March cluster shows an 80% cadence overlap.</div>
-    <div class="feed-sources">
-      <span class="source-pill">Middle East Eye</span>
-      <span class="source-pill">Archived: Wayback</span>
-    </div>
-  </div>
-
+  <div id="archiveStatus" style="padding: 16px 32px; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); border-bottom: 1px solid var(--border);">○ Loading documentation archive...</div>
+  <div id="archiveList"></div>
+  <div id="archivePagination" class="archive-pagination"></div>
 </div>
 
 <!-- FOOTER -->
@@ -357,6 +278,7 @@
     <li><a href="blog.html">Blog</a></li>
     <li><a href="profile.html">My Account</a></li>
     <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
     <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
     <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
   </ul>
@@ -384,6 +306,248 @@
     });
   }, { threshold: 0.1 });
   reveals.forEach(el => observer.observe(el));
+
+  // ─── Documentation Archive: every entry pulled live from the same outlets
+  // as the News Feed, timestamped, paginated 15-per-page — pages are built
+  // dynamically from however many documented entries are currently available,
+  // so page 2, 3, 4... appear automatically as the record grows.
+  const WORKER_URL = 'https://dnf.definitelynotpropaganda.workers.dev';
+  const ARCHIVE_PAGE_SIZE = 15;
+
+  const ARCHIVE_SOURCES = [
+    { id: 'aljazeera', name: 'Al Jazeera',      flag: null,      rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+    { id: 'trt',       name: 'TRT World',       flag: null,      rss: 'https://www.trtworld.com/rss' },
+    { id: 'anadolu',   name: 'Anadolu Agency',  flag: null,      rss: 'https://www.aa.com.tr/en/rss/default?cat=guncel' },
+    { id: 'mee',       name: 'Middle East Eye', flag: null,      rss: 'https://www.middleeasteye.net/rss' },
+    { id: '972mag',    name: '+972 Magazine',   flag: null,      rss: 'https://www.972mag.com/feed/' },
+    { id: 'presstv',   name: 'Press TV',        flag: null,      rss: 'https://www.presstv.ir/rss.xml' },
+    { id: 'npr',       name: 'NPR',             flag: 'western', rss: 'https://feeds.npr.org/1001/rss.xml' },
+    { id: 'nytimes',   name: 'NY Times',        flag: 'western', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml' },
+    { id: 'washpost',  name: 'Washington Post', flag: 'western', rss: 'https://feeds.washingtonpost.com/rss/world' },
+    { id: 'cnn',       name: 'CNN',             flag: 'western', rss: 'https://rss.cnn.com/rss/cnn_topstories.rss' },
+  ];
+
+  const ARCHIVE_TOPICS = [
+    { id: 'israel',       label: 'Israel / Middle East',   tagClass: 'tag-israel',
+      keywords: ['israel', 'israeli', 'gaza', 'palestin', 'idf', 'west bank', 'netanyahu',
+                 'hamas', 'rafah', 'lebanon', 'syria', 'middle east'] },
+    { id: 'iran',         label: 'Iran',                   tagClass: 'tag-iran',
+      keywords: ['iran', 'iranian', 'tehran', 'ayatollah', 'khamenei', 'irgc', 'nuclear deal', 'persian gulf'] },
+    { id: 'uscorruption', label: 'US Policy & Corruption', tagClass: 'tag-uspolicy',
+      keywords: ['congress', 'senate', 'white house', 'lobbying', 'campaign finance', 'corrupt',
+                 'scandal', 'bribery', 'indictment', 'conflict of interest', 'kickback',
+                 'investigation reveals', 'ethics probe', 'federal probe'] },
+    { id: 'media',        label: 'Media & Propaganda',     tagClass: 'tag-disinfo',
+      keywords: ['propaganda', 'disinformation', 'misinformation', 'narrative', 'hasbara',
+                 'coordinated', 'censorship', 'press freedom'] },
+    { id: 'ai',           label: 'AI',                     tagClass: 'tag-ai',
+      keywords: ['artificial intelligence', 'ai-generated', 'deepfake', 'chatbot', 'generative ai',
+                 'openai', 'machine learning'] },
+  ];
+
+  // Hand-documented entries that predate the live aggregator — kept so the
+  // archive always has a record even before the first live fetch resolves.
+  const SEED_ARCHIVE = [
+    { id: 'seed-1', tags: [{ label: 'Hasbara', cls: 'tag-hasbara' }, { label: 'Confirmed', cls: 'tag-confirmed' }],
+      title: 'Coordinated Comment Surge: "Human Shield" Narrative Deployed Across 6 Platforms Simultaneously',
+      excerpt: 'Identical phrasing appearing within 4-minute window across Twitter/X, Facebook, Reddit, YouTube, Telegram, and TikTok. Account creation dates cluster 2021–2022. All accounts go silent 6 hours after initial burst.',
+      sourcePills: ['Al Jazeera', '+972 Magazine', 'Middle East Eye', 'Archived: Wayback'],
+      pubDate: '2026-06-04T14:32:00Z', link: '#' },
+    { id: 'seed-2', tags: [{ label: 'Disinfo', cls: 'tag-disinfo' }],
+      title: 'Zone Flooding in Action: Epstein Adjacent Story Buried Under Four Simultaneous Domestic News Cycles',
+      excerpt: 'Pattern documented: major accountability story drops, then within 90 minutes four unrelated breaking stories appear across major outlets. Third time this month. Information velocity as a burial mechanism.',
+      sourcePills: ['The Intercept', 'TRT World', '⚑ Western-sourced only'],
+      pubDate: '2026-06-03T09:17:00Z', link: '#' },
+    { id: 'seed-3', tags: [{ label: 'Analysis', cls: 'tag-analysis' }],
+      title: 'TACO Pattern Cycle 7: Maximum Escalation Rhetoric Followed by Quiet Reversal, Face-Saving Framing Applied',
+      excerpt: 'Documented cycle: threat issued at maximum volume, then reversed quietly with rebranding. Media covers the threat, ignores the reversal. Called this pattern in February. The framing shift is the tell.',
+      sourcePills: ['Anadolu Agency', 'CGTN', 'Al Jazeera'],
+      pubDate: '2026-06-01T18:44:00Z', link: '#' },
+    { id: 'seed-4', tags: [{ label: 'Analysis', cls: 'tag-analysis' }],
+      title: 'TACO Cycle 6: Threat Escalation Walked Back Within 72 Hours, Coverage Ratio Roughly 40:1 in Favor of the Threat',
+      excerpt: 'For every story covering the eventual quiet reversal, roughly forty covered the original maximum-volume threat. The reversal ran as a brief wire update; the threat ran as a headline for three straight days.',
+      sourcePills: ['Anadolu Agency', 'TRT World'],
+      pubDate: '2026-05-30T12:08:00Z', link: '#' },
+    { id: 'seed-5', tags: [{ label: 'Hasbara', cls: 'tag-hasbara' }, { label: 'Confirmed', cls: 'tag-confirmed' }],
+      title: 'Verified: Same Six Phrases Appear in 200+ Replies Within Two Hours of a Press Briefing Ending',
+      excerpt: 'Cross-platform scrape confirms identical six-phrase rotation deployed by accounts with overlapping registration windows. Reply timing clusters within seconds of each other — not the cadence of independent users.',
+      sourcePills: ['Al Jazeera', '+972 Magazine', 'Archived: Wayback'],
+      pubDate: '2026-05-27T17:51:00Z', link: '#' },
+    { id: 'seed-6', tags: [{ label: 'Disinfo', cls: 'tag-disinfo' }],
+      title: 'Closed-Loop Sourcing: Five Linked Wire Stories Cite Each Other With Zero Independent Verification',
+      excerpt: 'Traced the citation chain on five widely-syndicated stories this week — each one\'s "independent confirmation" turned out to be another outlet quoting the first. No primary sourcing found anywhere in the loop.',
+      sourcePills: ['The Intercept', '⚑ Western-sourced only'],
+      pubDate: '2026-05-22T10:36:00Z', link: '#' },
+    { id: 'seed-7', tags: [{ label: 'Analysis', cls: 'tag-analysis' }],
+      title: 'Selection Architecture: Three Consecutive Cycles Produce Identical Policy Outcomes Despite Opposing Campaign Rhetoric',
+      excerpt: 'Mapped the candidate-selection pipeline across three election cycles — wildly different rhetoric on the way in, near-identical donor rosters and policy outcomes on the way out. The architecture, not the individuals, is the mechanism.',
+      sourcePills: ['CGTN', 'Press TV'],
+      pubDate: '2026-05-18T15:27:00Z', link: '#' },
+    { id: 'seed-8', tags: [{ label: 'Hasbara', cls: 'tag-hasbara' }, { label: 'Confirmed', cls: 'tag-confirmed' }],
+      title: 'Bot Network Resurfaces Under New Handles — 80% Overlap in Posting Cadence With March Cluster',
+      excerpt: 'Same posting-time fingerprints, same phrase rotation, same silence windows — just new account names and avatars. Archived comparison side-by-side with the March cluster shows an 80% cadence overlap.',
+      sourcePills: ['Middle East Eye', 'Archived: Wayback'],
+      pubDate: '2026-05-12T21:03:00Z', link: '#' },
+  ];
+
+  function archiveWorkerUrl(url) {
+    return `${WORKER_URL}?action=fetchFeed&url=${encodeURIComponent(url)}`;
+  }
+  function stripHtmlTags(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return (div.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+  function looksLikeFeedXml(text) {
+    const head = text.slice(0, 300).toLowerCase();
+    return head.includes('<?xml') || head.includes('<rss') || head.includes('<feed') || head.includes('<rdf');
+  }
+
+  async function fetchArchiveSource(src) {
+    const candidates = [
+      archiveWorkerUrl(src.rss),
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(src.rss)}`,
+    ];
+    for (const url of candidates) {
+      try {
+        const res = await fetch(url, { signal: AbortSignal.timeout(12000) });
+        if (!res.ok) continue;
+        const text = await res.text();
+        if (!looksLikeFeedXml(text)) continue;
+
+        const doc = new DOMParser().parseFromString(text, 'application/xml');
+        if (doc.querySelector('parsererror')) continue;
+
+        let nodes = Array.from(doc.querySelectorAll('item'));
+        let isAtom = false;
+        if (nodes.length === 0) { nodes = Array.from(doc.querySelectorAll('entry')); isAtom = true; }
+        if (nodes.length === 0) continue;
+
+        return nodes.slice(0, 25).map(node => {
+          const get = (tag) => node.querySelector(tag)?.textContent?.trim() || '';
+          let link = get('link');
+          if (isAtom) {
+            const linkEl = node.querySelector('link[href]');
+            link = linkEl ? linkEl.getAttribute('href') : link;
+          }
+          const description = isAtom
+            ? (get('summary') || get('content'))
+            : (get('description') || get('content\\:encoded'));
+          return {
+            sourceId: src.id,
+            sourceName: src.name,
+            sourceFlag: src.flag,
+            title: stripHtmlTags(get('title')),
+            excerpt: stripHtmlTags(description).slice(0, 220),
+            link,
+            pubDate: get('pubDate') || get('published') || get('updated') || get('date'),
+          };
+        });
+      } catch (err) { /* try the next candidate */ }
+    }
+    return [];
+  }
+
+  function matchedArchiveTopics(item) {
+    const haystack = (item.title + ' ' + item.excerpt).toLowerCase();
+    return ARCHIVE_TOPICS.filter(topic => topic.keywords.some(kw => haystack.includes(kw)));
+  }
+
+  function formatFullDateTime(dateStr) {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '';
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const hh = String(date.getUTCHours()).padStart(2, '0');
+    const mm = String(date.getUTCMinutes()).padStart(2, '0');
+    return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()} · ${hh}:${mm} UTC`;
+  }
+
+  async function loadArchive() {
+    const status     = document.getElementById('archiveStatus');
+    const list       = document.getElementById('archiveList');
+    const pagination = document.getElementById('archivePagination');
+    if (!list || !pagination) return;
+
+    let liveEntries = [];
+    try {
+      const results  = await Promise.all(ARCHIVE_SOURCES.map(fetchArchiveSource));
+      const allItems = results.flat().filter(item => item.title && item.link);
+
+      liveEntries = allItems.map(item => {
+        const topics = matchedArchiveTopics(item);
+        if (!topics.length) return null;
+        return {
+          id: item.link,
+          tags: topics.slice(0, 2).map(t => ({ label: t.label, cls: t.tagClass })),
+          title: item.title,
+          excerpt: item.excerpt,
+          sourcePills: [`${item.sourceFlag === 'western' ? '⚑ ' : ''}${item.sourceName}`],
+          pubDate: item.pubDate,
+          link: item.link,
+        };
+      }).filter(Boolean);
+    } catch (err) {
+      console.error('Archive aggregation failed:', err);
+    }
+
+    // Merge live + seed entries, dedupe by id (article link), newest first
+    const merged = new Map();
+    [...liveEntries, ...SEED_ARCHIVE].forEach(entry => {
+      if (!merged.has(entry.id)) merged.set(entry.id, entry);
+    });
+    const all = [...merged.values()].sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+    if (status) status.remove();
+
+    if (!all.length) {
+      list.innerHTML = '<div style="padding: 32px; font-family: var(--mono); font-size: 11px; color: var(--muted);">○ No documented entries available right now — check back soon.</div>';
+      return;
+    }
+
+    const totalPages = Math.max(1, Math.ceil(all.length / ARCHIVE_PAGE_SIZE));
+    let currentPage = 1;
+
+    function renderEntries(page) {
+      const start = (page - 1) * ARCHIVE_PAGE_SIZE;
+      const pageItems = all.slice(start, start + ARCHIVE_PAGE_SIZE);
+      list.innerHTML = pageItems.map(entry => `
+        <div class="feed-item reveal visible">
+          <div class="feed-meta">
+            ${entry.tags.map(t => `<span class="feed-tag ${t.cls}">${t.label}</span>`).join('')}
+            <span class="feed-date">${formatFullDateTime(entry.pubDate)}</span>
+          </div>
+          <div class="feed-title">${entry.title}</div>
+          <div class="feed-excerpt">${entry.excerpt}</div>
+          <div class="feed-sources">${entry.sourcePills.map(p => `<span class="source-pill">${p}</span>`).join('')}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderPagination() {
+      if (totalPages <= 1) { pagination.innerHTML = ''; return; }
+      let html = `<button class="page-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
+      for (let p = 1; p <= totalPages; p++) {
+        html += `<button class="page-btn ${p === currentPage ? 'active' : ''}" data-page="${p}">${p}</button>`;
+      }
+      html += `<button class="page-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
+      pagination.innerHTML = html;
+      pagination.querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = parseInt(btn.dataset.page, 10);
+          if (isNaN(target) || target < 1 || target > totalPages || target === currentPage) return;
+          currentPage = target;
+          renderEntries(currentPage);
+          renderPagination();
+          list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    }
+
+    renderEntries(currentPage);
+    renderPagination();
+  }
+
+  loadArchive();
 </script>
 
 </body>
