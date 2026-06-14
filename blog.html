@@ -118,9 +118,10 @@
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
     .feed-headline {
       font-family: var(--display);
-      font-size: clamp(48px, 7vw, 88px);
+      font-size: clamp(36px, 10vw, 88px);
       line-height: 0.95;
       letter-spacing: 0.02em;
+      word-break: break-word;
     }
     .feed-headline span { color: var(--accent); }
     .feed-sub {
@@ -368,6 +369,14 @@
       .auth-wrap, .composer-wrap { padding: 24px 20px; }
       .feed-wrap { padding: 32px 20px 60px; }
       footer { padding: 32px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .feed-header { padding: 28px 16px 20px; }
+      .auth-wrap, .composer-wrap { padding: 20px 16px; }
+      .feed-wrap { padding: 24px 16px 48px; }
+      .post-card { padding: 20px 16px; }
+      footer { padding: 24px 16px; }
     }
   </style>
 </head>

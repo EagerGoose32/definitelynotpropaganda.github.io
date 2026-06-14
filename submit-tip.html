@@ -97,10 +97,11 @@
     }
     .page-title {
       font-family: var(--display);
-      font-size: clamp(48px, 8vw, 84px);
+      font-size: clamp(36px, 11vw, 84px);
       line-height: 0.95;
       letter-spacing: 0.02em;
       margin-bottom: 20px;
+      word-break: break-word;
     }
     .page-sub {
       font-size: 16px;
@@ -285,6 +286,14 @@
       .submit-section { grid-template-columns: 1fr; gap: 40px; padding: 40px 20px 64px; }
       footer { padding: 32px 20px; }
       .footer-note { text-align: left; }
+    }
+
+    @media (max-width: 480px) {
+      .page-header { padding: 28px 16px 20px; }
+      .submit-section { padding: 28px 16px 48px; gap: 28px; }
+      .form-label { font-size: 9px; }
+      .form-input, .form-select, .form-textarea { font-size: 13px; }
+      footer { padding: 24px 16px; }
     }
   </style>
 </head>

@@ -182,10 +182,12 @@
 
     .hero-headline {
       font-family: var(--display);
-      font-size: clamp(64px, 8vw, 120px);
+      font-size: clamp(36px, 12vw, 120px);
       line-height: 0.92;
       letter-spacing: 0.02em;
       color: var(--text);
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
     .hero-headline .strike {
       position: relative;
@@ -842,13 +844,29 @@
       }
       .nav-toggle { display: block; }
       .hero-left { padding: 40px 20px; }
+      .hero-sub { font-size: 13px; }
+      .hero-cta { gap: 12px; }
       .method-grid { grid-template-columns: 1fr; }
       .feed-grid { grid-template-columns: 1fr; }
       .chat-container { grid-template-columns: 1fr; }
       .chat-sidebar { display: none; }
       .submit-section { grid-template-columns: 1fr; gap: 40px; padding: 40px 20px; }
       .section { padding: 48px 20px; }
+      .section-header { flex-wrap: wrap; gap: 12px; }
       footer { padding: 32px 20px; }
+      #chatHandle { max-width: none; width: 100%; }
+      .chat-input-row { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-left { padding: 32px 16px; }
+      .hero-label { font-size: 9px; }
+      .hero-sub { font-size: 12px; max-width: 100%; }
+      .btn-primary, .btn-secondary { padding: 12px 20px; font-size: 10px; }
+      .section { padding: 36px 16px; }
+      .ticker-wrap { font-size: 9px; }
+      .tip-banner { font-size: 9px; padding: 8px 16px; }
+      footer { padding: 24px 16px; }
     }
 
     /* SCROLL ANIMATIONS */
