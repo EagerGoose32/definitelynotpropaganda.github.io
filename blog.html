@@ -395,7 +395,7 @@
   <h1 class="feed-headline">THE <span>BLOG</span></h1>
   <p class="feed-sub">
     Analysis, dispatches, and behind-the-scenes notes from the team. Sign up to get notified of new posts —
-    or log in if you're already verified. Only the editorial account can publish.
+    or log in if you're already verified. Only editorial accounts can publish.
   </p>
 </div>
 
@@ -516,12 +516,10 @@
   // ─── CONFIGURE ME ──────────────────────────────────────────────────────────
   // 1. Paste your Firebase project config below (Project Settings → General →
   //    Your apps → SDK setup and configuration → Config).
-  // 2. Set ADMIN_EMAIL to the single email address allowed to publish posts.
-  //    This MUST match the email on the Firebase Auth account you want to be
-  //    the admin/editorial account, and MUST also be set in your Firestore
-  //    security rules (see BLOG_SETUP.md) — the client-side check below is
-  //    just for showing/hiding the composer UI, the rules are what actually
-  //    enforce it.
+  // 2. OWNER_EMAIL: full admin — can publish and delete any post.
+  //    EDITOR_EMAIL: restricted admin — can publish and delete only their own posts.
+  //    Both emails MUST also be listed in your Firestore security rules (see BLOG_SETUP.md).
+  //    Client-side checks here only control the UI; Firestore rules enforce access server-side.
   const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBtqqKJFZ7-D4TevJLYFSj7yFgRv-g6Lkg",
   authDomain: "definitely-not-propaganda.firebaseapp.com",
@@ -530,7 +528,8 @@
   messagingSenderId: "580345033905",
   appId: "1:580345033905:web:9bf7b7e2a1f15353611e90"
 };
-  const ADMIN_EMAIL = 'flockofego45@proton.me';
+  const OWNER_EMAIL  = 'flockofego45@proton.me';
+  const EDITOR_EMAIL = 'FRIEND_EMAIL_HERE'; // replace with your friend's email
   // ───────────────────────────────────────────────────────────────────────────
 
   const isConfigured = FIREBASE_CONFIG.apiKey !== 'YOUR_API_KEY';
@@ -657,7 +656,8 @@
       authLoggedIn.style.display = 'flex';
       sessionEmail.textContent = user.displayName ? `${user.displayName} (${user.email})` : user.email;
 
-      const isAdmin = user.email === ADMIN_EMAIL;
+      const isOwner  = user.email === OWNER_EMAIL;
+      const isEditor = user.email === EDITOR_EMAIL;
 
       if (!user.emailVerified) {
         sessionRole.innerHTML = '<span class="unverified">Email not verified — verify to unlock full access.</span>';
@@ -665,8 +665,11 @@
         composerWrap.style.display = 'none';
       } else {
         resendVerifyBtn.style.display = 'none';
-        if (isAdmin) {
-          sessionRole.innerHTML = '<span class="role">★ Editorial / Admin Account — verified</span>';
+        if (isOwner) {
+          sessionRole.innerHTML = '<span class="role">★ Owner / Editorial Account — verified</span>';
+          composerWrap.style.display = '';
+        } else if (isEditor) {
+          sessionRole.innerHTML = '<span class="role">✎ Editor Account — verified</span>';
           composerWrap.style.display = '';
         } else {
           sessionRole.innerHTML = '<span style="color: var(--text);">Verified reader</span>';
@@ -679,7 +682,8 @@
     postForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const user = auth.currentUser;
-      if (!user || user.email !== ADMIN_EMAIL || !user.emailVerified) {
+      const canPost = user && (user.email === OWNER_EMAIL || user.email === EDITOR_EMAIL);
+      if (!canPost || !user.emailVerified) {
         setStatus(postStatus, 'Not authorized to publish.', 'var(--accent2)');
         return;
       }
@@ -703,10 +707,12 @@
       }
     });
 
-    // ─── DELETE POST (admin only) ────────────────────────────────────────────
-    async function deletePost(id) {
+    // ─── DELETE POST (owner: any post; editor: own posts only) ──────────────
+    async function deletePost(id, postAuthorEmail) {
       const user = auth.currentUser;
-      if (!user || user.email !== ADMIN_EMAIL) return;
+      const isOwner  = user && user.email === OWNER_EMAIL;
+      const isEditor = user && user.email === EDITOR_EMAIL && postAuthorEmail === user.email;
+      if (!isOwner && !isEditor) return;
       if (!confirm('Delete this post?')) return;
       try {
         await db.collection('posts').doc(id).delete();
@@ -744,7 +750,11 @@
         const post = doc.data();
         const card = document.createElement('article');
         card.className = 'post-card';
-        const isAdmin = auth.currentUser && auth.currentUser.email === ADMIN_EMAIL;
+        card.dataset.author = post.author || '';
+        const currentUser = auth.currentUser;
+        const isOwner  = currentUser && currentUser.email === OWNER_EMAIL;
+        const isEditor = currentUser && currentUser.email === EDITOR_EMAIL;
+        const canDelete = isOwner || (isEditor && post.author === currentUser.email);
         card.innerHTML = `
           <div class="post-meta">
             <span class="author">${escapeHtml(post.authorName || 'staff')}</span>
@@ -753,7 +763,7 @@
           </div>
           <h2 class="post-title">${escapeHtml(post.title || 'Untitled')}</h2>
           <div class="post-body">${escapeHtml(post.body || '')}</div>
-          ${isAdmin ? `<div class="post-actions"><button onclick="dnpDeletePost('${doc.id}')">Delete</button></div>` : ''}
+          ${canDelete ? `<div class="post-actions"><button onclick="dnpDeletePost('${doc.id}', this.closest('.post-card').dataset.author)">Delete</button></div>` : ''}
         `;
         postsList.appendChild(card);
       });
