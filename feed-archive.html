@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Documentation Archive — Definitely Not Propaganda</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230a0a0a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='28' fill='%23e8e8e8'%3EDNP%3C/text%3E%3Ccircle cx='55' cy='48' r='4' fill='%23c8f135'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
@@ -210,7 +211,37 @@
     .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* MOBILE */
+    /* SEARCH */
+    .search-bar {
+      padding: 16px 40px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .search-input {
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 10px 14px;
+      letter-spacing: 0.05em;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { outline: none; border-color: var(--accent); }
+    .search-input::placeholder { color: var(--muted); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      nav { padding: 16px 28px; }
+      .nav-links { gap: 18px; }
+      .nav-links a { font-size: 11px; min-height: 44px; display: flex; align-items: center; }
+      .page-btn { min-height: 44px; padding: 10px 16px; }
+      .search-bar { padding: 12px 28px; }
+      .search-input { max-width: 100%; }
+    }
+
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
       .nav-links {
@@ -261,6 +292,11 @@
     publication. Newest first, 15 entries per page.
   </p>
 </section>
+
+<!-- SEARCH -->
+<div class="search-bar">
+  <input class="search-input" id="archiveSearch" type="text" placeholder="Search archive...">
+</div>
 
 <!-- ARCHIVE LIST -->
 <div class="archive-wrap">
@@ -504,26 +540,40 @@
       return;
     }
 
-    const totalPages = Math.max(1, Math.ceil(all.length / ARCHIVE_PAGE_SIZE));
+    let archiveSearchQuery = '';
     let currentPage = 1;
 
-    function renderEntries(page) {
-      const start = (page - 1) * ARCHIVE_PAGE_SIZE;
-      const pageItems = all.slice(start, start + ARCHIVE_PAGE_SIZE);
-      list.innerHTML = pageItems.map(entry => `
-        <div class="feed-item reveal visible">
-          <div class="feed-meta">
-            ${entry.tags.map(t => `<span class="feed-tag ${t.cls}">${t.label}</span>`).join('')}
-            <span class="feed-date">${formatFullDateTime(entry.pubDate)}</span>
-          </div>
-          <div class="feed-title">${entry.title}</div>
-          <div class="feed-excerpt">${entry.excerpt}</div>
-          <div class="feed-sources">${entry.sourcePills.map(p => `<span class="source-pill">${p}</span>`).join('')}</div>
-        </div>
-      `).join('');
+    function getFiltered() {
+      if (!archiveSearchQuery) return all;
+      return all.filter(e => (e.title + ' ' + e.excerpt).toLowerCase().includes(archiveSearchQuery));
     }
 
-    function renderPagination() {
+    function renderEntries(page) {
+      const filtered = getFiltered();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / ARCHIVE_PAGE_SIZE));
+      if (page > totalPages) page = 1;
+      currentPage = page;
+      const start = (page - 1) * ARCHIVE_PAGE_SIZE;
+      const pageItems = filtered.slice(start, start + ARCHIVE_PAGE_SIZE);
+      if (filtered.length === 0) {
+        list.innerHTML = '<div style="padding: 32px; font-family: var(--mono); font-size: 11px; color: var(--muted);">No entries match your search.</div>';
+      } else {
+        list.innerHTML = pageItems.map(entry => `
+          <div class="feed-item reveal visible">
+            <div class="feed-meta">
+              ${entry.tags.map(t => `<span class="feed-tag ${t.cls}">${t.label}</span>`).join('')}
+              <span class="feed-date">${formatFullDateTime(entry.pubDate)}</span>
+            </div>
+            <div class="feed-title">${entry.title}</div>
+            <div class="feed-excerpt">${entry.excerpt}</div>
+            <div class="feed-sources">${entry.sourcePills.map(p => `<span class="source-pill">${p}</span>`).join('')}</div>
+          </div>
+        `).join('');
+      }
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
       if (totalPages <= 1) { pagination.innerHTML = ''; return; }
       let html = `<button class="page-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
       for (let p = 1; p <= totalPages; p++) {
@@ -534,17 +584,24 @@
       pagination.querySelectorAll('.page-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const target = parseInt(btn.dataset.page, 10);
-          if (isNaN(target) || target < 1 || target > totalPages || target === currentPage) return;
+          const tp = Math.max(1, Math.ceil(getFiltered().length / ARCHIVE_PAGE_SIZE));
+          if (isNaN(target) || target < 1 || target > tp || target === currentPage) return;
           currentPage = target;
           renderEntries(currentPage);
-          renderPagination();
           list.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
       });
     }
 
+    const archiveSearchInput = document.getElementById('archiveSearch');
+    if (archiveSearchInput) {
+      archiveSearchInput.addEventListener('input', () => {
+        archiveSearchQuery = archiveSearchInput.value.toLowerCase().trim();
+        renderEntries(1);
+      });
+    }
+
     renderEntries(currentPage);
-    renderPagination();
   }
 
   loadArchive();
