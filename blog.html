@@ -297,6 +297,13 @@
       transition: all 0.2s;
     }
     .post-actions button:hover { color: var(--accent2); border-color: var(--accent2); }
+    .post-actions button.link-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .post-actions button.link-btn.copied { color: var(--accent); border-color: var(--accent); }
+
+    .post-card.highlighted {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(200, 241, 53, 0.15);
+    }
 
     .feed-status {
       padding: 60px 40px;
@@ -717,6 +724,30 @@
     }
     window.dnpDeletePost = deletePost;
 
+    function copyPostLink(id, btn) {
+      const url = location.origin + location.pathname + '#post-' + id;
+      navigator.clipboard.writeText(url).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+      }).catch(() => {
+        window.location.hash = 'post-' + id;
+      });
+    }
+    window.dnpCopyLink = copyPostLink;
+
+    function scrollToHashPost() {
+      const hash = location.hash;
+      if (!hash || !hash.startsWith('#post-')) return;
+      const el = document.getElementById(hash.slice(1));
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('highlighted');
+      setTimeout(() => el.classList.remove('highlighted'), 4000);
+    }
+    window.addEventListener('hashchange', scrollToHashPost);
+
     // ─── LOAD POSTS (public — anyone can read) ──────────────────────────────
     function timeAgo(ts) {
       if (!ts || !ts.toDate) return '';
@@ -744,6 +775,7 @@
         const post = doc.data();
         const card = document.createElement('article');
         card.className = 'post-card';
+        card.id = 'post-' + doc.id;
         const isAdmin = auth.currentUser && auth.currentUser.email === ADMIN_EMAIL;
         card.innerHTML = `
           <div class="post-meta">
@@ -753,10 +785,14 @@
           </div>
           <h2 class="post-title">${escapeHtml(post.title || 'Untitled')}</h2>
           <div class="post-body">${escapeHtml(post.body || '')}</div>
-          ${isAdmin ? `<div class="post-actions"><button onclick="dnpDeletePost('${doc.id}')">Delete</button></div>` : ''}
+          <div class="post-actions">
+            <button class="link-btn" onclick="dnpCopyLink('${doc.id}', this)">Link</button>
+            ${isAdmin ? `<button onclick="dnpDeletePost('${doc.id}')">Delete</button>` : ''}
+          </div>
         `;
         postsList.appendChild(card);
       });
+      scrollToHashPost();
     }
 
     function escapeHtml(str) {
