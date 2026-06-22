@@ -61,6 +61,26 @@
       display: inline-block;
       animation: ticker 30s linear infinite;
     }
+
+    /* TIP BANNER */
+    .tip-banner {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      padding: 10px 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .tip-banner a {
+      color: var(--accent2);
+      text-decoration: none;
+      font-weight: 700;
+      border-bottom: 1px solid var(--accent2);
+      padding-bottom: 1px;
+    }
+    .tip-banner a:hover { color: var(--text); border-color: var(--text); }
     @keyframes ticker {
       0% { transform: translateX(100vw); }
       100% { transform: translateX(-100%); }
@@ -93,7 +113,7 @@
     }
     .nav-links a {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 13px;
       color: var(--muted);
       text-decoration: none;
       text-transform: uppercase;
@@ -101,6 +121,20 @@
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--accent); }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .nav-toggle:hover { border-color: var(--accent); color: var(--accent); }
 
     .nav-badge {
       font-family: var(--mono);
@@ -119,18 +153,22 @@
 
     /* HERO */
     .hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      justify-content: center;
       min-height: 80vh;
       border-bottom: 1px solid var(--border);
     }
 
     .hero-left {
       padding: 60px 40px;
-      border-right: 1px solid var(--border);
+      max-width: 720px;
+      width: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
+      text-align: center;
+      align-items: center;
+      margin: 0 auto;
     }
 
     .hero-label {
@@ -167,8 +205,8 @@
       font-size: 14px;
       color: var(--muted);
       line-height: 1.7;
-      max-width: 400px;
-      margin-top: 32px;
+      max-width: 460px;
+      margin: 32px auto 0;
       font-weight: 300;
     }
 
@@ -177,6 +215,7 @@
       gap: 16px;
       margin-top: 40px;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     .btn-primary {
@@ -214,33 +253,6 @@
     .btn-secondary:hover {
       border-color: var(--accent);
       color: var(--accent);
-    }
-
-    .hero-right {
-      padding: 60px 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .stat-block {
-      border-bottom: 1px solid var(--border);
-      padding: 28px 0;
-    }
-    .stat-block:first-child { padding-top: 0; }
-    .stat-num {
-      font-family: var(--display);
-      font-size: 52px;
-      color: var(--accent);
-      line-height: 1;
-    }
-    .stat-label {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      margin-top: 6px;
     }
 
     /* METHODOLOGY */
@@ -344,6 +356,13 @@
     .tag-disinfo { background: #1a1a6e; color: var(--accent); border: 1px solid var(--accent); }
     .tag-analysis { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
     .tag-confirmed { background: #1a3a1a; color: #4caf50; border: 1px solid #4caf50; }
+    .tag-breaking { background: var(--accent2); color: #fff; font-weight: 700; animation: pulse 2s ease-in-out infinite; }
+
+    /* Topic/keyword tags — secondary badges marking what a story is about */
+    .tag-iran     { background: transparent; color: #f4a300; border: 1px solid #f4a300; }
+    .tag-israel   { background: transparent; color: #4ea8de; border: 1px solid #4ea8de; }
+    .tag-ai       { background: transparent; color: #b388ff; border: 1px solid #b388ff; }
+    .tag-uspolicy { background: transparent; color: #00bcd4; border: 1px solid #00bcd4; }
 
     .feed-date {
       font-family: var(--mono);
@@ -380,6 +399,33 @@
       padding: 2px 8px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
+    }
+
+    .feed-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-pill {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-pill:hover { color: var(--text); border-color: var(--text); }
+    .filter-pill.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 700;
     }
 
     /* SIDEBAR */
@@ -650,7 +696,7 @@
     }
 
     .submit-left p {
-      font-size: 14px;
+      font-size: 17px;
       color: var(--muted);
       line-height: 1.7;
       font-weight: 300;
@@ -688,6 +734,48 @@
     }
     .form-textarea { min-height: 120px; resize: vertical; }
     .form-select option { background: var(--surface); }
+
+    .form-file-drop {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      text-align: center;
+    }
+    .form-file-drop:hover, .form-file-drop.dragover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .form-file-drop input[type="file"] { display: none; }
+    .form-file-list {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .form-file-list .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      margin: 4px 6px 0 0;
+    }
+    .form-file-list .file-chip button {
+      background: none;
+      border: none;
+      color: var(--accent2);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 0;
+      line-height: 1;
+    }
 
     /* FOOTER */
     footer {
@@ -733,11 +821,27 @@
 
     /* RESPONSIVE */
     @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      .nav-links { display: none; }
-      .hero { grid-template-columns: 1fr; }
-      .hero-left { padding: 40px 20px; border-right: none; border-bottom: 1px solid var(--border); }
-      .hero-right { padding: 40px 20px; }
+      nav { padding: 16px 20px; flex-wrap: wrap; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 200;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        width: 100%;
+      }
+      .nav-toggle { display: block; }
+      .hero-left { padding: 40px 20px; }
       .method-grid { grid-template-columns: 1fr; }
       .feed-grid { grid-template-columns: 1fr; }
       .chat-container { grid-template-columns: 1fr; }
@@ -768,14 +872,23 @@
   </span>
 </div>
 
+<!-- TIP BANNER -->
+<div class="tip-banner">
+  SEEN SOMETHING WORTH DOCUMENTING? <a href="submit-tip.html">SUBMIT A TIP →</a> · ANONYMOUS · ENCRYPTED · VERIFIED BEFORE PUBLICATION
+</div>
+
 <!-- NAV -->
 <nav>
   <a href="#" class="logo">DNP<span>.</span></a>
-  <ul class="nav-links">
-    <li><a href="#feed">Feed</a></li>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="feed.html">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
     <li><a href="#methodology">Method</a></li>
-    <li><a href="#chat">Room</a></li>
-    <li><a href="#submit">Submit</a></li>
+    <li><a href="#chat">Chatroom</a></li>
   </ul>
   <div class="nav-badge">● Live</div>
 </nav>
@@ -783,48 +896,29 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
-    <div>
-      <div class="hero-label">// Counter-Propaganda Documentation Project</div>
-      <h1 class="hero-headline">
-        DEFINITELY<br>
-        <span class="strike">NOT</span><br>
-        PROPAGANDA
-      </h1>
-      <p class="hero-sub">
-        Documenting coordinated influence operations, hasbara networks, and information warfare in real time. Receipts first. Analysis second. No both-sidesing when the evidence is clear.
-      </p>
-      <div class="hero-cta">
-        <a href="#feed" class="btn-primary">View Documentation</a>
-        <a href="#chat" class="btn-secondary">Join the Room</a>
-      </div>
+    <div class="hero-label">// Counter-Propaganda Documentation Project</div>
+    <h1 class="hero-headline">
+      DEFINITELY<br>
+      <span class="strike">NOT</span><br>
+      PROPAGANDA
+    </h1>
+    <p class="hero-sub">
+      Documenting coordinated influence operations, hasbara networks, and information warfare in real time. Receipts first. Analysis second. No both-sidesing when the evidence is clear.
+    </p>
+    <div class="hero-cta">
+      <a href="#feed" class="btn-primary">View Documentation</a>
+      <a href="#chat" class="btn-secondary">Connect with Others</a>
+    </div>
+    <div style="font-family: var(--mono); font-size: 9px; color: var(--muted); margin-top: 20px; text-align: center;">
+      Secure, anonymous messaging on Matrix
     </div>
     <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 40px; line-height: 1.8;">
       MASTODON: @Captured99 &nbsp;·&nbsp; YOUTUBE: @DubbznWubbz99<br>
       ALL CLAIMS SOURCED · ALL RECEIPTS ARCHIVED
     </div>
-  </div>
-  <div class="hero-right">
-    <div class="stat-block">
-      <div class="stat-num">47</div>
-      <div class="stat-label">Coordinated Accounts Documented</div>
-    </div>
-    <div class="stat-block">
-      <div class="stat-num">12</div>
-      <div class="stat-label">Active Campaigns Tracked</div>
-    </div>
-    <div class="stat-block">
-      <div class="stat-num">3</div>
-      <div class="stat-label">Confirmed Silence Patterns</div>
-    </div>
-    <div class="stat-block">
-      <div class="stat-num">0</div>
-      <div class="stat-label">Unverified Claims Published</div>
-    </div>
-    <div class="stat-block" style="border-bottom: none;">
-      <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 1.8;">
-        Sources: Al Jazeera · Middle East Eye · Anadolu Agency · TRT World · +972 Magazine · The Intercept · CGTN · Press TV<br><br>
-        <span style="color: var(--accent);">⚑ Western-only sourcing flagged on every post</span>
-      </div>
+    <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 24px; line-height: 1.8;">
+      Sources: Al Jazeera · Middle East Eye · Anadolu Agency · TRT World · +972 Magazine · The Intercept · CGTN · Press TV<br><br>
+      <span style="color: var(--accent);">⚑ Western-only sourcing flagged on every post</span>
     </div>
   </div>
 </section>
@@ -871,83 +965,53 @@
 
 <!-- FEED -->
 <section class="section" id="feed" style="padding: 0;">
-  <div style="padding: 48px 40px 32px; border-bottom: 1px solid var(--border);">
+  <div style="padding: 48px 40px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
     <div class="section-header reveal" style="margin-bottom: 0;">
       <span class="section-num">// 02</span>
       <h2 class="section-title">DOCUMENTATION FEED</h2>
     </div>
+    <a href="feed-archive.html" class="btn-secondary" style="font-size: 10px;">All Entries →</a>
   </div>
   <div class="feed-grid">
     <div class="feed-main">
 
-      <div class="feed-item reveal">
-        <div class="feed-meta">
-          <span class="feed-tag tag-hasbara">Hasbara</span>
-          <span class="feed-tag tag-confirmed">Confirmed</span>
-          <span class="feed-date">Jun 4, 2026 · 14:32 UTC</span>
-        </div>
-        <div class="feed-title">Coordinated Comment Surge: "Human Shield" Narrative Deployed Across 6 Platforms Simultaneously</div>
-        <div class="feed-excerpt">Identical phrasing appearing within 4-minute window across Twitter/X, Facebook, Reddit, YouTube, Telegram, and TikTok. Account creation dates cluster 2021–2022. All accounts go silent 6 hours after initial burst.</div>
-        <div class="feed-sources">
-          <span class="source-pill">Al Jazeera</span>
-          <span class="source-pill">+972 Magazine</span>
-          <span class="source-pill">Middle East Eye</span>
-          <span class="source-pill">Archived: Wayback</span>
-        </div>
+      <div class="feed-filter-bar" id="feedFilterBar">
+        <button class="filter-pill active" data-filter="all">All Entries</button>
+        <button class="filter-pill" data-filter="breaking">Breaking</button>
+        <button class="filter-pill" data-filter="hasbara">Hasbara</button>
+        <button class="filter-pill" data-filter="disinfo">Disinfo</button>
+        <button class="filter-pill" data-filter="analysis">Analysis</button>
       </div>
 
-      <div class="feed-item reveal">
-        <div class="feed-meta">
-          <span class="feed-tag tag-disinfo">Disinfo</span>
-          <span class="feed-date">Jun 3, 2026 · 09:17 UTC</span>
-        </div>
-        <div class="feed-title">Zone Flooding in Action: Epstein Adjacent Story Buried Under Four Simultaneous Domestic News Cycles</div>
-        <div class="feed-excerpt">Pattern documented: major accountability story drops, then within 90 minutes four unrelated breaking stories appear across major outlets. Third time this month. Information velocity as a burial mechanism.</div>
-        <div class="feed-sources">
-          <span class="source-pill">The Intercept</span>
-          <span class="source-pill">TRT World</span>
-          <span class="source-pill">⚑ Western-sourced only</span>
-        </div>
-      </div>
+      <div id="breakingFeedStatus" style="padding: 16px 32px; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); border-bottom: 1px solid var(--border);">○ Pulling breaking entries from the live feed...</div>
 
-      <div class="feed-item reveal">
-        <div class="feed-meta">
-          <span class="feed-tag tag-analysis">Analysis</span>
-          <span class="feed-date">Jun 1, 2026 · 18:44 UTC</span>
-        </div>
-        <div class="feed-title">TACO Pattern Cycle 7: Maximum Escalation Rhetoric Followed by Quiet Reversal, Face-Saving Framing Applied</div>
-        <div class="feed-excerpt">Documented cycle: threat issued at maximum volume, then reversed quietly with rebranding. Media covers the threat, ignores the reversal. Called this pattern in February. The framing shift is the tell.</div>
-        <div class="feed-sources">
-          <span class="source-pill">Anadolu Agency</span>
-          <span class="source-pill">CGTN</span>
-          <span class="source-pill">Al Jazeera</span>
-        </div>
+      <div id="feedItems">
       </div>
 
       <div style="padding: 24px 32px; border-bottom: 1px solid var(--border);">
-        <a href="#" class="btn-secondary" style="display: inline-block;">Load More Entries →</a>
+        <a href="feed-archive.html" class="btn-secondary" style="display: inline-block;">Load More Entries →</a>
       </div>
     </div>
 
     <div class="feed-sidebar">
       <div class="sidebar-block">
         <div class="sidebar-title">// Active Patterns</div>
-        <div class="pattern-item">
+        <div class="pattern-item" data-pattern="hasbara">
           <span style="font-size: 11px;">Hasbara Ops</span>
           <div class="pattern-bar"><div class="pattern-fill" style="width: 78%;"></div></div>
           <span class="pattern-count">78%</span>
         </div>
-        <div class="pattern-item">
+        <div class="pattern-item" data-pattern="zoneflood">
           <span style="font-size: 11px;">Zone Flood</span>
           <div class="pattern-bar"><div class="pattern-fill" style="width: 54%;"></div></div>
           <span class="pattern-count">54%</span>
         </div>
-        <div class="pattern-item">
+        <div class="pattern-item" data-pattern="taco">
           <span style="font-size: 11px;">TACO Cycle</span>
           <div class="pattern-bar"><div class="pattern-fill" style="width: 91%;"></div></div>
           <span class="pattern-count">91%</span>
         </div>
-        <div class="pattern-item">
+        <div class="pattern-item" data-pattern="botsilence">
           <span style="font-size: 11px;">Bot Silence</span>
           <div class="pattern-bar"><div class="pattern-fill" style="width: 63%;"></div></div>
           <span class="pattern-count">63%</span>
@@ -973,6 +1037,8 @@
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <a href="https://mastodon.social/@Captured99" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">Mastodon @Captured99</a>
           <a href="https://youtube.com/@DubbznWubbz99" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">YouTube @DubbznWubbz99</a>
+          <a href="https://signal.me/#eu/J-Fk4fjil_-I2ZpKakms3PXeCLLDVShWDFFwWST6tiMz4IsBTJ1Edr-GyhCNEJ3Q" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">Signal: Message the Owner</a>
+          <a href="https://matrix.to/#/@eagergoose32:matrix.org" target="_blank" class="btn-secondary" style="display: block; text-align: center; font-size: 10px;">Matrix: @eagergoose32</a>
         </div>
       </div>
     </div>
@@ -984,7 +1050,7 @@
   <div class="chat-header">
     <div>
       <div class="section-num" style="margin-bottom: 8px;">// 03</div>
-      <h2 class="section-title" style="font-family: var(--display); font-size: 36px; letter-spacing: 0.04em;">THE ROOM</h2>
+      <h2 class="section-title" style="font-family: var(--display); font-size: 36px; letter-spacing: 0.04em;">ANONYMOUS CHAT</h2>
     </div>
     <div class="chat-live">
       <div class="live-dot"></div>
@@ -1021,16 +1087,12 @@
       </div>
     </div>
     <div class="chat-sidebar">
-      <div class="online-label">Online Now</div>
-      <div class="online-user"><div class="user-dot"></div><span>reader_7</span></div>
-      <div class="online-user"><div class="user-dot"></div><span>northkeep</span></div>
-      <div class="online-user"><div class="user-dot"></div><span>mzaatar</span></div>
-      <div class="online-user"><div class="user-dot" style="background: var(--muted);"></div><span>lurker_99</span></div>
-      <div class="online-user"><div class="user-dot" style="background: var(--muted);"></div><span>anon_44</span></div>
+      <div class="online-label">Active In Room (Last 15 Min)</div>
+      <div id="onlineUsers"><div class="online-user" style="border-bottom: none; color: var(--muted);">Watching for activity...</div></div>
 
       <div class="chat-matrix-note">
         Messages post anonymously to the live Matrix room. No account needed.<br><br>
-        For full access: <a href="https://matrix.to/#/!bxksvGChRQwBgnuARN:matrix.org?via=matrix.org" target="_blank">Join on Matrix →</a><br><br>
+        For full access: <a href="https://matrix.to/#/!wqmkZHnfQmDMgBKkDl:matrix.org?via=matrix.org" target="_blank">Join on Matrix →</a><br><br>
         Use <a href="https://element.io" target="_blank">Element.io</a> — encrypted, no corporate ownership.
       </div>
     </div>
@@ -1047,16 +1109,19 @@
     <p style="font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300;">
       See a coordinated account pattern? Catch a zone flood in progress? Document it and send it here. Include sources. Screenshots archived to Wayback. We verify before we publish.
     </p>
-    <div style="margin-top: 32px; font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 2;">
-      ENCRYPTED: Use <a href="https://signal.org" target="_blank" style="color: var(--accent); text-decoration: none;">Signal</a> or Matrix for sensitive submissions.<br>
+    <div style="margin-top: 32px; font-family: var(--mono); font-size: 13px; color: var(--muted); line-height: 2.1;">
+      ENCRYPTED: Message the owner via <a href="https://signal.me/#eu/J-Fk4fjil_-I2ZpKakms3PXeCLLDVShWDFFwWST6tiMz4IsBTJ1Edr-GyhCNEJ3Q" target="_blank" style="color: var(--accent); text-decoration: none;">Signal</a> or <a href="https://matrix.to/#/@eagergoose32:matrix.org" target="_blank" style="color: var(--accent); text-decoration: none;">Matrix</a> for sensitive submissions.<br>
       ANONYMOUS: No identifying info required.<br>
       VERIFIED: All tips cross-referenced before publication.
     </div>
   </div>
-  <div class="submit-form reveal">
+  <form class="submit-form reveal" id="tipForm" action="https://formsubmit.co/ajax/flockofego45@proton.me" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_subject" value="New Tip Submission — Definitely Not Propaganda">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
     <div class="form-field">
       <label class="form-label">Pattern Type</label>
-      <select class="form-select">
+      <select class="form-select" name="Pattern Type">
         <option value="">Select type...</option>
         <option>Coordinated Account Behavior</option>
         <option>Hasbara Operation</option>
@@ -1069,28 +1134,40 @@
     </div>
     <div class="form-field">
       <label class="form-label">Platform(s)</label>
-      <input type="text" class="form-input" placeholder="Twitter/X, Facebook, Reddit..." />
+      <input type="text" class="form-input" name="Platforms" placeholder="Twitter/X, Facebook, Reddit..." />
     </div>
     <div class="form-field">
       <label class="form-label">Description</label>
-      <textarea class="form-textarea" placeholder="What did you observe? Be specific. Include timestamps if possible."></textarea>
+      <textarea class="form-textarea" name="Description" placeholder="What did you observe? Be specific. Include timestamps if possible."></textarea>
     </div>
     <div class="form-field">
       <label class="form-label">Sources / Archive Links</label>
-      <textarea class="form-textarea" style="min-height: 80px;" placeholder="Wayback Machine links, Al Jazeera URLs, primary sources..."></textarea>
+      <textarea class="form-textarea" style="min-height: 80px;" name="Sources" placeholder="Wayback Machine links, Al Jazeera URLs, primary sources..."></textarea>
     </div>
-    <button class="btn-primary" style="align-self: flex-start;">Submit Documentation →</button>
-  </div>
+    <div class="form-field">
+      <label class="form-label">Screenshots / Images (optional, up to 4, 8MB total)</label>
+      <label class="form-file-drop" id="tipFileDrop" for="tipFiles">
+        Click to choose images, or drag &amp; drop here — JPG, PNG, WEBP, GIF
+        <input type="file" id="tipFiles" name="attachment" accept="image/png, image/jpeg, image/webp, image/gif" multiple>
+      </label>
+      <div class="form-file-list" id="tipFileList"></div>
+    </div>
+    <button type="submit" class="btn-primary" style="align-self: flex-start;">Submit Documentation →</button>
+    <div id="tipStatus" style="font-family: var(--mono); font-size: 10px; color: var(--muted); min-height: 14px;"></div>
+  </form>
 </section>
 
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">DNP<span>.</span></div>
   <ul class="footer-links">
-    <li><a href="#feed">Feed</a></li>
+    <li><a href="feed.html">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
     <li><a href="#methodology">Method</a></li>
-    <li><a href="#chat">Room</a></li>
-    <li><a href="#submit">Submit</a></li>
+    <li><a href="#chat">Chatroom</a></li>
     <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
     <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
   </ul>
@@ -1107,6 +1184,264 @@
   const WORKER_URL = 'https://dnf.definitelynotpropaganda.workers.dev';
   // ──────────────────────────────────────────────────────────────────────────
 
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks  = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
+
+  // ─── Documentation Feed: filter tabs + dynamic pattern percentages ────────
+  const FEED_PATTERNS = [
+    { id: 'hasbara',    keywords: ['hasbara', 'comment surge', 'coordinated', 'narrative deployed', 'platforms simultaneously'] },
+    { id: 'zoneflood',  keywords: ['zone flood', 'flooding', 'buried', 'burial', 'simultaneous', 'news cycles'] },
+    { id: 'taco',       keywords: ['taco', 'escalation', 'reversal', 'cycle', 'face-saving', 'rebrand'] },
+    { id: 'botsilence', keywords: ['bot', 'silence', 'silent', 'account creation', 'go silent'] },
+  ];
+
+  const feedFilterBar = document.getElementById('feedFilterBar');
+  const feedItemsWrap = document.getElementById('feedItems');
+
+  function feedItemText(item) {
+    const title   = item.querySelector('.feed-title')?.textContent || '';
+    const excerpt = item.querySelector('.feed-excerpt')?.textContent || '';
+    const tags    = [...item.querySelectorAll('.feed-tag')].map(t => t.textContent).join(' ');
+    return (title + ' ' + excerpt + ' ' + tags).toLowerCase();
+  }
+
+  function recalcPatternPercentages() {
+    if (!feedItemsWrap) return;
+    const visibleItems = [...feedItemsWrap.querySelectorAll('.feed-item')]
+      .filter(item => item.style.display !== 'none');
+    if (!visibleItems.length) return;
+
+    const haystacks = visibleItems.map(feedItemText);
+
+    FEED_PATTERNS.forEach(pattern => {
+      const matches = haystacks.filter(text => pattern.keywords.some(kw => text.includes(kw))).length;
+      const pct = Math.round((matches / haystacks.length) * 100);
+      const row = document.querySelector(`.pattern-item[data-pattern="${pattern.id}"]`);
+      if (!row) return;
+      const fill  = row.querySelector('.pattern-fill');
+      const count = row.querySelector('.pattern-count');
+      if (fill)  fill.style.width = pct + '%';
+      if (count) count.textContent = pct + '%';
+    });
+  }
+
+  if (feedFilterBar && feedItemsWrap) {
+    feedFilterBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-pill');
+      if (!btn) return;
+      feedFilterBar.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p === btn));
+
+      const filter = btn.dataset.filter;
+      feedItemsWrap.querySelectorAll('.feed-item').forEach(item => {
+        const show = filter === 'all' || item.dataset.category === filter;
+        item.style.display = show ? '' : 'none';
+      });
+      recalcPatternPercentages();
+    });
+
+    recalcPatternPercentages();
+  }
+
+  // ─── Breaking entries: pulled live from the same sources as the News Feed,
+  // clustered by topic, and ranked by how many distinct outlets are currently
+  // covering that topic (a proxy for "how big is this story right now"),
+  // with a preference bump for Israel/Middle East and US policy & corruption.
+  const BREAKING_SOURCES = [
+    { id: 'aljazeera', name: 'Al Jazeera',      flag: null,      rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+    { id: 'trt',       name: 'TRT World',       flag: null,      rss: 'https://www.trtworld.com/rss' },
+    { id: 'anadolu',   name: 'Anadolu Agency',  flag: null,      rss: 'https://www.aa.com.tr/en/rss/default?cat=guncel' },
+    { id: 'mee',       name: 'Middle East Eye', flag: null,      rss: 'https://www.middleeasteye.net/rss' },
+    { id: '972mag',    name: '+972 Magazine',   flag: null,      rss: 'https://www.972mag.com/feed/' },
+    { id: 'presstv',   name: 'Press TV',        flag: null,      rss: 'https://www.presstv.ir/rss.xml' },
+    { id: 'npr',       name: 'NPR',             flag: 'western', rss: 'https://feeds.npr.org/1001/rss.xml' },
+    { id: 'nytimes',   name: 'NY Times',        flag: 'western', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml' },
+    { id: 'washpost',  name: 'Washington Post', flag: 'western', rss: 'https://feeds.washingtonpost.com/rss/world' },
+    { id: 'cnn',       name: 'CNN',             flag: 'western', rss: 'https://rss.cnn.com/rss/cnn_topstories.rss' },
+  ];
+
+  // Higher weight = bumped up in the ranking. Per request: prefer Israel/
+  // Middle East coverage and US-policy stories that intersect with corruption.
+  const BREAKING_TOPICS = [
+    { id: 'israel',       label: 'Israel / Middle East',   tagClass: 'tag-israel',   weight: 5,
+      keywords: ['israel', 'israeli', 'gaza', 'palestin', 'idf', 'west bank', 'netanyahu',
+                 'hamas', 'rafah', 'lebanon', 'syria', 'middle east'] },
+    { id: 'iran',         label: 'Iran',                   tagClass: 'tag-iran',     weight: 4,
+      keywords: ['iran', 'iranian', 'tehran', 'ayatollah', 'khamenei', 'irgc', 'nuclear deal', 'persian gulf'] },
+    { id: 'uscorruption', label: 'US Policy & Corruption', tagClass: 'tag-uspolicy', weight: 5,
+      keywords: ['congress', 'senate', 'white house', 'lobbying', 'campaign finance', 'corrupt',
+                 'scandal', 'bribery', 'indictment', 'conflict of interest', 'kickback',
+                 'investigation reveals', 'ethics probe', 'federal probe'] },
+    { id: 'media',        label: 'Media & Propaganda',     tagClass: 'tag-disinfo',  weight: 2,
+      keywords: ['propaganda', 'disinformation', 'misinformation', 'narrative', 'hasbara',
+                 'coordinated', 'censorship', 'press freedom'] },
+    { id: 'ai',           label: 'AI',                     tagClass: 'tag-ai',       weight: 1,
+      keywords: ['artificial intelligence', 'ai-generated', 'deepfake', 'chatbot', 'generative ai',
+                 'openai', 'machine learning'] },
+  ];
+
+  const MAX_BREAKING_ITEMS   = 5;
+  const MIN_BREAKING_OUTLETS = 2; // require corroboration before calling something "breaking"
+
+  function breakingWorkerUrl(url) {
+    return `${WORKER_URL}?action=fetchFeed&url=${encodeURIComponent(url)}`;
+  }
+  function stripHtmlTags(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return (div.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+  function looksLikeFeedXml(text) {
+    const head = text.slice(0, 300).toLowerCase();
+    return head.includes('<?xml') || head.includes('<rss') || head.includes('<feed') || head.includes('<rdf');
+  }
+
+  async function fetchBreakingSource(src) {
+    const candidates = [
+      breakingWorkerUrl(src.rss),
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(src.rss)}`,
+    ];
+    for (const url of candidates) {
+      try {
+        const res = await fetch(url, { signal: AbortSignal.timeout(12000) });
+        if (!res.ok) continue;
+        const text = await res.text();
+        if (!looksLikeFeedXml(text)) continue;
+
+        const doc = new DOMParser().parseFromString(text, 'application/xml');
+        if (doc.querySelector('parsererror')) continue;
+
+        let nodes = Array.from(doc.querySelectorAll('item'));
+        let isAtom = false;
+        if (nodes.length === 0) { nodes = Array.from(doc.querySelectorAll('entry')); isAtom = true; }
+        if (nodes.length === 0) continue;
+
+        return nodes.slice(0, 20).map(node => {
+          const get = (tag) => node.querySelector(tag)?.textContent?.trim() || '';
+          let link = get('link');
+          if (isAtom) {
+            const linkEl = node.querySelector('link[href]');
+            link = linkEl ? linkEl.getAttribute('href') : link;
+          }
+          const description = isAtom
+            ? (get('summary') || get('content'))
+            : (get('description') || get('content\\:encoded'));
+          return {
+            sourceId: src.id,
+            sourceName: src.name,
+            sourceFlag: src.flag,
+            title: stripHtmlTags(get('title')),
+            excerpt: stripHtmlTags(description).slice(0, 200),
+            link,
+            pubDate: get('pubDate') || get('published') || get('updated') || get('date'),
+          };
+        });
+      } catch (err) { /* try the next candidate */ }
+    }
+    return [];
+  }
+
+  function matchedBreakingTopics(item) {
+    const haystack = (item.title + ' ' + item.excerpt).toLowerCase();
+    return BREAKING_TOPICS.filter(topic => topic.keywords.some(kw => haystack.includes(kw)));
+  }
+
+  function timeAgoLabel(dateStr) {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '';
+    const mins = Math.floor((Date.now() - date.getTime()) / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    return `${Math.floor(hours / 24)}d ago`;
+  }
+
+  async function loadBreakingNews() {
+    const status = document.getElementById('breakingFeedStatus');
+    if (!feedItemsWrap || !status) return;
+
+    try {
+      const results  = await Promise.all(BREAKING_SOURCES.map(fetchBreakingSource));
+      const allItems = results.flat().filter(item => item.title && item.link);
+
+      // Cluster by strongest-matching topic — "outlets reporting on it" becomes
+      // "distinct outlets currently running a story that matches this topic".
+      const clusters = new Map();
+      allItems.forEach(item => {
+        const topics = matchedBreakingTopics(item);
+        if (!topics.length) return;
+        const topic = topics.reduce((best, t) => (t.weight > best.weight ? t : best), topics[0]);
+        if (!clusters.has(topic.id)) clusters.set(topic.id, { topic, items: [] });
+        clusters.get(topic.id).items.push(item);
+      });
+
+      const ranked = [...clusters.values()]
+        .map(cluster => {
+          const outlets = [...new Map(cluster.items.map(i => [i.sourceId, i])).values()];
+          const lead = [...cluster.items].sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))[0];
+          return { topic: cluster.topic, outlets, lead, score: outlets.length * 3 + cluster.topic.weight };
+        })
+        .filter(c => c.lead)
+        .sort((a, b) => {
+          const aMulti = a.outlets.length >= MIN_BREAKING_OUTLETS ? 1 : 0;
+          const bMulti = b.outlets.length >= MIN_BREAKING_OUTLETS ? 1 : 0;
+          if (aMulti !== bMulti) return bMulti - aMulti;
+          return b.score - a.score;
+        })
+        .slice(0, MAX_BREAKING_ITEMS);
+
+      if (!ranked.length) {
+        status.textContent = '○ No breaking stories detected right now — check back soon.';
+        return;
+      }
+
+      status.remove();
+
+      ranked.forEach(({ topic, outlets, lead }) => {
+        const card = document.createElement('a');
+        card.className = 'feed-item';
+        card.dataset.category = 'breaking';
+        card.href = lead.link;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+        card.style.cssText = 'display: block; text-decoration: none; color: inherit;';
+
+        const sourcePills = outlets.map(o =>
+          `<span class="source-pill">${o.sourceFlag === 'western' ? '⚑ ' : ''}${o.sourceName}</span>`
+        ).join('');
+
+        card.innerHTML = `
+          <div class="feed-meta">
+            <span class="feed-tag tag-breaking">● Breaking</span>
+            <span class="feed-tag ${topic.tagClass}">${topic.label}</span>
+            <span class="feed-tag tag-confirmed">${outlets.length} ${outlets.length === 1 ? 'Outlet' : 'Outlets'} Reporting</span>
+            <span class="feed-date">${timeAgoLabel(lead.pubDate)}</span>
+          </div>
+          <div class="feed-title">${lead.title}</div>
+          <div class="feed-excerpt">${lead.excerpt}</div>
+          <div class="feed-sources">${sourcePills}</div>
+        `;
+        feedItemsWrap.prepend(card);
+      });
+
+      const activeFilter = feedFilterBar?.querySelector('.filter-pill.active')?.dataset.filter || 'all';
+      feedItemsWrap.querySelectorAll('.feed-item').forEach(item => {
+        item.style.display = (activeFilter === 'all' || item.dataset.category === activeFilter) ? '' : 'none';
+      });
+      recalcPatternPercentages();
+    } catch (err) {
+      console.error('Breaking news aggregation failed:', err);
+      status.textContent = '⚑ Breaking entries unavailable right now — showing documented entries only.';
+    }
+  }
+
+  loadBreakingNews();
+
   // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
@@ -1122,6 +1457,7 @@
   const chatHandle   = document.getElementById('chatHandle');
   const chatSend     = document.getElementById('chatSend');
   const chatStatus   = document.getElementById('chatStatus');
+  const onlineUsers  = document.getElementById('onlineUsers');
 
   // Rate limit: one message per 10s per session
   let lastSent = 0;
@@ -1129,6 +1465,79 @@
 
   const messageCache = new Set();
   let pollInterval = null;
+  let consecutivePollFailures = 0;
+
+  // The worker posts to Matrix under the BOT's account, not the typed handle —
+  // so a message we just showed optimistically (under our own handle) reappears
+  // moments later via polling under the bot's name. Track recently-sent text so
+  // we can recognize and skip that echo instead of showing it twice.
+  const recentlySent = []; // { text, time }
+  const RECENTLY_SENT_WINDOW_MS = 20000;
+
+  function rememberSent(text) {
+    recentlySent.push({ text, time: Date.now() });
+  }
+  function consumeIfRecentlySent(text) {
+    const cutoff = Date.now() - RECENTLY_SENT_WINDOW_MS;
+    while (recentlySent.length && recentlySent[0].time < cutoff) recentlySent.shift();
+    const idx = recentlySent.findIndex(r => r.text === text);
+    if (idx === -1) return false;
+    recentlySent.splice(idx, 1);
+    return true;
+  }
+
+  // ─── ACTIVE-IN-ROOM SIDEBAR ───────────────────────────────────────────────
+  // Driven entirely by real chat activity from the Matrix room — anyone who
+  // has posted in the last 15 minutes shows up, sorted most-recent first.
+  const ACTIVE_WINDOW_MS = 15 * 60 * 1000;
+  const RECENT_DOT_MS = 5 * 60 * 1000;
+  const activeSenders = new Map(); // senderName -> last origin_server_ts seen
+
+  // Optional: if you know your relay bot's Matrix username (check the room's
+  // member list), set it here so it's excluded from the list immediately.
+  // Otherwise it's auto-detected the first time one of your own messages
+  // round-trips back through polling, then remembered for next time.
+  const SITE_BOT_USERNAME = '';
+  let siteBotSender = SITE_BOT_USERNAME || localStorage.getItem('dnp_site_bot_sender') || null;
+
+  function markAsSiteBot(senderName) {
+    if (!senderName || siteBotSender === senderName) return;
+    siteBotSender = senderName;
+    try { localStorage.setItem('dnp_site_bot_sender', senderName); } catch (e) {}
+    activeSenders.delete(senderName);
+    renderOnlineUsers();
+  }
+
+  function recordActivity(senderName, ts) {
+    if (!senderName || senderName === siteBotSender || !ts) return;
+    const prev = activeSenders.get(senderName);
+    if (!prev || ts > prev) activeSenders.set(senderName, ts);
+    renderOnlineUsers();
+  }
+
+  function renderOnlineUsers() {
+    const cutoff = Date.now() - ACTIVE_WINDOW_MS;
+    const recentCutoff = Date.now() - RECENT_DOT_MS;
+    const entries = [...activeSenders.entries()]
+      .filter(([, ts]) => ts >= cutoff)
+      .sort((a, b) => b[1] - a[1]);
+
+    if (entries.length === 0) {
+      onlineUsers.innerHTML = '<div class="online-user" style="border-bottom: none; color: var(--muted);">No one’s chatted in the last 15 min — be the first.</div>';
+      return;
+    }
+
+    onlineUsers.innerHTML = entries.map(([name, ts]) => `
+      <div class="online-user">
+        <div class="user-dot" style="${ts >= recentCutoff ? '' : 'background: var(--muted);'}"></div>
+        <span>${name.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+      </div>
+    `).join('');
+  }
+
+  // Periodically re-render so people drop off the list once they go quiet,
+  // even if no new messages arrive to trigger a refresh.
+  setInterval(renderOnlineUsers, 60000);
 
   function setStatus(msg, color = 'var(--muted)') {
     chatStatus.style.color = color;
@@ -1157,7 +1566,7 @@
 
   async function loadInitialMessages() {
     try {
-      const res = await fetch(WORKER_URL + '?action=getMessages&limit=3', {
+      const res = await fetch(WORKER_URL + '?action=getMessages&limit=20', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -1182,6 +1591,7 @@
         const id = msg.event_id || msg.sender + msg.origin_server_ts;
         messageCache.add(id);
         addMessage(msg.sender_name || 'anon', msg.body, false);
+        recordActivity(msg.sender_name, msg.origin_server_ts);
       });
     } catch (e) {
       console.error('Error loading messages:', e);
@@ -1200,20 +1610,43 @@
         headers: { 'Content-Type': 'application/json' }
       });
 
-      if (!res.ok) return;
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        throw new Error(`HTTP ${res.status} ${body.slice(0, 200)}`);
+      }
 
       const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      consecutivePollFailures = 0;
+
       if (!data.messages || data.messages.length === 0) return;
 
       const msg = data.messages[0];
       const id = msg.event_id || msg.sender + msg.origin_server_ts;
 
-      if (!messageCache.has(id)) {
+      if (messageCache.has(id)) return;
+
+      // Echo of something we just posted ourselves (shown optimistically
+      // already, under our own handle) — cache it so it's never re-added,
+      // but don't display the bot-attributed duplicate.
+      if (consumeIfRecentlySent(msg.body)) {
         messageCache.add(id);
-        addMessage(msg.sender_name || 'anon', msg.body, false);
+        markAsSiteBot(msg.sender_name);
+        return;
       }
+
+      messageCache.add(id);
+      addMessage(msg.sender_name || 'anon', msg.body, false);
+      recordActivity(msg.sender_name, msg.origin_server_ts);
     } catch (e) {
       console.error('Poll error:', e);
+      consecutivePollFailures++;
+      // Surface it after a few consecutive misses so visitors aren't left
+      // staring at a chat that looks alive but has silently stopped updating.
+      if (consecutivePollFailures === 3) {
+        setStatus(`Live updates interrupted (${e.message}) — refresh to retry.`, 'var(--accent2)');
+      }
     }
   }
 
@@ -1235,7 +1668,10 @@
       return;
     }
 
-    // Optimistic UI — show immediately
+    // Optimistic UI — show immediately, and remember the body so the
+    // bot-attributed echo of this same message doesn't get shown again
+    rememberSent(text);
+    recordActivity(handle, Date.now());
     addMessage(handle, text, true);
     chatInput.value = '';
     chatSend.disabled = true;
@@ -1277,18 +1713,151 @@
     pollInterval = setInterval(pollNewMessages, 3000);
   })();
 
-  // Animate stats on load
-  document.querySelectorAll('.stat-num').forEach(el => {
-    const target = parseInt(el.textContent);
-    if (isNaN(target) || target === 0) return;
-    let current = 0;
-    const step = Math.ceil(target / 30);
-    const interval = setInterval(() => {
-      current = Math.min(current + step, target);
-      el.textContent = current;
-      if (current >= target) clearInterval(interval);
-    }, 40);
-  });
+  // Tip submission form
+  const tipForm   = document.getElementById('tipForm');
+  const tipStatus = document.getElementById('tipStatus');
+
+  if (tipForm) {
+    function setTipStatus(msg, color = 'var(--muted)') {
+      tipStatus.style.color = color;
+      tipStatus.textContent = msg;
+      if (msg) setTimeout(() => { tipStatus.textContent = ''; }, 5000);
+    }
+
+    // ─── Image attachments ───────────────────────────────────────────────
+    // FormSubmit accepts file uploads via a multipart form post — name the
+    // input "attachment" and it gets relayed as an email attachment.
+    const MAX_IMAGES = 4;
+    const MAX_TOTAL_BYTES = 8 * 1024 * 1024; // 8MB (FormSubmit caps at 10MB/email)
+    const tipFileInput = document.getElementById('tipFiles');
+    const tipFileDrop  = document.getElementById('tipFileDrop');
+    const tipFileList  = document.getElementById('tipFileList');
+    let selectedFiles = [];
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function syncFileInput() {
+      const dt = new DataTransfer();
+      selectedFiles.forEach(f => dt.items.add(f));
+      tipFileInput.files = dt.files;
+    }
+
+    function renderFileList() {
+      tipFileList.innerHTML = '';
+      selectedFiles.forEach((file, i) => {
+        const chip = document.createElement('span');
+        chip.className = 'file-chip';
+        chip.innerHTML = `${file.name} · ${formatBytes(file.size)} <button type="button" aria-label="Remove">✕</button>`;
+        chip.querySelector('button').addEventListener('click', () => {
+          selectedFiles.splice(i, 1);
+          syncFileInput();
+          renderFileList();
+        });
+        tipFileList.appendChild(chip);
+      });
+      if (selectedFiles.length) {
+        const total = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+        const totalEl = document.createElement('div');
+        totalEl.style.marginTop = '6px';
+        totalEl.textContent = `${selectedFiles.length}/${MAX_IMAGES} images · ${formatBytes(total)} total`;
+        tipFileList.appendChild(totalEl);
+      }
+    }
+
+    function addFiles(fileList) {
+      const incoming = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+      if (incoming.length !== fileList.length) {
+        setTipStatus('Only image files are accepted.', 'var(--accent2)');
+      }
+
+      for (const file of incoming) {
+        if (selectedFiles.length >= MAX_IMAGES) {
+          setTipStatus(`Max ${MAX_IMAGES} images.`, 'var(--accent2)');
+          break;
+        }
+        const alreadyAdded = selectedFiles.some(f => f.name === file.name && f.size === file.size);
+        if (alreadyAdded) continue;
+
+        const total = selectedFiles.reduce((sum, f) => sum + f.size, 0) + file.size;
+        if (total > MAX_TOTAL_BYTES) {
+          setTipStatus(`Images must total under ${formatBytes(MAX_TOTAL_BYTES)}.`, 'var(--accent2)');
+          break;
+        }
+        selectedFiles.push(file);
+      }
+      syncFileInput();
+      renderFileList();
+    }
+
+    if (tipFileInput && tipFileDrop) {
+      tipFileInput.addEventListener('change', () => addFiles(tipFileInput.files));
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        tipFileDrop.addEventListener(evt, (e) => {
+          e.preventDefault();
+          tipFileDrop.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(evt => {
+        tipFileDrop.addEventListener(evt, (e) => {
+          e.preventDefault();
+          tipFileDrop.classList.remove('dragover');
+        });
+      });
+      tipFileDrop.addEventListener('drop', (e) => {
+        if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files);
+      });
+    }
+    // ──────────────────────────────────────────────────────────────────────
+
+    tipForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const patternType = tipForm.querySelector('select[name="Pattern Type"]').value;
+      const description = tipForm.querySelector('textarea[name="Description"]').value.trim();
+
+      if (!patternType) {
+        setTipStatus('Select a pattern type.', 'var(--accent2)');
+        return;
+      }
+
+      if (!description) {
+        setTipStatus('Description required.', 'var(--accent2)');
+        return;
+      }
+
+      const submitBtn = tipForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      setTipStatus(selectedFiles.length ? 'Sending with images...' : 'Sending...');
+
+      try {
+        const res = await fetch(tipForm.action, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(tipForm)
+        });
+
+        if (res.ok) {
+          setTipStatus('✓ Submitted — thank you. We verify before we publish.', 'var(--accent)');
+          tipForm.reset();
+          selectedFiles = [];
+          syncFileInput();
+          renderFileList();
+        } else {
+          setTipStatus('Error submitting tip. Please try again.', 'var(--accent2)');
+        }
+      } catch (err) {
+        console.error('Submission error:', err);
+        setTipStatus('Network error. Please try again.', 'var(--accent2)');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
 </script>
 
 </body>

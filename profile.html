@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Account — Definitely Not Propaganda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #2a2a2a;
+      --accent: #c8f135;
+      --accent2: #ff3b3b;
+      --text: #e8e8e8;
+      --muted: #666;
+      --mono: 'Space Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+      --body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .logo {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .nav-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      background: var(--accent2);
+      color: #fff;
+      padding: 4px 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    /* HEADER */
+    .feed-header {
+      padding: 56px 40px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .feed-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    .feed-headline {
+      font-family: var(--display);
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+    }
+    .feed-headline span { color: var(--accent); }
+    .feed-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+      margin-top: 20px;
+      font-weight: 300;
+    }
+
+    /* SECTIONS */
+    .acct-wrap { padding: 48px 40px 80px; max-width: 640px; }
+    .acct-section {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .acct-section.danger { border-color: rgba(255, 59, 59, 0.4); }
+    .acct-section-title {
+      font-family: var(--display);
+      font-size: 24px;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .acct-section.danger .acct-section-title { color: var(--accent2); }
+    .acct-section-note {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-weight: 300;
+      max-width: 480px;
+    }
+
+    .auth-field { margin-bottom: 14px; }
+    .auth-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .auth-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 14px;
+      padding: 12px 14px;
+      transition: border-color 0.2s;
+    }
+    .auth-input:focus { outline: none; border-color: var(--accent); }
+    .auth-input[disabled] { color: var(--muted); cursor: not-allowed; }
+
+    .btn-primary {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 13px 24px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--accent2); }
+    .btn-danger {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 13px 24px;
+      background: transparent;
+      color: var(--accent2);
+      border: 1px solid var(--accent2);
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background: var(--accent2); color: #fff; }
+
+    .auth-status {
+      font-family: var(--mono);
+      font-size: 11px;
+      margin-top: 14px;
+      line-height: 1.6;
+      min-height: 1px;
+    }
+
+    .acct-meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+    .acct-meta .val { color: var(--text); }
+
+    .gate {
+      padding: 60px 40px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .gate a { color: var(--accent); }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-logo {
+      font-family: var(--display);
+      font-size: 40px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; flex-wrap: wrap; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 200;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        width: 100%;
+      }
+      .nav-toggle { display: block; }
+      .feed-header { padding: 40px 20px 24px; }
+      .acct-wrap { padding: 32px 20px 60px; }
+      .acct-section { padding: 24px; }
+      footer { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">DNP<span>.</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="feed.html">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html" class="active">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
+    <li><a href="index.html#chat">Chatroom</a></li>
+  </ul>
+  <div class="nav-badge">● Live</div>
+</nav>
+
+<!-- HEADER -->
+<div class="feed-header">
+  <div class="feed-eyebrow"><div class="live-dot"></div>Account Settings</div>
+  <h1 class="feed-headline">MY <span>ACCOUNT</span></h1>
+  <p class="feed-sub">
+    Update your username, change your password, or close your account. Sensitive changes
+    require you to confirm your current password first.
+  </p>
+</div>
+
+<!-- LOGGED OUT GATE -->
+<div class="gate" id="loggedOutGate" style="display: none;">
+  Sign in to manage your account — head to the <a href="blog.html">Blog</a> page and log in.
+</div>
+
+<!-- ACCOUNT PANELS -->
+<div class="acct-wrap" id="acctWrap" style="display: none;">
+
+  <div class="acct-meta">
+    Email: <span class="val" id="acctEmail"></span><br>
+    Status: <span class="val" id="acctStatus"></span>
+  </div>
+
+  <!-- USERNAME -->
+  <div class="acct-section">
+    <div class="acct-section-title">Username</div>
+    <div class="acct-section-note">
+      This is the display name shown next to anything you publish (e.g. blog posts).
+      It does not change your login email.
+    </div>
+    <form id="usernameForm">
+      <div class="auth-field">
+        <label class="auth-label">Display Name</label>
+        <input class="auth-input" type="text" id="usernameInput" maxlength="40" placeholder="e.g. northkeep">
+      </div>
+      <button type="submit" class="btn-primary">Save Username →</button>
+      <div class="auth-status" id="usernameStatus"></div>
+    </form>
+  </div>
+
+  <!-- PASSWORD -->
+  <div class="acct-section">
+    <div class="acct-section-title">Password</div>
+    <div class="acct-section-note">
+      Changing your password requires re-entering your current one — Firebase requires a
+      recent login for sensitive account changes.
+    </div>
+    <form id="passwordForm">
+      <div class="auth-field">
+        <label class="auth-label">Current Password</label>
+        <input class="auth-input" type="password" id="currentPassword" autocomplete="current-password" required>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">New Password</label>
+        <input class="auth-input" type="password" id="newPassword" autocomplete="new-password" minlength="6" required>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Confirm New Password</label>
+        <input class="auth-input" type="password" id="newPasswordConfirm" autocomplete="new-password" minlength="6" required>
+      </div>
+      <button type="submit" class="btn-primary">Update Password →</button>
+      <div class="auth-status" id="passwordStatus"></div>
+    </form>
+  </div>
+
+  <!-- DANGER ZONE -->
+  <div class="acct-section danger">
+    <div class="acct-section-title">Delete Account</div>
+    <div class="acct-section-note">
+      This permanently deletes your login — it cannot be undone. You'll need to re-enter
+      your password to confirm. (Note: this does not delete any blog posts published under
+      the editorial account; it only removes your personal login.)
+    </div>
+    <form id="deleteForm">
+      <div class="auth-field">
+        <label class="auth-label">Confirm Password</label>
+        <input class="auth-input" type="password" id="deletePassword" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-danger">Permanently Delete My Account →</button>
+      <div class="auth-status" id="deleteStatus"></div>
+    </form>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DNP<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="feed.html">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
+    <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="index.html#chat">Chatroom</a></li>
+    <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
+    <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
+  </ul>
+  <div class="footer-note">
+    Definitely Not Propaganda<br>
+    All claims sourced · Receipts archived<br>
+    <span style="color: var(--accent);">Free press or no press.</span>
+  </div>
+</footer>
+
+<!-- Firebase (compat SDK — same project as blog.html) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script>
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks  = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
+
+  // Same Firebase project config used on blog.html — this is not a secret,
+  // Firebase web config is meant to be public; access is enforced by rules.
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBtqqKJFZ7-D4TevJLYFSj7yFgRv-g6Lkg",
+    authDomain: "definitely-not-propaganda.firebaseapp.com",
+    projectId: "definitely-not-propaganda",
+    storageBucket: "definitely-not-propaganda.firebasestorage.app",
+    messagingSenderId: "580345033905",
+    appId: "1:580345033905:web:9bf7b7e2a1f15353611e90"
+  };
+
+  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+  const auth = firebase.auth();
+
+  const loggedOutGate = document.getElementById('loggedOutGate');
+  const acctWrap = document.getElementById('acctWrap');
+  const acctEmail = document.getElementById('acctEmail');
+  const acctStatus = document.getElementById('acctStatus');
+  const usernameForm = document.getElementById('usernameForm');
+  const usernameInput = document.getElementById('usernameInput');
+  const usernameStatus = document.getElementById('usernameStatus');
+  const passwordForm = document.getElementById('passwordForm');
+  const passwordStatus = document.getElementById('passwordStatus');
+  const deleteForm = document.getElementById('deleteForm');
+  const deleteStatus = document.getElementById('deleteStatus');
+
+  function setStatus(el, msg, color) {
+    el.textContent = msg;
+    el.style.color = color || 'var(--muted)';
+    if (msg) setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 8000);
+  }
+
+  async function reauthenticate(user, password) {
+    const cred = firebase.auth.EmailAuthProvider.credential(user.email, password);
+    await user.reauthenticateWithCredential(cred);
+  }
+
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      loggedOutGate.style.display = '';
+      acctWrap.style.display = 'none';
+      return;
+    }
+    loggedOutGate.style.display = 'none';
+    acctWrap.style.display = '';
+    acctEmail.textContent = user.email;
+    acctStatus.textContent = user.emailVerified ? 'Verified' : 'Not verified';
+    acctStatus.style.color = user.emailVerified ? 'var(--accent)' : 'var(--accent2)';
+    usernameInput.value = user.displayName || '';
+  });
+
+  // ─── UPDATE USERNAME ───────────────────────────────────────────────────────
+  usernameForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) return;
+    const name = usernameInput.value.trim();
+    try {
+      setStatus(usernameStatus, 'Saving...', 'var(--muted)');
+      await user.updateProfile({ displayName: name || null });
+      setStatus(usernameStatus, 'Username updated.', 'var(--accent)');
+    } catch (err) {
+      console.error('[Account] username update error:', err);
+      setStatus(usernameStatus, err.message || 'Could not update username.', 'var(--accent2)');
+    }
+  });
+
+  // ─── UPDATE PASSWORD ───────────────────────────────────────────────────────
+  passwordForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) return;
+    const current = document.getElementById('currentPassword').value;
+    const next = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('newPasswordConfirm').value;
+    if (next !== confirm) { setStatus(passwordStatus, 'New passwords do not match.', 'var(--accent2)'); return; }
+    if (next.length < 6) { setStatus(passwordStatus, 'New password must be at least 6 characters.', 'var(--accent2)'); return; }
+    try {
+      setStatus(passwordStatus, 'Verifying current password...', 'var(--muted)');
+      await reauthenticate(user, current);
+      setStatus(passwordStatus, 'Updating password...', 'var(--muted)');
+      await user.updatePassword(next);
+      passwordForm.reset();
+      setStatus(passwordStatus, 'Password updated.', 'var(--accent)');
+    } catch (err) {
+      console.error('[Account] password update error:', err);
+      const msg = err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'
+        ? 'Current password is incorrect.'
+        : (err.message || 'Could not update password.');
+      setStatus(passwordStatus, msg, 'var(--accent2)');
+    }
+  });
+
+  // ─── DELETE ACCOUNT ────────────────────────────────────────────────────────
+  deleteForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) return;
+    const password = document.getElementById('deletePassword').value;
+    if (!confirm('This will permanently delete your account. This cannot be undone. Continue?')) return;
+    try {
+      setStatus(deleteStatus, 'Verifying password...', 'var(--muted)');
+      await reauthenticate(user, password);
+      setStatus(deleteStatus, 'Deleting account...', 'var(--muted)');
+      await user.delete();
+      window.location.href = 'index.html';
+    } catch (err) {
+      console.error('[Account] delete error:', err);
+      const msg = err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'
+        ? 'Password is incorrect.'
+        : (err.message || 'Could not delete account.');
+      setStatus(deleteStatus, msg, 'var(--accent2)');
+    }
+  });
+</script>
+
+</body>
+</html>
