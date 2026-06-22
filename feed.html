@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>News Feed — Definitely Not Propaganda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #2a2a2a;
+      --accent: #c8f135;
+      --accent2: #ff3b3b;
+      --text: #e8e8e8;
+      --muted: #666;
+      --mono: 'Space Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+      --body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .logo {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .nav-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      background: var(--accent2);
+      color: #fff;
+      padding: 4px 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    /* HEADER */
+    .feed-header {
+      padding: 56px 40px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .feed-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    .feed-headline {
+      font-family: var(--display);
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+    }
+    .feed-headline span { color: var(--accent); }
+    .feed-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+      margin-top: 20px;
+      font-weight: 300;
+    }
+
+    /* FILTERS */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 24px 40px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .filter-pill {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-pill:hover { color: var(--text); border-color: var(--text); }
+    .filter-pill.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* GRID */
+    .feed-wrap { padding: 48px 40px 80px; }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .news-card {
+      background: var(--bg);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: background 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .news-card:hover { background: var(--surface); }
+
+    .news-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .news-source {
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 4px 10px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .flag-western {
+      font-family: var(--mono);
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+    }
+    .news-time {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .news-title {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .news-excerpt {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 300;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .news-link {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: auto;
+    }
+
+    .feed-status {
+      padding: 60px 40px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .feed-status.error { color: var(--accent2); }
+
+    .source-status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 16px 40px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      letter-spacing: 0.05em;
+    }
+    .source-status-bar span.ok { color: #4caf50; }
+    .source-status-bar span.fail { color: var(--accent2); }
+    .source-status-bar span.pending { color: var(--muted); }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-logo {
+      font-family: var(--display);
+      font-size: 40px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; flex-wrap: wrap; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 200;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        width: 100%;
+      }
+      .nav-toggle { display: block; }
+      .feed-header { padding: 40px 20px 24px; }
+      .filter-bar { padding: 16px 20px; }
+      .feed-wrap { padding: 32px 20px 60px; }
+      .source-status-bar { padding: 12px 20px; }
+      footer { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">DNP<span>.</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="feed.html" class="active">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
+    <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="index.html#chat">Chatroom</a></li>
+  </ul>
+  <div class="nav-badge">● Live</div>
+</nav>
+
+<!-- HEADER -->
+<div class="feed-header">
+  <div class="feed-eyebrow"><div class="live-dot"></div>Aggregated In Real Time</div>
+  <h1 class="feed-headline">LIVE <span>NEWS</span> FEED</h1>
+  <p class="feed-sub">
+    Pulled directly from non-Western and independent sources, prioritized over wire-service narratives — Al Jazeera, TRT World, Anadolu Agency, Middle East Eye, +972 Magazine, CGTN, and Press TV. US/Western legacy outlets (NPR, NY Times, Washington Post, CNN) are also included side-by-side and clearly flagged <span class="flag-western" style="display: inline-block; vertical-align: middle;">⚑ Western Media</span> so you can compare framing directly. Refreshed automatically — click through to read the original reporting.
+  </p>
+</div>
+
+<!-- SOURCE STATUS -->
+<div class="source-status-bar" id="sourceStatus"></div>
+
+<!-- FILTERS -->
+<div class="filter-bar" id="filterBar" style="padding-bottom: 12px;">
+  <span style="font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); display: flex; align-items: center; margin-right: 4px;">Source:</span>
+  <button class="filter-pill active" data-filter="all">All Sources</button>
+</div>
+
+<!-- GRID -->
+<div class="feed-wrap">
+  <div id="feedStatus" class="feed-status">Loading live feeds...</div>
+  <div class="news-grid" id="newsGrid"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DNP<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="feed.html">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="profile.html">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
+    <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="index.html#chat">Chatroom</a></li>
+    <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
+    <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
+  </ul>
+  <div class="footer-note">
+    Definitely Not Propaganda<br>
+    All claims sourced · Receipts archived<br>
+    <span style="color: var(--accent);">Free press or no press.</span>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks  = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
+
+  // ─── SOURCES ──────────────────────────────────────────────────────────────
+  // Each source can have multiple RSS URL fallbacks — tries them in order.
+  const SOURCES = [
+    { id: 'aljazeera',  name: 'Al Jazeera',       rss: [
+      'https://www.aljazeera.com/xml/rss/all.xml',
+      'https://www.aljazeera.com/feed/',
+      'https://aljazeera.com/feed/',
+    ]},
+    { id: 'trt',        name: 'TRT World',        rss: [
+      'https://www.trtworld.com/rss',
+      'https://www.trtworld.com/feed',
+      'https://trtworld.com/rss',
+    ]},
+    { id: 'anadolu',    name: 'Anadolu Agency',   rss: [
+      'https://www.aa.com.tr/en/rss/default?cat=guncel',
+      'https://www.aa.com.tr/en/feed.xml',
+      'https://aa.com.tr/en/rss',
+    ]},
+    { id: 'mee',        name: 'Middle East Eye',  rss: ['https://www.middleeasteye.net/rss'] },
+    { id: '972mag',     name: '+972 Magazine',    rss: ['https://www.972mag.com/feed/'] },
+    { id: 'cgtn',       name: 'CGTN',             rss: ['https://www.cgtn.com/subscribe/rss/section/world.xml'] },
+    { id: 'presstv',    name: 'Press TV',         rss: ['https://www.presstv.ir/rss.xml'] },
+
+    // US / Western wire & legacy outlets — included for comparison so readers
+    // can see how the same stories get framed on each side. Flagged below so
+    // they're never mistaken for the independent/alternative sources above.
+    { id: 'npr',        name: 'NPR',              flag: 'western', rss: ['https://feeds.npr.org/1001/rss.xml'] },
+    { id: 'nytimes',    name: 'NY Times',         flag: 'western', rss: ['https://rss.nytimes.com/services/xml/rss/nyt/World.xml'] },
+    { id: 'washpost',   name: 'Washington Post',  flag: 'western', rss: ['https://feeds.washingtonpost.com/rss/world'] },
+    { id: 'cnn',        name: 'CNN',              flag: 'western', rss: ['https://rss.cnn.com/rss/cnn_topstories.rss', 'http://rss.cnn.com/rss/cnn_topstories.rss'] },
+  ];
+
+  // Our own Cloudflare Worker fetches feeds server-side — no CORS, no
+  // dependency on flaky free third-party proxy uptime. Tried first; if it's
+  // unreachable (e.g. not yet deployed with the fetchFeed action) we fall
+  // back to the old proxy chain below so the page still works either way.
+  const WORKER_URL = 'https://dnf.definitelynotpropaganda.workers.dev';
+  function workerFeedUrl(url) {
+    return `${WORKER_URL}?action=fetchFeed&url=${encodeURIComponent(url)}`;
+  }
+
+  // Direct fetch tried first (some feeds allow CORS); proxies as fallback.
+  // r.jina.ai is a "reader" proxy that often gets through bot-blocking that
+  // standard CORS proxies can't — useful for sites like Al Jazeera/TRT that
+  // actively block scraper traffic.
+  const PROXIES = [
+    url => url, // direct — works if the feed sends CORS headers
+    url => `https://r.jina.ai/${url}`,
+    url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    url => `https://thingproxy.freeboard.io/fetch/${url}`,
+    url => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`,
+  ];
+  const REFRESH_MS = 5 * 60 * 1000; // 5 minutes
+
+  // Priority topics — matching items are boosted to the top of the feed.
+  const PRIORITY_TOPICS = [
+    {
+      id: 'israel',
+      label: 'Israel / Palestine',
+      keywords: ['israel', 'israeli', 'gaza', 'palestin', 'idf', 'west bank',
+                 'netanyahu', 'hamas', 'zionis', 'rafah', 'knesset', 'occupied territor', 'settler'],
+    },
+    {
+      id: 'us',
+      label: 'US News',
+      keywords: ['united states', 'u.s.', ' us ', 'washington', 'white house', 'congress',
+                 'senate', 'pentagon', 'biden', 'trump', 'american ', 'capitol hill', 'supreme court'],
+    },
+    {
+      id: 'corruption',
+      label: 'Corruption',
+      keywords: ['corrupt', 'scandal', 'bribery', 'bribe', 'fraud', 'embezzl', 'indict',
+                 'kickback', 'conflict of interest', 'lobby', 'cover-up', 'cover up', 'investigation reveals'],
+    },
+    {
+      id: 'media',
+      label: 'Media & Propaganda',
+      keywords: ['propaganda', 'disinformation', 'misinformation', 'narrative', 'hasbara',
+                 'astroturf', 'coordinated inauthentic', 'talking points', 'state media',
+                 'media bias', 'press freedom', 'censorship', 'fact-check', 'bot network'],
+    },
+    {
+      id: 'china',
+      label: 'China / Asia-Pacific',
+      keywords: ['china', 'chinese', 'beijing', 'taiwan', 'hong kong', 'xinjiang',
+                 'uyghur', 'ccp', 'xi jinping', 'south china sea', 'asia-pacific'],
+    },
+    {
+      id: 'iran',
+      label: 'Iran',
+      keywords: ['iran', 'iranian', 'tehran', 'ayatollah', 'khamenei', 'irgc',
+                 'nuclear deal', 'sanctions on iran', 'persian gulf', 'revolutionary guard'],
+    },
+  ];
+
+  function matchedTopics(item) {
+    const haystack = (item.title + ' ' + item.excerpt).toLowerCase();
+    return PRIORITY_TOPICS.filter(topic =>
+      topic.keywords.some(kw => haystack.includes(kw))
+    );
+  }
+
+  const newsGrid     = document.getElementById('newsGrid');
+  const feedStatus   = document.getElementById('feedStatus');
+  const filterBar    = document.getElementById('filterBar');
+  const sourceStatus = document.getElementById('sourceStatus');
+
+  let allItems = [];
+  let activeSourceFilter = 'all';
+  let activeTopicFilter = 'all';
+  const sourceState = {};
+
+  // Topic filter pills (priority row)
+  const topicBar = document.createElement('div');
+  topicBar.className = 'filter-bar';
+  topicBar.id = 'topicBar';
+  topicBar.style.borderBottom = '1px solid var(--border)';
+  topicBar.style.paddingTop = '4px';
+  filterBar.insertAdjacentElement('afterend', topicBar);
+
+  const topicLabel = document.createElement('span');
+  topicLabel.style.cssText = 'font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); display: flex; align-items: center; margin-right: 4px;';
+  topicLabel.textContent = 'Priority:';
+  topicBar.appendChild(topicLabel);
+
+  const allTopicsPill = document.createElement('button');
+  allTopicsPill.className = 'filter-pill active';
+  allTopicsPill.dataset.topic = 'all';
+  allTopicsPill.textContent = '★ All Topics';
+  topicBar.appendChild(allTopicsPill);
+
+  PRIORITY_TOPICS.forEach(topic => {
+    const pill = document.createElement('button');
+    pill.className = 'filter-pill';
+    pill.dataset.topic = topic.id;
+    pill.textContent = `★ ${topic.label}`;
+    pill.style.borderColor = 'var(--accent2)';
+    pill.style.color = 'var(--accent2)';
+    topicBar.appendChild(pill);
+  });
+
+  topicBar.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-pill');
+    if (!btn) return;
+    activeTopicFilter = btn.dataset.topic;
+    topicBar.querySelectorAll('.filter-pill').forEach(p => {
+      const isActive = p === btn;
+      p.classList.toggle('active', isActive);
+      if (p.dataset.topic !== 'all') {
+        p.style.background = isActive ? 'var(--accent2)' : 'transparent';
+        p.style.color = isActive ? '#fff' : 'var(--accent2)';
+      }
+    });
+    renderItems();
+  });
+
+  // Build source filter pills
+  SOURCES.forEach(src => {
+    const pill = document.createElement('button');
+    pill.className = 'filter-pill';
+    pill.dataset.filter = src.id;
+    pill.textContent = src.name;
+    filterBar.appendChild(pill);
+
+    const statusEl = document.createElement('span');
+    statusEl.className = 'pending';
+    statusEl.textContent = `○ ${src.name}: loading...`;
+    statusEl.id = `status-${src.id}`;
+    sourceStatus.appendChild(statusEl);
+    sourceState[src.id] = statusEl;
+  });
+
+  filterBar.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-pill');
+    if (!btn) return;
+    activeSourceFilter = btn.dataset.filter;
+    filterBar.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p === btn));
+    renderItems();
+  });
+
+  function timeAgo(dateStr) {
+    const date = new Date(dateStr);
+    const diffMs = Date.now() - date.getTime();
+    const mins = Math.floor(diffMs / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  }
+
+  function stripHtml(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html || '';
+    return (div.textContent || div.innerText || '').trim();
+  }
+
+  function renderItems() {
+    let filtered = activeSourceFilter === 'all'
+      ? allItems
+      : allItems.filter(item => item.sourceId === activeSourceFilter);
+
+    // Annotate with matched priority topics
+    filtered = filtered.map(item => ({ ...item, _topics: matchedTopics(item) }));
+
+    if (activeTopicFilter !== 'all') {
+      filtered = filtered.filter(item => item._topics.some(t => t.id === activeTopicFilter));
+    }
+
+    if (filtered.length === 0) {
+      newsGrid.innerHTML = '';
+      feedStatus.style.display = 'block';
+      feedStatus.textContent = allItems.length === 0
+        ? 'No live items loaded yet — sources may be slow to respond.'
+        : 'No items match the current filters yet.';
+      return;
+    }
+
+    feedStatus.style.display = 'none';
+    newsGrid.innerHTML = '';
+
+    filtered
+      .sort((a, b) => {
+        // Priority items (more topic matches) bubble to the top, then by recency
+        const scoreDiff = b._topics.length - a._topics.length;
+        if (scoreDiff !== 0) return scoreDiff;
+        return new Date(b.pubDate) - new Date(a.pubDate);
+      })
+      .slice(0, 60)
+      .forEach(item => {
+        const card = document.createElement('a');
+        card.className = 'news-card';
+        card.href = item.link;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+        if (item._topics.length > 0) {
+          card.style.borderLeft = '2px solid var(--accent2)';
+        }
+
+        const topicTags = item._topics.map(t =>
+          `<span style="font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 6px; border: 1px solid var(--accent2); color: var(--accent2);">★ ${t.label}</span>`
+        ).join(' ');
+
+        card.innerHTML = `
+          <div class="news-meta">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span class="news-source">${item.sourceName}</span>
+              ${item.sourceFlag === 'western' ? '<span class="flag-western">⚑ Western Media</span>' : ''}
+            </div>
+            <span class="news-time">${timeAgo(item.pubDate)}</span>
+          </div>
+          <div class="news-title">${item.title}</div>
+          ${topicTags ? `<div style="display: flex; flex-wrap: wrap; gap: 6px;">${topicTags}</div>` : ''}
+          <div class="news-excerpt">${item.excerpt}</div>
+          <div class="news-link">Read full story →</div>
+        `;
+        newsGrid.appendChild(card);
+      });
+  }
+
+  function parseRssXml(xmlText, src) {
+    const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+    if (doc.querySelector('parsererror')) throw new Error('XML parse error');
+
+    // Support both RSS (<item>) and Atom (<entry>) feeds
+    let nodes = Array.from(doc.querySelectorAll('item'));
+    let isAtom = false;
+    if (nodes.length === 0) {
+      nodes = Array.from(doc.querySelectorAll('entry'));
+      isAtom = true;
+    }
+    if (nodes.length === 0) throw new Error('No items in feed');
+
+    return nodes.slice(0, 15).map(node => {
+      const get = (tag) => node.querySelector(tag)?.textContent?.trim() || '';
+
+      let link = get('link');
+      if (isAtom) {
+        const linkEl = node.querySelector('link[href]');
+        link = linkEl ? linkEl.getAttribute('href') : link;
+      }
+
+      const description = isAtom
+        ? (get('summary') || get('content'))
+        : (get('description') || get('content\\:encoded'));
+
+      const pubDate = get('pubDate') || get('published') || get('updated') || get('date');
+
+      return {
+        sourceId: src.id,
+        sourceName: src.name,
+        sourceFlag: src.flag || null,
+        title: stripHtml(get('title')),
+        excerpt: stripHtml(description).slice(0, 220),
+        link,
+        pubDate,
+      };
+    });
+  }
+
+  // r.jina.ai (and similar "reader" services) return HTTP 200 with readable
+  // text/markdown instead of the actual feed XML for some sites — that looks
+  // like a success but fails to parse. Reject anything that doesn't actually
+  // look like an RSS/Atom/XML document so the chain keeps trying.
+  function looksLikeXml(text) {
+    const head = text.slice(0, 300).toLowerCase();
+    return head.includes('<?xml') || head.includes('<rss') || head.includes('<feed') || head.includes('<rdf');
+  }
+
+  async function fetchViaProxies(rssUrls, sourceName) {
+    // rssUrls can be a string or array — try each one with each proxy
+    const urlsToTry = Array.isArray(rssUrls) ? rssUrls : [rssUrls];
+    let lastError;
+
+    for (const rssUrl of urlsToTry) {
+      // Try our Worker proxy first — server-side fetch, no CORS, cached at
+      // the edge, and under our control (unlike third-party proxies).
+      const workerUrl = workerFeedUrl(rssUrl);
+      const workerLabel = `[${sourceName}] worker → ${rssUrl.slice(0, 70)}`;
+      try {
+        const res = await fetch(workerUrl);
+        if (!res.ok) {
+          console.warn(`${workerLabel} → HTTP ${res.status}`);
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const text = await res.text();
+        if (!text || text.length < 50 || text.trim().startsWith('{"error"')) {
+          console.warn(`${workerLabel} → empty/error response`);
+          throw new Error('Empty response');
+        }
+        if (!looksLikeXml(text)) {
+          console.warn(`${workerLabel} → response doesn't look like XML`);
+          throw new Error('Non-XML response');
+        }
+        console.log(`${workerLabel} → OK (${text.length} chars)`);
+        return text;
+      } catch (err) {
+        console.warn(`${workerLabel} → ${err.message}`);
+        lastError = err;
+      }
+
+      for (const buildUrl of PROXIES) {
+        const proxyUrl = buildUrl(rssUrl);
+        const label = `[${sourceName}] ${proxyUrl.slice(0, 80)}`;
+        try {
+          const res = await fetch(proxyUrl);
+          if (!res.ok) {
+            console.warn(`${label} → HTTP ${res.status}`);
+            throw new Error(`HTTP ${res.status}`);
+          }
+
+          // rss2json returns JSON; the others return raw XML/text
+          if (proxyUrl.includes('rss2json.com')) {
+            const data = await res.json();
+            if (data.status !== 'ok' || !Array.isArray(data.items)) {
+              console.warn(`${label} → ${data.message || 'feed unavailable'}`);
+              throw new Error(data.message || 'Feed unavailable');
+            }
+            console.log(`${label} → OK (${data.items.length} items via rss2json)`);
+            return data.items.slice(0, 15).map(item => ({
+              title: item.title,
+              description: item.description || item.content,
+              link: item.link,
+              pubDate: item.pubDate,
+            }));
+          }
+
+          const text = await res.text();
+          if (!text || text.length < 50) {
+            console.warn(`${label} → empty/short response (${text.length} chars)`);
+            throw new Error('Empty response');
+          }
+          if (!looksLikeXml(text)) {
+            console.warn(`${label} → response doesn't look like XML`);
+            throw new Error('Non-XML response');
+          }
+          console.log(`${label} → OK (${text.length} chars)`);
+          return text;
+        } catch (err) {
+          console.warn(`${label} → ${err.message}`);
+          lastError = err;
+        }
+      }
+    }
+    throw lastError || new Error('All proxies and URLs failed');
+  }
+
+  async function loadSource(src) {
+    try {
+      const result = await fetchViaProxies(src.rss, src.name);
+
+      let items;
+      if (typeof result === 'string') {
+        items = parseRssXml(result, src);
+      } else {
+        // Already-normalized items from rss2json fallback
+        items = result.map(item => ({
+          sourceId: src.id,
+          sourceName: src.name,
+          sourceFlag: src.flag || null,
+          title: stripHtml(item.title),
+          excerpt: stripHtml(item.description).slice(0, 220),
+          link: item.link,
+          pubDate: item.pubDate,
+        }));
+      }
+
+      if (!items.length) throw new Error('No items returned');
+
+      allItems = allItems.concat(items);
+      sourceState[src.id].className = 'ok';
+      sourceState[src.id].textContent = `✓ ${src.name}: ${items.length} items`;
+    } catch (err) {
+      sourceState[src.id].className = 'fail';
+      sourceState[src.id].textContent = `⚑ ${src.name}: unavailable`;
+      console.error(`Feed error (${src.name}):`, err);
+    }
+
+    renderItems();
+  }
+
+  async function loadAllSources() {
+    allItems = [];
+    feedStatus.style.display = 'block';
+    feedStatus.textContent = 'Loading live feeds...';
+    feedStatus.classList.remove('error');
+
+    SOURCES.forEach(src => {
+      sourceState[src.id].className = 'pending';
+      sourceState[src.id].textContent = `○ ${src.name}: loading...`;
+    });
+
+    await Promise.all(SOURCES.map(loadSource));
+
+    if (allItems.length === 0) {
+      feedStatus.style.display = 'block';
+      feedStatus.classList.add('error');
+      feedStatus.textContent = 'Unable to load live feeds right now. Sources may be rate-limited — try refreshing in a moment.';
+    }
+  }
+
+  loadAllSources();
+  setInterval(loadAllSources, REFRESH_MS);
+</script>
+
+</body>
+</html>
