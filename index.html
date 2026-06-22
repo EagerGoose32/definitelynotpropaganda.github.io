@@ -1061,7 +1061,7 @@
   ];
 
   const MAX_BREAKING_ITEMS   = 5;
-  const MIN_BREAKING_OUTLETS = 2; // require corroboration before calling something "breaking"
+  const MIN_BREAKING_OUTLETS = 1;
 
   function breakingWorkerUrl(url) {
     return `${WORKER_URL}?action=fetchFeed&url=${encodeURIComponent(url)}`;
