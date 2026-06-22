@@ -481,6 +481,30 @@
       margin-top: 8px;
     }
 
+    /* SUBSCRIBE */
+    .subscribe-btn {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 10px 18px;
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s, color 0.2s;
+    }
+    .subscribe-btn:hover { background: var(--accent); color: #000; }
+    .subscribe-btn.subscribed {
+      background: var(--accent);
+      color: #000;
+    }
+    .subscribe-btn.subscribed:hover {
+      background: transparent;
+      color: var(--accent);
+    }
+
     /* SEARCH */
     .search-bar {
       padding: 16px 40px;
@@ -617,6 +641,7 @@
       <div id="sessionRole"></div>
     </div>
     <div class="session-actions">
+      <button class="subscribe-btn" id="subscribeBtn" style="display: none;">Subscribe to Posts</button>
       <button class="btn-ghost" id="resendVerifyBtn" style="display: none;">Resend Verification Email</button>
       <button class="btn-ghost" id="logoutBtn">Log Out</button>
     </div>
@@ -740,6 +765,7 @@
     const composerWrap = document.getElementById('composerWrap');
     const postForm = document.getElementById('postForm');
     const postStatus = document.getElementById('postStatus');
+    const subscribeBtn = document.getElementById('subscribeBtn');
 
     function setStatus(el, msg, color) {
       el.textContent = msg;
@@ -813,20 +839,54 @@
       }
     });
 
+    // ─── SUBSCRIBE / UNSUBSCRIBE ────────────────────────────────────────────
+    let isSubscribed = false;
+    let subUnsub = null;
+
+    function updateSubscribeBtn() {
+      subscribeBtn.textContent = isSubscribed ? 'Subscribed ✓' : 'Subscribe to Posts';
+      subscribeBtn.classList.toggle('subscribed', isSubscribed);
+    }
+
+    function watchSubscription(user) {
+      if (subUnsub) subUnsub();
+      subUnsub = db.collection('subscribers').doc(user.uid).onSnapshot(doc => {
+        isSubscribed = doc.exists && doc.data().active;
+        updateSubscribeBtn();
+      });
+    }
+
+    subscribeBtn.addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (!user || !user.emailVerified) return;
+      try {
+        if (isSubscribed) {
+          await db.collection('subscribers').doc(user.uid).update({ active: false });
+        } else {
+          await db.collection('subscribers').doc(user.uid).set({
+            email: user.email,
+            displayName: user.displayName || user.email.split('@')[0],
+            active: true,
+            subscribedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          }, { merge: true });
+        }
+      } catch (err) {
+        console.error('[Blog] subscribe error:', err);
+        alert(err.message || 'Could not update subscription.');
+      }
+    });
+
     // ─── AUTH STATE ──────────────────────────────────────────────────────────
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
         authLoggedOut.style.display = '';
         authLoggedIn.style.display = 'none';
         composerWrap.style.display = 'none';
+        subscribeBtn.style.display = 'none';
+        if (subUnsub) { subUnsub(); subUnsub = null; }
         return;
       }
       await user.reload();
-      // Firestore security rules read `email_verified` from the ID token's
-      // claims, not the live account state — that token is cached at login
-      // and won't reflect a verification that happened mid-session. Force a
-      // refresh so a freshly-verified user can actually publish without
-      // having to manually log out and back in.
       if (user.emailVerified) await user.getIdToken(true);
       authLoggedOut.style.display = 'none';
       authLoggedIn.style.display = 'flex';
@@ -838,8 +898,11 @@
         sessionRole.innerHTML = '<span class="unverified">Email not verified — verify to unlock full access.</span>';
         resendVerifyBtn.style.display = '';
         composerWrap.style.display = 'none';
+        subscribeBtn.style.display = 'none';
       } else {
         resendVerifyBtn.style.display = 'none';
+        subscribeBtn.style.display = '';
+        watchSubscription(user);
         if (isAdmin) {
           sessionRole.innerHTML = '<span class="role">★ Editorial / Admin Account — verified</span>';
           composerWrap.style.display = '';
@@ -863,13 +926,34 @@
       if (!title || !body) { setStatus(postStatus, 'Title and body are required.', 'var(--accent2)'); return; }
       try {
         setStatus(postStatus, 'Publishing...', 'var(--muted)');
-        await db.collection('posts').add({
+        const postRef = await db.collection('posts').add({
           title,
           body,
           author: user.email,
           authorName: user.displayName || user.email.split('@')[0],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         });
+
+        const subs = await db.collection('subscribers').where('active', '==', true).get();
+        const batch = db.batch();
+        subs.forEach(doc => {
+          const sub = doc.data();
+          batch.set(db.collection('mail').doc(), {
+            to: sub.email,
+            message: {
+              subject: `New DNP Post: ${title}`,
+              html: `<p>Hey ${escapeHtml(sub.displayName || 'there')},</p>
+<p>A new post was published on <strong>Definitely Not Propaganda</strong>:</p>
+<h2>${escapeHtml(title)}</h2>
+<p>${escapeHtml(body).substring(0, 300)}${body.length > 300 ? '...' : ''}</p>
+<p><a href="https://definitelynotpropaganda.github.io/blog.html#post-${postRef.id}">Read the full post →</a></p>
+<hr>
+<p style="font-size:12px;color:#666;">You received this because you subscribed on the DNP blog. Log in and click "Subscribed ✓" to unsubscribe.</p>`
+            }
+          });
+        });
+        if (!subs.empty) await batch.commit();
+
         postForm.reset();
         setStatus(postStatus, 'Published.', 'var(--accent)');
       } catch (err) {
