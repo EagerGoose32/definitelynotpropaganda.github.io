@@ -474,209 +474,36 @@
 
     /* CHATROOM */
     .chat-section {
-      padding: 0;
+      padding: 80px 40px;
       border-bottom: 1px solid var(--border);
+      text-align: center;
     }
-
-    .chat-header {
-      padding: 32px 40px 24px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .chat-section .section-num { margin-bottom: 8px; }
+    .chat-section h2 {
+      font-family: var(--display);
+      font-size: 36px;
+      letter-spacing: 0.04em;
+      margin-bottom: 24px;
     }
-
-    .chat-live {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-    }
-    .live-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: blink 1.2s ease-in-out infinite;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.2; }
-    }
-
-    .chat-container {
-      display: grid;
-      grid-template-columns: 1fr 280px;
-      height: 520px;
-    }
-
-    .chat-main {
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid var(--border);
-    }
-
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border) transparent;
-    }
-
-    .msg {
-      display: flex;
-      gap: 12px;
-      animation: fadeUp 0.3s ease;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .msg-avatar {
-      width: 32px; height: 32px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--accent);
-      flex-shrink: 0;
-      text-transform: uppercase;
-    }
-
-    .msg-body { flex: 1; }
-
-    .msg-header {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 4px;
-    }
-
-    .msg-name {
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    .msg-time {
-      font-family: var(--mono);
-      font-size: 9px;
-      color: var(--muted);
-    }
-
-    .msg-text {
-      font-size: 13px;
-      color: var(--text);
-      line-height: 1.6;
-      font-weight: 300;
-    }
-
-    .msg-text .highlight {
-      background: rgba(200, 241, 53, 0.1);
-      color: var(--accent);
-      padding: 0 4px;
-      font-family: var(--mono);
-      font-size: 12px;
-    }
-
-    .msg.system .msg-text {
-      color: var(--muted);
-      font-style: italic;
-      font-size: 12px;
-    }
-
-    .chat-input-area {
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .chat-input {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 14px;
-      font-family: var(--body);
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .chat-input:focus { border-color: var(--accent); }
-    .chat-input::placeholder { color: var(--muted); }
-
-    .chat-send {
-      font-family: var(--mono);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 10px 20px;
-      background: var(--accent);
-      color: #000;
-      border: none;
-      cursor: pointer;
-      font-weight: 700;
-      transition: opacity 0.2s;
-    }
-    .chat-send:hover { opacity: 0.85; }
-
-    .chat-sidebar {
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .online-label {
-      font-family: var(--mono);
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
-    .online-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 12px;
-    }
-    .online-user:last-child { border-bottom: none; }
-
-    .user-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #4caf50;
-      flex-shrink: 0;
-    }
-
-    .chat-matrix-note {
-      margin-top: 20px;
-      padding: 12px;
-      border: 1px solid var(--border);
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-    .chat-matrix-note a {
+    .chat-link {
+      font-family: var(--display);
+      font-size: clamp(36px, 6vw, 72px);
       color: var(--accent);
       text-decoration: none;
+      letter-spacing: 0.03em;
+      display: inline-block;
+      transition: transform 0.15s, text-shadow 0.15s;
+    }
+    .chat-link:hover {
+      transform: translate(-2px, -2px);
+      text-shadow: 4px 4px 0 var(--accent2);
+    }
+    .chat-sub {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 20px;
+      letter-spacing: 0.05em;
     }
 
     /* SUBMIT */
@@ -844,9 +671,7 @@
       .hero-left { padding: 40px 20px; }
       .method-grid { grid-template-columns: 1fr; }
       .feed-grid { grid-template-columns: 1fr; }
-      .chat-container { grid-template-columns: 1fr; }
-      .chat-sidebar { display: none; }
-      .submit-section { grid-template-columns: 1fr; gap: 40px; padding: 40px 20px; }
+.submit-section { grid-template-columns: 1fr; gap: 40px; padding: 40px 20px; }
       .section { padding: 48px 20px; }
       footer { padding: 32px 20px; }
     }
@@ -888,7 +713,7 @@
     <li><a href="submit-tip.html">Submit Tip</a></li>
     <li><a href="feed-archive.html">Feed Archive</a></li>
     <li><a href="#methodology">Method</a></li>
-    <li><a href="#chat">Chatroom</a></li>
+    <li><a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Chatroom</a></li>
   </ul>
   <div class="nav-badge">● Live</div>
 </nav>
@@ -907,7 +732,7 @@
     </p>
     <div class="hero-cta">
       <a href="#feed" class="btn-primary">View Documentation</a>
-      <a href="#chat" class="btn-secondary">Connect with Others</a>
+      <a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank" class="btn-secondary">Connect with Others</a>
     </div>
     <div style="font-family: var(--mono); font-size: 9px; color: var(--muted); margin-top: 20px; text-align: center;">
       Secure, anonymous messaging on Matrix
@@ -917,8 +742,8 @@
       ALL CLAIMS SOURCED · ALL RECEIPTS ARCHIVED
     </div>
     <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 24px; line-height: 1.8;">
-      Sources: Al Jazeera · Middle East Eye · Anadolu Agency · TRT World · +972 Magazine · The Intercept · CGTN · Press TV<br><br>
-      <span style="color: var(--accent);">⚑ Western-only sourcing flagged on every post</span>
+      Sources: NPR · AP News · Reuters · NY Times · Washington Post · CNN · ProPublica · The Intercept<br><br>
+      <span style="color: var(--accent);">US domestic news · All claims sourced</span>
     </div>
   </div>
 </section>
@@ -957,8 +782,8 @@
     </div>
     <div class="method-card reveal">
       <div class="method-icon">⊕</div>
-      <div class="method-title">Non-Western Priority</div>
-      <div class="method-desc">Al Jazeera, Anadolu, TRT World, Middle East Eye, CGTN confirmed before Western sources. Western-only sourcing flagged explicitly on every post.</div>
+      <div class="method-title">Multi-Source Verification</div>
+      <div class="method-desc">Cross-reference across NPR, AP, Reuters, ProPublica, and The Intercept. Single-source stories flagged explicitly. Corroboration required before publishing.</div>
     </div>
   </div>
 </section>
@@ -1021,14 +846,14 @@
       <div class="sidebar-block">
         <div class="sidebar-title">// Source Monitor</div>
         <div style="font-size: 12px; color: var(--muted); line-height: 2;">
-          <div style="color: #4caf50;">✓ Al Jazeera</div>
-          <div style="color: #4caf50;">✓ Anadolu Agency</div>
-          <div style="color: #4caf50;">✓ TRT World</div>
-          <div style="color: #4caf50;">✓ Middle East Eye</div>
-          <div style="color: #4caf50;">✓ +972 Magazine</div>
-          <div style="color: #4caf50;">✓ CGTN</div>
-          <div style="color: var(--accent2);">⚑ AP/Reuters (secondary)</div>
-          <div style="color: var(--accent2);">⚑ NYT/WaPo (flagged)</div>
+          <div style="color: #4caf50;">✓ NPR</div>
+          <div style="color: #4caf50;">✓ AP News</div>
+          <div style="color: #4caf50;">✓ Reuters</div>
+          <div style="color: #4caf50;">✓ ProPublica</div>
+          <div style="color: #4caf50;">✓ The Intercept</div>
+          <div style="color: #4caf50;">✓ NY Times</div>
+          <div style="color: #4caf50;">✓ Washington Post</div>
+          <div style="color: #4caf50;">✓ CNN</div>
         </div>
       </div>
 
@@ -1047,56 +872,10 @@
 
 <!-- CHATROOM -->
 <section class="chat-section" id="chat">
-  <div class="chat-header">
-    <div>
-      <div class="section-num" style="margin-bottom: 8px;">// 03</div>
-      <h2 class="section-title" style="font-family: var(--display); font-size: 36px; letter-spacing: 0.04em;">ANONYMOUS CHAT</h2>
-    </div>
-    <div class="chat-live">
-      <div class="live-dot"></div>
-      Open Channel
-    </div>
-  </div>
-  <div class="chat-container">
-    <div class="chat-main">
-      <div class="chat-messages" id="chatMessages">
-        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--muted); font-family: var(--mono); font-size: 12px;">
-          Loading messages...
-        </div>
-      </div>
-      <div class="chat-input-area" style="flex-direction: column; align-items: stretch; gap: 10px;">
-        <div style="display: flex; gap: 10px;">
-          <input
-            type="text"
-            class="chat-input"
-            id="chatHandle"
-            placeholder="handle (optional)"
-            maxlength="30"
-            style="max-width: 160px; flex-shrink: 0;"
-          />
-          <input
-            type="text"
-            class="chat-input"
-            id="chatInput"
-            placeholder="Message... (sources encouraged)"
-            maxlength="500"
-          />
-          <button class="chat-send" id="chatSend">Send</button>
-        </div>
-        <div id="chatStatus" style="font-family: var(--mono); font-size: 10px; color: var(--muted); min-height: 14px;"></div>
-      </div>
-    </div>
-    <div class="chat-sidebar">
-      <div class="online-label">Active In Room (Last 15 Min)</div>
-      <div id="onlineUsers"><div class="online-user" style="border-bottom: none; color: var(--muted);">Watching for activity...</div></div>
-
-      <div class="chat-matrix-note">
-        Messages post anonymously to the live Matrix room. No account needed.<br><br>
-        For full access: <a href="https://matrix.to/#/!wqmkZHnfQmDMgBKkDl:matrix.org?via=matrix.org" target="_blank">Join on Matrix →</a><br><br>
-        Use <a href="https://element.io" target="_blank">Element.io</a> — encrypted, no corporate ownership.
-      </div>
-    </div>
-  </div>
+  <div class="section-num">// 03</div>
+  <h2>ANONYMOUS CHAT</h2>
+  <a class="chat-link" href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">JOIN THE MATRIX ROOM →</a>
+  <p class="chat-sub">Encrypted · No corporate ownership · Use <a href="https://element.io" target="_blank" style="color: var(--accent); text-decoration: none;">Element.io</a> to connect</p>
 </section>
 
 <!-- SUBMIT -->
@@ -1142,7 +921,7 @@
     </div>
     <div class="form-field">
       <label class="form-label">Sources / Archive Links</label>
-      <textarea class="form-textarea" style="min-height: 80px;" name="Sources" placeholder="Wayback Machine links, Al Jazeera URLs, primary sources..."></textarea>
+      <textarea class="form-textarea" style="min-height: 80px;" name="Sources" placeholder="Wayback Machine links, news URLs, primary sources..."></textarea>
     </div>
     <div class="form-field">
       <label class="form-label">Screenshots / Images (optional, up to 4, 8MB total)</label>
@@ -1167,7 +946,7 @@
     <li><a href="submit-tip.html">Submit Tip</a></li>
     <li><a href="feed-archive.html">Feed Archive</a></li>
     <li><a href="#methodology">Method</a></li>
-    <li><a href="#chat">Chatroom</a></li>
+    <li><a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Chatroom</a></li>
     <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
     <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
   </ul>
@@ -1252,40 +1031,37 @@
   // covering that topic (a proxy for "how big is this story right now"),
   // with a preference bump for Israel/Middle East and US policy & corruption.
   const BREAKING_SOURCES = [
-    { id: 'aljazeera', name: 'Al Jazeera',      flag: null,      rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-    { id: 'trt',       name: 'TRT World',       flag: null,      rss: 'https://www.trtworld.com/rss' },
-    { id: 'anadolu',   name: 'Anadolu Agency',  flag: null,      rss: 'https://www.aa.com.tr/en/rss/default?cat=guncel' },
-    { id: 'mee',       name: 'Middle East Eye', flag: null,      rss: 'https://www.middleeasteye.net/rss' },
-    { id: '972mag',    name: '+972 Magazine',   flag: null,      rss: 'https://www.972mag.com/feed/' },
-    { id: 'presstv',   name: 'Press TV',        flag: null,      rss: 'https://www.presstv.ir/rss.xml' },
-    { id: 'npr',       name: 'NPR',             flag: 'western', rss: 'https://feeds.npr.org/1001/rss.xml' },
-    { id: 'nytimes',   name: 'NY Times',        flag: 'western', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml' },
-    { id: 'washpost',  name: 'Washington Post', flag: 'western', rss: 'https://feeds.washingtonpost.com/rss/world' },
-    { id: 'cnn',       name: 'CNN',             flag: 'western', rss: 'https://rss.cnn.com/rss/cnn_topstories.rss' },
+    { id: 'npr',       name: 'NPR',             flag: null, rss: 'https://feeds.npr.org/1001/rss.xml' },
+    { id: 'ap',        name: 'AP News',         flag: null, rss: 'https://rsshub.app/apnews/topics/apf-topnews' },
+    { id: 'reuters',   name: 'Reuters',         flag: null, rss: 'https://rsshub.app/reuters/world/us' },
+    { id: 'nytimes',   name: 'NY Times',        flag: null, rss: 'https://rss.nytimes.com/services/xml/rss/nyt/US.xml' },
+    { id: 'washpost',  name: 'Washington Post', flag: null, rss: 'https://feeds.washingtonpost.com/rss/national' },
+    { id: 'cnn',       name: 'CNN',             flag: null, rss: 'https://rss.cnn.com/rss/cnn_topstories.rss' },
+    { id: 'propublica',name: 'ProPublica',      flag: null, rss: 'https://feeds.propublica.org/propublica/main' },
+    { id: 'intercept', name: 'The Intercept',   flag: null, rss: 'https://theintercept.com/feed/?rss' },
   ];
 
-  // Higher weight = bumped up in the ranking. Per request: prefer Israel/
-  // Middle East coverage and US-policy stories that intersect with corruption.
   const BREAKING_TOPICS = [
-    { id: 'israel',       label: 'Israel / Middle East',   tagClass: 'tag-israel',   weight: 5,
-      keywords: ['israel', 'israeli', 'gaza', 'palestin', 'idf', 'west bank', 'netanyahu',
-                 'hamas', 'rafah', 'lebanon', 'syria', 'middle east'] },
-    { id: 'iran',         label: 'Iran',                   tagClass: 'tag-iran',     weight: 4,
-      keywords: ['iran', 'iranian', 'tehran', 'ayatollah', 'khamenei', 'irgc', 'nuclear deal', 'persian gulf'] },
     { id: 'uscorruption', label: 'US Policy & Corruption', tagClass: 'tag-uspolicy', weight: 5,
       keywords: ['congress', 'senate', 'white house', 'lobbying', 'campaign finance', 'corrupt',
                  'scandal', 'bribery', 'indictment', 'conflict of interest', 'kickback',
-                 'investigation reveals', 'ethics probe', 'federal probe'] },
+                 'investigation reveals', 'ethics probe', 'federal probe', 'executive order'] },
+    { id: 'justice',      label: 'Justice & Courts',       tagClass: 'tag-israel',   weight: 4,
+      keywords: ['supreme court', 'federal court', 'doj', 'fbi', 'attorney general', 'ruling',
+                 'prosecution', 'lawsuit', 'civil rights', 'constitutional', 'amendment'] },
+    { id: 'economy',      label: 'Economy & Labor',        tagClass: 'tag-iran',     weight: 3,
+      keywords: ['economy', 'inflation', 'recession', 'unemployment', 'wages', 'labor', 'strike',
+                 'housing', 'wall street', 'federal reserve', 'interest rate', 'debt ceiling'] },
     { id: 'media',        label: 'Media & Propaganda',     tagClass: 'tag-disinfo',  weight: 2,
-      keywords: ['propaganda', 'disinformation', 'misinformation', 'narrative', 'hasbara',
-                 'coordinated', 'censorship', 'press freedom'] },
-    { id: 'ai',           label: 'AI',                     tagClass: 'tag-ai',       weight: 1,
+      keywords: ['propaganda', 'disinformation', 'misinformation', 'narrative',
+                 'coordinated', 'censorship', 'press freedom', 'media bias'] },
+    { id: 'ai',           label: 'AI & Tech',              tagClass: 'tag-ai',       weight: 1,
       keywords: ['artificial intelligence', 'ai-generated', 'deepfake', 'chatbot', 'generative ai',
-                 'openai', 'machine learning'] },
+                 'openai', 'machine learning', 'surveillance', 'big tech', 'antitrust'] },
   ];
 
   const MAX_BREAKING_ITEMS   = 5;
-  const MIN_BREAKING_OUTLETS = 2; // require corroboration before calling something "breaking"
+  const MIN_BREAKING_OUTLETS = 1;
 
   function breakingWorkerUrl(url) {
     return `${WORKER_URL}?action=fetchFeed&url=${encodeURIComponent(url)}`;
@@ -1450,268 +1226,6 @@
     });
   }, { threshold: 0.1 });
   reveals.forEach(el => observer.observe(el));
-
-  // Chat elements
-  const chatMessages = document.getElementById('chatMessages');
-  const chatInput    = document.getElementById('chatInput');
-  const chatHandle   = document.getElementById('chatHandle');
-  const chatSend     = document.getElementById('chatSend');
-  const chatStatus   = document.getElementById('chatStatus');
-  const onlineUsers  = document.getElementById('onlineUsers');
-
-  // Rate limit: one message per 10s per session
-  let lastSent = 0;
-  const RATE_LIMIT_MS = 10000;
-
-  const messageCache = new Set();
-  let pollInterval = null;
-  let consecutivePollFailures = 0;
-
-  // The worker posts to Matrix under the BOT's account, not the typed handle —
-  // so a message we just showed optimistically (under our own handle) reappears
-  // moments later via polling under the bot's name. Track recently-sent text so
-  // we can recognize and skip that echo instead of showing it twice.
-  const recentlySent = []; // { text, time }
-  const RECENTLY_SENT_WINDOW_MS = 20000;
-
-  function rememberSent(text) {
-    recentlySent.push({ text, time: Date.now() });
-  }
-  function consumeIfRecentlySent(text) {
-    const cutoff = Date.now() - RECENTLY_SENT_WINDOW_MS;
-    while (recentlySent.length && recentlySent[0].time < cutoff) recentlySent.shift();
-    const idx = recentlySent.findIndex(r => r.text === text);
-    if (idx === -1) return false;
-    recentlySent.splice(idx, 1);
-    return true;
-  }
-
-  // ─── ACTIVE-IN-ROOM SIDEBAR ───────────────────────────────────────────────
-  // Driven entirely by real chat activity from the Matrix room — anyone who
-  // has posted in the last 15 minutes shows up, sorted most-recent first.
-  const ACTIVE_WINDOW_MS = 15 * 60 * 1000;
-  const RECENT_DOT_MS = 5 * 60 * 1000;
-  const activeSenders = new Map(); // senderName -> last origin_server_ts seen
-
-  // Optional: if you know your relay bot's Matrix username (check the room's
-  // member list), set it here so it's excluded from the list immediately.
-  // Otherwise it's auto-detected the first time one of your own messages
-  // round-trips back through polling, then remembered for next time.
-  const SITE_BOT_USERNAME = '';
-  let siteBotSender = SITE_BOT_USERNAME || localStorage.getItem('dnp_site_bot_sender') || null;
-
-  function markAsSiteBot(senderName) {
-    if (!senderName || siteBotSender === senderName) return;
-    siteBotSender = senderName;
-    try { localStorage.setItem('dnp_site_bot_sender', senderName); } catch (e) {}
-    activeSenders.delete(senderName);
-    renderOnlineUsers();
-  }
-
-  function recordActivity(senderName, ts) {
-    if (!senderName || senderName === siteBotSender || !ts) return;
-    const prev = activeSenders.get(senderName);
-    if (!prev || ts > prev) activeSenders.set(senderName, ts);
-    renderOnlineUsers();
-  }
-
-  function renderOnlineUsers() {
-    const cutoff = Date.now() - ACTIVE_WINDOW_MS;
-    const recentCutoff = Date.now() - RECENT_DOT_MS;
-    const entries = [...activeSenders.entries()]
-      .filter(([, ts]) => ts >= cutoff)
-      .sort((a, b) => b[1] - a[1]);
-
-    if (entries.length === 0) {
-      onlineUsers.innerHTML = '<div class="online-user" style="border-bottom: none; color: var(--muted);">No one’s chatted in the last 15 min — be the first.</div>';
-      return;
-    }
-
-    onlineUsers.innerHTML = entries.map(([name, ts]) => `
-      <div class="online-user">
-        <div class="user-dot" style="${ts >= recentCutoff ? '' : 'background: var(--muted);'}"></div>
-        <span>${name.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
-      </div>
-    `).join('');
-  }
-
-  // Periodically re-render so people drop off the list once they go quiet,
-  // even if no new messages arrive to trigger a refresh.
-  setInterval(renderOnlineUsers, 60000);
-
-  function setStatus(msg, color = 'var(--muted)') {
-    chatStatus.style.color = color;
-    chatStatus.textContent = msg;
-    if (msg) setTimeout(() => { chatStatus.textContent = ''; }, 4000);
-  }
-
-  function addMessage(name, text, isLocal = false) {
-    const initials = name.slice(0, 2).toUpperCase();
-    const escaped = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const msg = document.createElement('div');
-    msg.className = 'msg' + (isLocal ? ' local' : '');
-    msg.innerHTML = `
-      <div class="msg-avatar" style="${isLocal ? 'border-color: var(--accent);' : ''}">${initials}</div>
-      <div class="msg-body">
-        <div class="msg-header">
-          <span class="msg-name">${name}</span>
-          <span class="msg-time">just now</span>
-        </div>
-        <div class="msg-text">${escaped}</div>
-      </div>
-    `;
-    chatMessages.appendChild(msg);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  async function loadInitialMessages() {
-    try {
-      const res = await fetch(WORKER_URL + '?action=getMessages&limit=20', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const data = await res.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      if (!data.messages || data.messages.length === 0) {
-        if (chatMessages.children.length === 1) { // Still has loading message
-          chatMessages.innerHTML = '<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 12px;">No messages yet. Be the first to document.</div>';
-        }
-        return;
-      }
-
-      chatMessages.innerHTML = '';
-      data.messages.forEach(msg => {
-        const id = msg.event_id || msg.sender + msg.origin_server_ts;
-        messageCache.add(id);
-        addMessage(msg.sender_name || 'anon', msg.body, false);
-        recordActivity(msg.sender_name, msg.origin_server_ts);
-      });
-    } catch (e) {
-      console.error('Error loading messages:', e);
-      chatMessages.innerHTML = `<div style="padding: 20px; color: var(--muted); font-family: var(--mono); font-size: 11px; line-height: 1.6;">
-        Worker update needed.<br><br>
-        Your Worker needs to support message fetching. See <a href="https://github.com/EagerGoose32/definitelynotpropaganda.github.io/blob/main/WORKER.md" target="_blank" style="color: var(--accent); text-decoration: none;">WORKER.md</a> for setup.<br><br>
-        <span style="color: var(--accent2);">Status: ${e.message}</span>
-      </div>`;
-    }
-  }
-
-  async function pollNewMessages() {
-    try {
-      const res = await fetch(WORKER_URL + '?action=getMessages&limit=1', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (!res.ok) {
-        const body = await res.text().catch(() => '');
-        throw new Error(`HTTP ${res.status} ${body.slice(0, 200)}`);
-      }
-
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-
-      consecutivePollFailures = 0;
-
-      if (!data.messages || data.messages.length === 0) return;
-
-      const msg = data.messages[0];
-      const id = msg.event_id || msg.sender + msg.origin_server_ts;
-
-      if (messageCache.has(id)) return;
-
-      // Echo of something we just posted ourselves (shown optimistically
-      // already, under our own handle) — cache it so it's never re-added,
-      // but don't display the bot-attributed duplicate.
-      if (consumeIfRecentlySent(msg.body)) {
-        messageCache.add(id);
-        markAsSiteBot(msg.sender_name);
-        return;
-      }
-
-      messageCache.add(id);
-      addMessage(msg.sender_name || 'anon', msg.body, false);
-      recordActivity(msg.sender_name, msg.origin_server_ts);
-    } catch (e) {
-      console.error('Poll error:', e);
-      consecutivePollFailures++;
-      // Surface it after a few consecutive misses so visitors aren't left
-      // staring at a chat that looks alive but has silently stopped updating.
-      if (consecutivePollFailures === 3) {
-        setStatus(`Live updates interrupted (${e.message}) — refresh to retry.`, 'var(--accent2)');
-      }
-    }
-  }
-
-  async function sendMessage() {
-    const text   = chatInput.value.trim();
-    const handle = chatHandle.value.trim() || 'anon';
-
-    if (!text) return;
-
-    if (text.length < 2) {
-      setStatus('Message too short.', 'var(--accent2)');
-      return;
-    }
-
-    const now = Date.now();
-    if (now - lastSent < RATE_LIMIT_MS) {
-      const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSent)) / 1000);
-      setStatus(`Slow down — wait ${wait}s`, 'var(--accent2)');
-      return;
-    }
-
-    // Optimistic UI — show immediately, and remember the body so the
-    // bot-attributed echo of this same message doesn't get shown again
-    rememberSent(text);
-    recordActivity(handle, Date.now());
-    addMessage(handle, text, true);
-    chatInput.value = '';
-    chatSend.disabled = true;
-    setStatus('Sending...');
-
-    try {
-      const res = await fetch(WORKER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, handle })
-      });
-
-      if (res.ok) {
-        lastSent = Date.now();
-        setStatus('✓ Posted', 'var(--accent)');
-      } else {
-        const err = await res.json().catch(() => ({}));
-        setStatus(`Error: ${err.error || res.status}`, 'var(--accent2)');
-      }
-    } catch (e) {
-      setStatus('Network error', 'var(--accent2)');
-    } finally {
-      chatSend.disabled = false;
-    }
-  }
-
-  chatSend.addEventListener('click', sendMessage);
-  chatInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-
-  // Load initial messages and start polling for new ones
-  (async () => {
-    await loadInitialMessages();
-    // Poll for new messages every 3 seconds
-    pollInterval = setInterval(pollNewMessages, 3000);
-  })();
 
   // Tip submission form
   const tipForm   = document.getElementById('tipForm');
