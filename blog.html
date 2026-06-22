@@ -319,6 +319,39 @@
       box-shadow: 0 0 20px rgba(200, 241, 53, 0.15);
     }
 
+    .post-card.editing { border-color: var(--accent); }
+    .edit-title-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--display);
+      font-size: 32px;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      padding: 8px 10px;
+      margin-bottom: 14px;
+    }
+    .edit-title-input:focus { outline: none; border-color: var(--accent); }
+    .edit-body-textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 15px;
+      line-height: 1.8;
+      font-weight: 300;
+      padding: 10px;
+      min-height: 160px;
+      resize: vertical;
+    }
+    .edit-body-textarea:focus { outline: none; border-color: var(--accent); }
+    .post-actions button.edit-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .post-actions button.save-btn { color: var(--accent); border-color: var(--accent); }
+    .post-actions button.save-btn:hover { background: var(--accent); color: #000; }
+    .post-actions button.cancel-btn:hover { color: var(--text); border-color: var(--text); }
+
     .feed-status {
       padding: 60px 40px;
       text-align: center;
@@ -738,6 +771,67 @@
     }
     window.dnpDeletePost = deletePost;
 
+    function editPost(id) {
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL) return;
+      const card = document.getElementById('post-' + id);
+      if (!card || card.classList.contains('editing')) return;
+
+      const titleEl = card.querySelector('.post-title');
+      const bodyEl = card.querySelector('.post-body');
+      const actionsEl = card.querySelector('.post-actions');
+      const oldTitle = titleEl.textContent;
+      const oldBody = bodyEl.textContent;
+
+      card.classList.add('editing');
+      titleEl.outerHTML = `<input class="edit-title-input" id="edit-title-${id}" value="${escapeHtml(oldTitle)}" />`;
+      bodyEl.outerHTML = `<textarea class="edit-body-textarea" id="edit-body-${id}">${escapeHtml(oldBody)}</textarea>`;
+      actionsEl.innerHTML = `
+        <button class="save-btn" onclick="dnpSavePost('${id}')">Save</button>
+        <button class="cancel-btn" onclick="dnpCancelEdit('${id}', ${JSON.stringify(escapeHtml(oldTitle))}, ${JSON.stringify(escapeHtml(oldBody))})">Cancel</button>
+      `;
+    }
+    window.dnpEditPost = editPost;
+
+    async function savePost(id) {
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL) return;
+      const titleInput = document.getElementById('edit-title-' + id);
+      const bodyInput = document.getElementById('edit-body-' + id);
+      if (!titleInput || !bodyInput) return;
+
+      const title = titleInput.value.trim();
+      const body = bodyInput.value.trim();
+      if (!title || !body) return;
+
+      try {
+        await db.collection('posts').doc(id).update({ title, body });
+      } catch (err) {
+        console.error('[Blog] edit error:', err);
+        alert(err.message || 'Edit failed.');
+      }
+    }
+    window.dnpSavePost = savePost;
+
+    function cancelEdit(id, oldTitle, oldBody) {
+      const card = document.getElementById('post-' + id);
+      if (!card) return;
+      card.classList.remove('editing');
+      const titleInput = card.querySelector('.edit-title-input');
+      const bodyInput = card.querySelector('.edit-body-textarea');
+      if (titleInput) titleInput.outerHTML = `<h2 class="post-title">${oldTitle}</h2>`;
+      if (bodyInput) bodyInput.outerHTML = `<div class="post-body">${oldBody}</div>`;
+      const actionsEl = card.querySelector('.post-actions');
+      if (actionsEl) {
+        actionsEl.innerHTML = `
+          <button class="link-btn" onclick="dnpCopyLink('${id}', this)">Link</button>
+          <button class="edit-btn" onclick="dnpEditPost('${id}')">Edit</button>
+          <button onclick="dnpDeletePost('${id}')">Delete</button>
+        `;
+      }
+    }
+    window.dnpCancelEdit = cancelEdit;
+
     function copyPostLink(id, btn) {
       const url = location.origin + location.pathname + '#post-' + id;
       navigator.clipboard.writeText(url).then(() => {
@@ -801,6 +895,7 @@
           <div class="post-body">${escapeHtml(post.body || '')}</div>
           <div class="post-actions">
             <button class="link-btn" onclick="dnpCopyLink('${doc.id}', this)">Link</button>
+            ${isAdmin ? `<button class="edit-btn" onclick="dnpEditPost('${doc.id}')">Edit</button>` : ''}
             ${isAdmin ? `<button onclick="dnpDeletePost('${doc.id}')">Delete</button>` : ''}
           </div>
         `;
