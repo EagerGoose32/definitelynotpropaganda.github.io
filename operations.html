@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Operations Archive — Definitely Not Propaganda</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230a0a0a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='28' fill='%23e8e8e8'%3EDNP%3C/text%3E%3Ccircle cx='55' cy='48' r='4' fill='%23c8f135'/%3E%3C/svg%3E">
+
+  <!-- Open Graph / Social Preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Operations Archive — Definitely Not Propaganda" />
+  <meta property="og:description" content="Documented propaganda campaigns and political influence operations, sourced and archived." />
+  <meta property="og:url" content="https://definitelynotpropaganda.github.io/operations.html" />
+  <meta property="og:site_name" content="Definitely Not Propaganda" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Operations Archive — Definitely Not Propaganda" />
+  <meta name="twitter:description" content="Documented propaganda campaigns and political influence operations, sourced and archived." />
+  <meta name="description" content="Documented propaganda campaigns and political influence operations, sourced and archived." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #2a2a2a;
+      --accent: #c8f135;
+      --accent2: #ff3b3b;
+      --text: #e8e8e8;
+      --muted: #666;
+      --mono: 'Space Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+      --body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .logo {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .nav-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      background: var(--accent2);
+      color: #fff;
+      padding: 4px 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    /* HEADER */
+    .page-header {
+      padding: 56px 40px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .page-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent2);
+    }
+    .page-headline {
+      font-family: var(--display);
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+    }
+    .page-headline span { color: var(--accent2); }
+    .page-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+      margin-top: 20px;
+      font-weight: 300;
+    }
+
+    /* ENTRY TABS (index of operations) */
+    .ops-nav {
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0 40px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .ops-nav::-webkit-scrollbar { display: none; }
+    .ops-tab {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 16px 20px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ops-tab:hover { color: var(--text); }
+    .ops-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .ops-tab .tab-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border: 1px solid currentColor;
+      border-radius: 2px;
+      opacity: 0.7;
+    }
+
+    /* ENTRY PANELS */
+    .ops-panel { display: none; }
+    .ops-panel.active { display: block; }
+
+    /* ARTICLE LAYOUT */
+    .article-wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 40px 100px;
+    }
+
+    /* TAG ROW */
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border: 1px solid;
+      border-radius: 2px;
+    }
+    .tag-confirmed { color: var(--accent2); border-color: var(--accent2); }
+    .tag-hasbara { color: #d4a017; border-color: #d4a017; }
+    .tag-disinfo { color: #7a7aff; border-color: #7a7aff; }
+    .tag-analysis { color: #3fbf7f; border-color: #3fbf7f; }
+    .tag-fara { color: #ff8c42; border-color: #ff8c42; }
+    .tag-astroturf { color: #c875f5; border-color: #c875f5; }
+
+    /* ARTICLE TYPOGRAPHY */
+    .article-title {
+      font-family: var(--display);
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.0;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      margin-bottom: 12px;
+      border-left: 4px solid var(--accent2);
+      padding-left: 18px;
+    }
+    .article-subhead {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0 0 10px 22px;
+      max-width: 620px;
+    }
+    .article-byline {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0 0 36px 22px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-wrap h2 {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent2);
+      margin: 52px 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .article-wrap h3 {
+      font-family: var(--body);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 32px 0 12px;
+    }
+    .article-wrap p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: #d0d0d0;
+      margin-bottom: 18px;
+    }
+    .article-wrap ul, .article-wrap ol {
+      margin: 0 0 18px;
+      padding-left: 22px;
+    }
+    .article-wrap li {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #d0d0d0;
+      margin-bottom: 8px;
+    }
+    .article-wrap a {
+      color: var(--text);
+      text-decoration: underline;
+      text-decoration-color: var(--muted);
+      text-underline-offset: 3px;
+    }
+    .article-wrap a:hover { text-decoration-color: var(--accent); }
+
+    /* RECEIPT (sourced quote block) */
+    .receipt {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      padding: 18px 22px;
+      margin: 24px 0;
+    }
+    .receipt-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .receipt blockquote {
+      margin: 0;
+      padding-left: 14px;
+      border-left: 2px solid var(--border);
+      font-style: italic;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #c8c8c8;
+    }
+    .receipt cite {
+      display: block;
+      margin-top: 10px;
+      font-style: normal;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* CALLOUT */
+    .callout {
+      background: linear-gradient(180deg, rgba(255,59,59,0.07), transparent);
+      border: 1px solid rgba(255,59,59,0.3);
+      padding: 20px 22px;
+      margin: 28px 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #d0d0d0;
+    }
+    .callout-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent2);
+      margin-bottom: 10px;
+    }
+
+    /* DOMAIN GRID */
+    .domain-grid { display: grid; gap: 10px; margin: 20px 0; }
+    .domain-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px 18px;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+    .domain-card .url { color: var(--text); font-size: 14px; }
+    .domain-card .role { color: var(--muted); margin-top: 6px; font-size: 12px; line-height: 1.5; }
+
+    /* TABLE */
+    .article-wrap table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 14px;
+    }
+    .article-wrap th, .article-wrap td {
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .article-wrap th {
+      background: var(--surface);
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .article-wrap td { color: #d0d0d0; line-height: 1.6; }
+
+    /* TOC */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 20px 22px;
+      margin: 0 0 44px;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+    .toc-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .toc ol { margin: 0; padding-left: 18px; }
+    .toc li { margin-bottom: 6px; }
+    .toc a { text-decoration: none; color: var(--text); }
+    .toc a:hover { color: var(--accent); }
+
+    /* ARCHIVE LINK */
+    .archive-link {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ARTICLE FOOTER NOTE */
+    .article-footnote {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 40px;
+      display: flex;
+      align-items: flex-start;
+      gap: 48px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-logo {
+      font-family: var(--display);
+      font-size: 40px;
+      color: var(--text);
+      letter-spacing: 0.05em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      nav { padding: 16px 28px; }
+      .nav-links { gap: 18px; }
+      .nav-links a { font-size: 11px; min-height: 44px; display: flex; align-items: center; }
+      .page-header { padding: 40px 28px 24px; }
+      .article-wrap { padding: 36px 28px 80px; }
+      .ops-nav { padding: 0 28px; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; flex-wrap: wrap; }
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        gap: 0;
+        margin-top: 12px;
+        border-top: 1px solid var(--border);
+        padding-top: 12px;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 0; font-size: 13px; min-height: 44px; }
+      .nav-toggle { display: block; }
+      .nav-badge { display: none; }
+      .page-header { padding: 32px 20px 20px; }
+      .article-wrap { padding: 28px 20px 60px; }
+      .ops-nav { padding: 0 20px; }
+      .ops-tab { padding: 14px 14px; font-size: 10px; }
+      .article-title { font-size: 30px; }
+      footer { padding: 32px 20px; flex-direction: column; gap: 24px; }
+      .footer-note { margin-left: 0; text-align: left; }
+      .footer-links { gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">DNP<span>.</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="feed.html">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="operations.html" class="active">Operations</a></li>
+    <li><a href="profile.html">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
+    <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Chatroom</a></li>
+  </ul>
+  <div class="nav-badge">● Archive</div>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="page-eyebrow">Documented &amp; Sourced</div>
+  <h1 class="page-headline">OPERATIONS <span>ARCHIVE</span></h1>
+  <p class="page-sub">
+    Documented propaganda campaigns and political influence operations — mapped, sourced, and archived.
+    Each entry is its own investigation. Receipts first.
+  </p>
+</div>
+
+<!-- ENTRY TABS -->
+<div class="ops-nav" id="opsTabs" role="tablist">
+  <button class="ops-tab active" onclick="showOp('clocktower')" role="tab" aria-selected="true">
+    Clock Tower X <span class="tab-badge">FARA</span>
+  </button>
+  <!-- ADD NEW TABS HERE — copy the line above, change the onclick id, add a badge if needed -->
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     ENTRY 01: CLOCK TOWER X NETWORK
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="ops-panel active" id="panel-clocktower" role="tabpanel">
+<div class="article-wrap">
+
+  <div class="tag-row">
+    <span class="tag tag-confirmed">Confirmed</span>
+    <span class="tag tag-hasbara">Hasbara</span>
+    <span class="tag tag-astroturf">Astroturf</span>
+    <span class="tag tag-analysis">Analysis</span>
+    <span class="tag tag-fara">FARA</span>
+  </div>
+
+  <h1 class="article-title">The Clock Tower X Network: Mapping a $9M Foreign Influence Operation Targeting American Phones</h1>
+  <p class="article-subhead">Fake "peace" texts, a propaganda site that teaches you to spot propaganda, and a paper trail that leads straight to the Israeli Ministry of Foreign Affairs.</p>
+  <p class="article-byline">Field documentation &middot; June 30, 2026 &middot; DNP Operations Archive</p>
+
+  <div class="toc">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#origin">How this started — the text</a></li>
+      <li><a href="#money">Follow the invoice: who's actually paying</a></li>
+      <li><a href="#network">The network: mapped domains</a></li>
+      <li><a href="#truthhub">Case study: the "Truth Hub" that fails its own test</a></li>
+      <li><a href="#culturavia">Case study: Culturavia, the softer front</a></li>
+      <li><a href="#legal">The paper trail: what the legal pages admit</a></li>
+      <li><a href="#pattern">The pattern, named</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </div>
+
+  <h2 id="origin">01 / How This Started</h2>
+  <p>On June 30, 2026, an unsolicited text arrived from a number identifying itself as "Jenn" with an organization called <strong>Friends for Peace</strong>:</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Text Receipt — +1 703-289-0571</div>
+    <blockquote>"Hi, I'm Jenn with Friends for Peace. A new agreement could weaken an Iran-backed terrorist group without more U.S. troops. Open to chat? Stop2End"</blockquote>
+  </div>
+
+  <p>A second, separate number — <strong>+1 703-520-5751</strong> — sent a near-identical script under the name "James" from an org called <strong>Partners in Peace</strong>, with the same "Stop2End" footer. When pushed to get on a call, the response was immediate and revealing:</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Text Receipt — +1 703-520-5751</div>
+    <blockquote>"We are unable to make calls right now but I am happy to chat more over text."</blockquote>
+  </div>
+
+  <p>Neither "Friends for Peace" nor "Partners in Peace" exist as registered organizations. They are not findable in any nonprofit registry, FEC filing, or FARA database under those names — because those names are disposable wrappers. Investigative outlet <em>Responsible Statecraft</em> documented the same pattern across four separate numbers reaching Americans in California, Florida, Texas, Wisconsin, and Alabama, sometimes in Spanish, since November 2025.</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Responsible Statecraft, Feb 9, 2026</div>
+    <blockquote>"During one text conversation, the campaign admitted that they 'use different names' for the organization."</blockquote>
+    <cite>responsiblestatecraft.org/parscale-pro-israel-texts</cite>
+  </div>
+
+  <h2 id="money">02 / Follow the Invoice</h2>
+  <p>The texting operation traces to <strong>Clock Tower X LLC</strong>, a firm founded by former Trump 2020 campaign manager <strong>Brad Parscale</strong>, operating under a direct contract with the Israeli government.</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Responsible Statecraft</div>
+    <blockquote>"Clock Tower X's contract with the Israeli Ministry of Foreign Affairs, which increased from $6 million to $9 million in December, includes 'Delivery of monthly updated audience segmentation and sentiment analysis, including Gen Z and other key U.S. demographic groups.'"</blockquote>
+  </div>
+
+  <p>The operation is internally branded <strong>"Project 545,"</strong> per public statements from Israeli MFA chief of staff Eran Shayovich, Parscale's direct point of contact in Israel:</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Eran Shayovich, LinkedIn (cited by RS)</div>
+    <blockquote>"A year and two months into a long war, when the image of the State of Israel was at one of its lowest points... we began to fight back seriously."</blockquote>
+  </div>
+
+  <p>The same contract extends into earned and paid media well beyond text messages — CTX is also <strong>integrating pro-Israel messaging into Salem Media Network</strong>, the conservative media conglomerate behind shows like "The Right View with Lara Trump" and "The Dinesh D'Souza Podcast."</p>
+
+  <h2 id="network">03 / The Network: Mapped Domains</h2>
+  <p>Per journalist Jack Poulson's reporting, Clock Tower X operates at least 11 distinct websites. This investigation has independently confirmed and documented the following nodes, all sharing the identical FARA footer disclaimer and <code>@clocktowerx.com</code> contact infrastructure:</p>
+
+  <div class="domain-grid">
+    <div class="domain-card">
+      <div class="url">allyvia.org</div>
+      <div class="role">Hard policy/security front. "Strengthening the US and Israel Alliance for Security, Prosperity &amp; Shared Values." Hosts the "Truth Hub" — see Section 04.</div>
+    </div>
+    <div class="domain-card">
+      <div class="url">culturavia.org</div>
+      <div class="role">Soft cultural/faith front. "Faith • Freedom • Friendship." Targets audiences who'd bounce off hard security framing. See Section 05.</div>
+    </div>
+    <div class="domain-card">
+      <div class="url">YouTube: "Allies for Peace"</div>
+      <div class="role">Video arm. Channel created two weeks before the SMS campaign launched. Hosts the edited Joe Rogan/Douglas Murray "Tunnels" clip pushed directly in text conversations.</div>
+    </div>
+  </div>
+
+  <p>Both confirmed sites carry the identical legally-mandated disclosure, present only in the page footer:</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Footer text, allyvia.org &amp; culturavia.org</div>
+    <blockquote>"This material is distributed by Clock Tower X LLC on behalf of the State of Israel. Additional information is available at the Department of Justice, Washington, DC."</blockquote>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">The Gap</div>
+    This disclosure exists on the websites. It does not exist in the text messages that drive traffic to those websites. A FARA attorney consulted by Responsible Statecraft noted the law requires a "conspicuous statement" disclosing foreign-agent status within the actual outreach — not three clicks away in a footer nobody reads.
+  </div>
+
+  <h2 id="truthhub">04 / Case Study: The "Truth Hub" That Fails Its Own Test</h2>
+  <p>Allyvia hosts a page literally titled <strong>"How to Spot Propaganda."</strong> It instructs readers to watch for:</p>
+  <ul>
+    <li>"Emotional manipulation — using graphic imagery or inflammatory language to provoke reaction before critical thinking engages."</li>
+    <li>"Does the post cite credible organizations or provide verifiable evidence?"</li>
+    <li>"Decontextualized photos and videos... a reverse image search often reveals original context."</li>
+    <li>"Be suspicious of claims lacking specific dates, locations, or attribution."</li>
+    <li>"Consider timing and coordination. Disinformation campaigns often involve multiple accounts posting identical or nearly identical content simultaneously."</li>
+  </ul>
+
+  <p>Every bullet describes the site's own operation. The adjacent "Truth Hub" page makes unsourced claims throughout — "legal scholars note," "military analysts," "Hamas's documented practice" — with zero named sources, zero links, zero dates. The site that warns you to distrust content lacking attribution is, itself, content lacking attribution.</p>
+
+  <h3>The strawman pattern, page by page</h3>
+  <table>
+    <tr><th>Page topic</th><th>Claim addressed</th><th>What's omitted</th></tr>
+    <tr>
+      <td>Genocide</td>
+      <td>"Requires proof of specific intent... advance warnings contradict genocidal intent"</td>
+      <td>No mention of the ICJ's January 2024 provisional measures ruling, which leaned on statements from Israeli officials as evidence of intent</td>
+    </tr>
+    <tr>
+      <td>Apartheid</td>
+      <td>Knocks down "comparable to historical South Africa, where black people had no rights" — a strawman almost no one argues</td>
+      <td>The actual legal-scholarship claim (B'Tselem, HRW, Amnesty) concerns differential rights regimes across territory under unified control — specifically the West Bank/Gaza, not Israeli citizenship law</td>
+    </tr>
+    <tr>
+      <td>Colonialism</td>
+      <td>"Established by an indigenous people... unlike classic colonial projects driven by foreign empires"</td>
+      <td>No mention of the British Mandate's role facilitating Jewish immigration under imperial administration — the actual historical hook scholars use; no mention of the Nakba, acknowledged even by mainstream Israeli historians</td>
+    </tr>
+    <tr>
+      <td>Civilian casualties</td>
+      <td>"9:1 ratio is typical of modern urban warfare... Hamas's history of inflating death toll figures"</td>
+      <td>No Gaza-specific ratio given for comparison; omits that a senior US official stated Gaza Ministry of Health figures may be an <em>undercount</em>, and the MoH numbers have been independently cross-validated by Lancet-published epidemiological studies</td>
+    </tr>
+  </table>
+
+  <h2 id="culturavia">05 / Case Study: Culturavia, the Softer Front</h2>
+  <p>Culturavia is structurally distinct from Allyvia — same operator, same FARA footer, different audience segment. Where Allyvia leads with security and policy, Culturavia leads with "Faith &amp; Heritage," "Arts &amp; Culture," and "Philanthropy." It is also a registered fundraising vehicle:</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Culturavia Privacy Policy</div>
+    <blockquote>"All purchases from the online store are considered contributions to CTX." / "Information as required by the Oklahoma Ethics Commission... requires us to collect and disclose the name and mailing address, occupation and employer of all individuals whose donations exceed $200 per calendar year."</blockquote>
+    <cite>culturavia.org/legal/privacy-policy — mailing address listed: 3745 Medina Rd., Ste C., Medina, OH 44256-9510</cite>
+  </div>
+
+  <p>Culturavia's page on antisemitism, <em>"Distinguishing Legitimate Criticism of Israel from Antisemitism,"</em> is notably more careful than Allyvia's content — it accurately quotes the IHRA Working Definition and lists genuinely protected criticism (opposing settlement policy, advocating Palestinian statehood, criticizing military operations). That accuracy is itself worth flagging: it never mentions that IHRA's own lead drafter, Kenneth Stern, has publicly objected to the definition being weaponized against campus speech, nor does it mention the Jerusalem Declaration on Antisemitism or the Nexus Document were created specifically because scholars disputed how IHRA was being applied. The page also never engages the hardest case — how the "double standards" clause gets operationalized against BDS legislation and ICC/ICJ proceedings — sticking instead to the easiest, least contested examples.</p>
+
+  <div class="callout">
+    <div class="callout-label">Read</div>
+    The two sites appear calibrated by audience: Allyvia's harder framing gets the crude strawmen; Culturavia's "faith and culture" framing gets the more careful, harder-to-catch omissions. Same operator, different dosing.
+  </div>
+
+  <h2 id="legal">06 / The Paper Trail</h2>
+  <p>Allyvia's own Mobile Terms &amp; Conditions document drops the "Friends for Peace" / "Partners in Peace" cover entirely and signs as the operating company directly:</p>
+
+  <div class="receipt">
+    <div class="receipt-label">allyvia.org/legal/mobile-terms-conditions</div>
+    <blockquote>"CLOCK TOWER X LLC ('Clock Tower,' 'CTX,' 'We,' 'Us,' 'Our') is offering a mobile messaging program... you agree to receive recurring autodialed marketing mobile messages and you understand that your consent to be contacted in this method is not required to make any purchase from Us."</blockquote>
+  </div>
+
+  <p>This is the company's own legal classification of the texts: <strong>autodialed marketing</strong>. Not civic dialogue. Not grassroots peace outreach. Marketing, run by a foreign government's contracted PR firm, sent to American phones under invented charity names.</p>
+
+  <p class="archive-link">Archived snapshot, mobile T&amp;C page (2026.06.30): <a href="http://archive.today/2026.06.30-222730/https://allyvia.org/legal/mobile-terms-conditions/" target="_blank" rel="noopener">archive.today/2026.06.30-222730</a></p>
+
+  <h2 id="pattern">07 / The Pattern, Named</h2>
+  <p>This is <strong>Zone Flooding</strong> executed as a vertically integrated operation: SMS outreach generates initial contact → bot/script holds engagement → links push to "Truth Hub" content for pre-loaded skepticism toward Gaza reporting → cultural-affinity site (Culturavia) builds soft long-term trust → all under a $9M government contract with disclosure technically present but functionally invisible.</p>
+
+  <p>None of the individual facts deployed across these sites are necessarily fabricated outright. The dishonesty is structural: real facts, arranged and scoped to imply conclusions the facts alone don't support, with the actual contested evidence — ICJ intent findings, the Nakba, the British Mandate, MoH casualty cross-validation, the IHRA/JDA scholarly split — consistently absent. It is not crude lying. It is omission as methodology, at industrial scale, run by a former presidential campaign manager on a seven-figure foreign government retainer.</p>
+
+  <h2 id="sources">Sources</h2>
+  <ul>
+    <li>Cleveland-Stout, N. "Mysterious 'peace' groups are sending Americans pro-Israel texts." <em>Responsible Statecraft</em>, Feb 9, 2026. responsiblestatecraft.org/parscale-pro-israel-texts</li>
+    <li>Poulson, J. "Israel expanded propaganda contract." Substack, cited via Responsible Statecraft.</li>
+    <li>allyvia.org — /alliance/, /truth/, /debunking (live, accessed June 30, 2026)</li>
+    <li>allyvia.org/legal/mobile-terms-conditions/ — archived archive.today/2026.06.30-222730</li>
+    <li>culturavia.org — /legal/privacy-policy/, /distinguishing-legitimate-criticism-of-israel-from-antisemitism/ (live, accessed June 30, 2026)</li>
+    <li>FARA filing, Clock Tower X LLC exhibit, efile.fara.gov (cited via Responsible Statecraft, $6M→$9M contract increase, Dec 2025)</li>
+    <li>EPIC.org / Megan Iorio, Senior Counsel, on chatbot-pattern analysis of campaign texts</li>
+  </ul>
+
+  <div class="article-footnote">
+    DNP Operations Archive — this entry will be updated as additional Clock Tower X network domains are confirmed.<br>
+    Submit tips via <a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Matrix</a> or the <a href="submit-tip.html">contact form</a>.
+  </div>
+
+</div>
+</div>
+<!-- ══ END ENTRY: CLOCK TOWER X ══ -->
+
+<!-- ADD NEW ENTRY PANELS BELOW THIS LINE
+     Copy this block structure for each new entry:
+
+<div class="ops-panel" id="panel-YOURID" role="tabpanel">
+<div class="article-wrap">
+  ... article content ...
+</div>
+</div>
+-->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DNP<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="feed.html">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="operations.html">Operations</a></li>
+    <li><a href="profile.html">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
+    <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Chatroom</a></li>
+    <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
+    <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
+  </ul>
+  <div class="footer-note">
+    Definitely Not Propaganda<br>
+    All claims sourced · Receipts archived<br>
+    <span style="color: var(--accent);">Free press or no press.</span>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav
+  const navToggle = document.getElementById('navToggle');
+  const navLinks  = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
+
+  // Tab switching
+  function showOp(id) {
+    document.querySelectorAll('.ops-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ops-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    const panel = document.getElementById('panel-' + id);
+    if (panel) panel.classList.add('active');
+    const tab = [...document.querySelectorAll('.ops-tab')].find(t => t.getAttribute('onclick') === `showOp('${id}')`);
+    if (tab) { tab.classList.add('active'); tab.setAttribute('aria-selected', 'true'); }
+
+    // Update URL hash so entries are linkable
+    history.replaceState(null, '', '#' + id);
+  }
+
+  // On load, check hash to deep-link to an entry
+  (function() {
+    const hash = location.hash.replace('#', '');
+    if (hash && document.getElementById('panel-' + hash)) showOp(hash);
+  })();
+</script>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c11d4aecef19499d875e1a4630efc593"}'></script>
+
+</body>
+</html>
