@@ -1,2 +1,2 @@
 # definitelynotpropaganda.github.io
-news site
+eagergoose32.github.io/definitelynotpropaganda.github.io
