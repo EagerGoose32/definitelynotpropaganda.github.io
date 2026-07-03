@@ -1,6 +1,6 @@
 # Definitely Not Propaganda
 
-**[definitelynotpropaganda.github.io](https://definitelynotpropaganda.github.io/)**
+**[https://eagergoose32.github.io/definitelynotpropaganda.github.io/]**
 
 A counter-propaganda documentation project tracking coordinated influence operations, hasbara networks, and information warfare in real time. Receipts first, analysis second — every claim is sourced and archived.
 
