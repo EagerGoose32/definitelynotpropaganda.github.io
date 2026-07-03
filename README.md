@@ -1,6 +1,6 @@
 # Definitely Not Propaganda
 
-**[https://eagergoose32.github.io/definitelynotpropaganda.github.io/]**
+**[eagergoose32.github.io/definitelynotpropaganda.github.io](https://eagergoose32.github.io/definitelynotpropaganda.github.io/)**
 
 A counter-propaganda documentation project tracking coordinated influence operations, hasbara networks, and information warfare in real time. Receipts first, analysis second — every claim is sourced and archived.
 
@@ -27,4 +27,4 @@ DNP documents recurring patterns in coordinated online influence campaigns and m
 
 ## Contributing
 
-Seen a coordinated pattern worth documenting? [Submit a tip](https://definitelynotpropaganda.github.io/submit-tip.html) or join the [Matrix chatroom](https://matrix.to/#/#DNP5:matrix.org).
+Seen a coordinated pattern worth documenting? [Submit a tip](https://eagergoose32.github.io/definitelynotpropaganda.github.io/submit-tip.html) or join the [Matrix chatroom](https://matrix.to/#/#DNP5:matrix.org).
