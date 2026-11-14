@@ -15,7 +15,7 @@ AI disclosure: I use Claude, an AI model made by Anthropic, to help gather infor
 - **Documentation Feed** (`index.html`, `feed.html`, `feed-archive.html`) — a filterable feed of documented entries (Breaking / Hasbara / Disinfo / Analysis), plus a live "Breaking" section that pulls and clusters current RSS headlines by topic, ranked by how many independent outlets are covering a story.
 - **The Method** — a methodology section laying out the site's detection patterns: Follow the Invoice, Silence Is a Tell, Zone Flooding, Selection Not Purchase, Receipts First, Multi-Source Verification, and How We Use AI.
 - **Operations Archive** (`operations.html`) — an archive of documented propaganda campaigns and political influence operations.
-- **How It Works** (`how-it-works.html`) — how the research gets done, how Claude (an AI model) is used and what it does not do, how every claim is verified, what the tags mean, and how corrections work.
+- **How We Work** (`how-it-works.html`) — how the research gets done, how Claude (an AI model) is used and what it does not do, how every claim is verified, what the tags mean, and how corrections work.
 - **Blog** (`blog.html`) — editorial posts and dispatches, backed by Firebase Auth/Firestore with email-verified accounts; only the configured admin account can publish, everyone can read (see `BLOG_SETUP.md`).
 - **My Account** (`profile.html`) — reader account management for the blog/login system.
 - **Submit a Tip** (`submit-tip.html`) — an anonymous, verified tip submission form (with optional image attachments) for readers to report coordinated account behavior or narrative patterns; sensitive submissions can go through Signal or Matrix instead.
