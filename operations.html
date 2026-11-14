@@ -216,6 +216,8 @@
     .tag-analysis { color: #3fbf7f; border-color: #3fbf7f; }
     .tag-fara { color: #ff8c42; border-color: #ff8c42; }
     .tag-astroturf { color: #c875f5; border-color: #c875f5; }
+    .tag-unconfirmed { color: #8fa3b8; border-color: #8fa3b8; }
+    .tag-invoice { color: var(--accent); border-color: var(--accent); }
 
     /* ARTICLE TYPOGRAPHY */
     .article-title {
@@ -395,6 +397,17 @@
     .toc a { text-decoration: none; color: var(--text); }
     .toc a:hover { color: var(--accent); }
 
+    /* CHECKLIST (to-do style lists) */
+    .article-wrap ul.checklist { list-style: none; padding-left: 0; }
+    .article-wrap ul.checklist li { position: relative; padding-left: 26px; }
+    .article-wrap ul.checklist li::before {
+      content: "\2610";
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
     /* ARCHIVE LINK */
     .archive-link {
       font-family: var(--mono);
@@ -518,6 +531,9 @@
 <div class="ops-nav" id="opsTabs" role="tablist">
   <button class="ops-tab active" onclick="showOp('clocktower')" role="tab" aria-selected="true">
     Clock Tower X <span class="tab-badge">FARA</span>
+  </button>
+  <button class="ops-tab" onclick="showOp('nov13')" role="tab" aria-selected="false">
+    Nov. 13 Ground Stop <span class="tab-badge">DEVELOPING</span>
   </button>
   <!-- ADD NEW TABS HERE — copy the line above, change the onclick id, add a badge if needed -->
 </div>
@@ -713,6 +729,329 @@
 </div>
 </div>
 <!-- ══ END ENTRY: CLOCK TOWER X ══ -->
+
+<!-- ══════════════════════════════════════════════════════════════════
+     ENTRY 02: NOV. 13 NATIONWIDE GROUND STOP
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="ops-panel" id="panel-nov13" role="tabpanel">
+<div class="article-wrap">
+
+  <div class="tag-row">
+    <span class="tag tag-analysis">Analysis</span>
+    <span class="tag tag-unconfirmed">Unconfirmed</span>
+    <span class="tag tag-invoice">Follow the Invoice</span>
+  </div>
+
+  <h1 class="article-title">The Nov. 13 Ground Stop: What Broke, What Was Pushed Out Three Days Earlier, and Who Gets Paid</h1>
+  <p class="article-subhead">An AI routing tool sent nationwide before its own test ended, a written warning nobody answered, a contractor-run network that reportedly crashed after an update, and a $30.1 billion funding ask already on appropriators' desks.</p>
+  <p class="article-byline">Field documentation &middot; November 14, 2026 &middot; DNP Operations Archive</p>
+
+  <p>Three days before Friday's nationwide ground stop, the FAA pushed its new AI routing tool, SMART, to every en route center in the country. It had not finished its own 90-day test, and 25 members of Congress had asked in writing how it would hold up during an equipment outage. The day before the crash, Duffy and OMB Director Russ Vought sent appropriators a letter asking for $30.1 billion. Then the L3Harris network that carries controller radio traffic reportedly went down after an update. By that night Duffy was blaming 1980s copper and asking for $50 billion.</p>
+
+  <div class="callout">
+    <div class="callout-label">Not Established</div>
+    None of that proves the outage was planned, and nothing in the reporting reviewed for this entry says SMART caused it. What it does show is an agency that skipped its own safety homework, ignored a warning about this exact kind of failure, and had the invoice drafted before anything broke.
+  </div>
+
+  <div class="toc">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#n13-timeline">The timeline</a></li>
+      <li><a href="#n13-smart">The AI tool that skipped its own test</a></li>
+      <li><a href="#n13-fti">The network that has failed before</a></li>
+      <li><a href="#n13-versions">Three explanations in one night</a></li>
+      <li><a href="#n13-money">Follow the invoice</a></li>
+      <li><a href="#n13-purpose">Was it on purpose?</a></li>
+      <li><a href="#n13-next">What to pull next</a></li>
+      <li><a href="#n13-sources">Sources</a></li>
+    </ol>
+  </div>
+
+  <h2 id="n13-timeline">01 / The Timeline</h2>
+  <p>The nationwide SMART expansion, the $30.1 billion letter and the crash all landed within four days.</p>
+
+  <table>
+    <tr><th>When</th><th>What happened</th><th>Source</th></tr>
+    <tr>
+      <td>Sept. 21, 2026</td>
+      <td>SMART goes live around DC as the start of a 90-day evaluation.</td>
+      <td><a href="https://bellancaaircraft.com/faa-must-pause-use-of-ai-based-smart-atc-system-lawmakers-say/" target="_blank" rel="noopener">Bellanca / FLYING</a></td>
+    </tr>
+    <tr>
+      <td>Sept. 22, 2026</td>
+      <td>Duffy announces a $30 billion ask, the day after a telecom failure and cut fiber line hit Northeast flights.</td>
+      <td><a href="https://airwaysmag.com/new-post/duffy-30-billion-atc-airport-modernization" target="_blank" rel="noopener">Airways</a></td>
+    </tr>
+    <tr>
+      <td>Oct. 9, 2026</td>
+      <td>25 Democrats led by Rep. April McClain Delaney send a letter asking for a pause and for details on how SMART would perform during equipment outages. Deadline to respond: Oct. 19.</td>
+      <td><a href="https://avweb.com/aviation-news/lawmakers-seek-pause-on-faa-ai-tool/" target="_blank" rel="noopener">AVweb</a></td>
+    </tr>
+    <tr>
+      <td>Nov. 10, 2026</td>
+      <td>About 50 days into the 90-day evaluation, the FAA pushes SMART to all 22 en route centers.</td>
+      <td><a href="https://www.fcnp.com/2026/11/13/beyer-warned-of-faa-ai-safety-risks-weeks-before-nationwide-aviation-disruption/" target="_blank" rel="noopener">Falls Church News-Press</a></td>
+    </tr>
+    <tr>
+      <td>Nov. 12, 2026</td>
+      <td>Duffy and OMB Director Russ Vought send appropriators a letter asking for $30.1 billion.</td>
+      <td><a href="https://news.bgov.com/bloomberg-government-news/congress-faces-30-billion-ask-in-lame-duck-to-boost-air-safety" target="_blank" rel="noopener">Bloomberg Government</a></td>
+    </tr>
+    <tr>
+      <td>Nov. 13, 2026, ~3:30 p.m. ET</td>
+      <td>Kansas City Center reports problems. Chicago's airports are stopped next.</td>
+      <td><a href="https://www.paddleyourownkanoo.com/2026/11/13/faa-announces-ground-stop-for-all-aircraft-across-the-entire-united-states/" target="_blank" rel="noopener">Paddle Your Own Kanoo</a></td>
+    </tr>
+    <tr>
+      <td>Nov. 13, 2026, 3:54 p.m. ET</td>
+      <td>Nationwide ground stop.</td>
+      <td><a href="https://www.axios.com/2026/11/13/faa-nationwide-ground-stop" target="_blank" rel="noopener">Axios</a></td>
+    </tr>
+    <tr>
+      <td>Nov. 13, 2026, 8:15 p.m. ET</td>
+      <td>Ground stop lifted. That evening Duffy says, "I want $50 billion" in emergency funding.</td>
+      <td><a href="https://www.nbcnews.com/news/us-news/live-blog/live-updates-flights-grounded-faa-communications-outage-rcna609268" target="_blank" rel="noopener">NBC News</a></td>
+    </tr>
+  </table>
+
+  <h2 id="n13-smart">02 / The AI Tool That Skipped Its Own Test</h2>
+  <p>SMART is not a robot flying planes. It is a recommendation engine. It pulls in about 200 data feeds, such as weather, traffic and airspace restrictions, and suggests routing and scheduling changes. Controllers decide whether to take them, and the FAA has been clear it <a href="https://ivn.us/did-new-ai-software-just-crash-the-faas-network/" target="_blank" rel="noopener">cannot take control of an aircraft</a>.</p>
+
+  <p>The problem is how fast it went out the door. Boston-based <a href="https://dronexl.co/2026/06/26/faa-smart-contract-asi-air-space-intelligence/" target="_blank" rel="noopener">Air Space Intelligence</a> (ASI) won the $875 million, 12-year contract on June 22, beating Palantir and Thales. The deal also covers <a href="https://www.executivebiz.com/articles/faa-awards-asi-875m-air-traffic-modernization-contract" target="_blank" rel="noopener">FMDS</a>, the new data backbone for the FAA's national command center. SMART went live around DC on Sept. 21 as the start of a <a href="https://bellancaaircraft.com/faa-must-pause-use-of-ai-based-smart-atc-system-lawmakers-say/" target="_blank" rel="noopener">90-day evaluation</a>, and Duffy had talked about full deployment by spring 2027. On Nov. 10, about <a href="https://www.fcnp.com/2026/11/13/beyer-warned-of-faa-ai-safety-risks-weeks-before-nationwide-aviation-disruption/" target="_blank" rel="noopener">50 days in</a>, the FAA pushed it to all 22 en route centers.</p>
+
+  <p>That came after the Oct. 9 letter asking for a pause and for details on how SMART <a href="https://avweb.com/aviation-news/lawmakers-seek-pause-on-faa-ai-tool/" target="_blank" rel="noopener">would perform during equipment outages</a>. The deadline was Oct. 19. The FAA expanded anyway without <a href="https://ivn.us/did-new-ai-software-just-crash-the-faas-network/" target="_blank" rel="noopener">answering publicly</a>. NATCA, the controllers' union, says it was <a href="https://www.technology.org/2026/10/14/lawmakers-faa-pause-smart-ai-air-traffic-tool-washington/" target="_blank" rel="noopener">never involved in the design, testing or rollout</a>.</p>
+
+  <p>ASI says the ground stop had nothing to do with SMART, "any product of ASI or our integration with FAA and ATC." It posted that Friday night, before anyone official had pointed at it.</p>
+
+  <div class="callout">
+    <div class="callout-label">Secondhand &mdash; Confirm Before Citing</div>
+    The money around ASI is still secondhand reporting. Treat each item below as a lead to confirm, not a finding.
+  </div>
+
+  <ul>
+    <li><strong>The FAA wants to own part of ASI.</strong> Politico, citing an internal FAA document, reported a term sheet for an <a href="https://www.flyingmag.com/faa-seeks-ownership-stake-atc-contractor-asi/" target="_blank" rel="noopener">equity stake and warrants</a>. It would be the first time the FAA has sought one. Not finalized as of mid-October.</li>
+    <li><strong>Valuation jump.</strong> ASI was valued at about $300 million in December 2023. In October 2026, four months after the award, it raised $325 million at a <a href="https://nohatehottakes.substack.com/p/a-small-ai-startup-1-billion-in-federal" target="_blank" rel="noopener">$3 billion valuation</a>. Investors include Andreessen Horowitz, Spark Capital and Citadel Securities affiliates.</li>
+    <li><strong>The son-in-law donation.</strong> ASI's PAC reportedly gave $2,500 in March 2026 to Michael Alfonso, Duffy's son-in-law and a Wisconsin congressional candidate. That was about three months before the award. Sourcing is secondary (The Bulwark, WisPolitics). The same writeup says there is no evidence it affected the award.</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-label">The Gap</div>
+    What this investigation cannot show yet is a technical link. SMART pulls a lot of data, and Duffy says the network choked on data, but nobody has shown SMART traffic runs over the L3Harris radio network that failed. Until someone does, it is timing, not cause.
+  </div>
+
+  <h2 id="n13-fti">03 / The Network That Has Failed Before</h2>
+  <p>The best-sourced explanation so far is the boring one, which is usually a good sign. The Wall Street Journal reported the outage was hitting a <a href="https://www.twz.com/air/faa-orders-ground-stop-for-all-flights-across-the-u-s" target="_blank" rel="noopener">telecom network overseen by L3Harris</a>, and multiple sources told CBS that an update to that network made it reboot and crash. It is the FAA Telecommunications Infrastructure network, or FTI, which carries the radio frequencies controllers use to talk to pilots. L3Harris <a href="https://www.implicator.ai/faa-lifts-ground-stop-overloaded-routers/" target="_blank" rel="noopener">had not commented</a> as of Friday night, and no official has confirmed the update story.</p>
+
+  <p>The FAA does not even own this network. Harris won FTI in 2002, and the DOT Inspector General described the contract as <a href="https://webarchive.library.unt.edu/web/20161103185913/https://www.oig.dot.gov/sites/default/files/WEB%20FILE2_FTI%20%20Nov%2019%20outage-6-18-10_Final%20Signature%28a%29%20%282%29.pdf" target="_blank" rel="noopener">basically a lease</a>. L3Harris also runs the FAA's <a href="https://www.yahoo.com/news/us-faa-not-considering-replacing-161335458.html" target="_blank" rel="noopener">Starlink testing</a> under the same program.</p>
+
+  <h3>The record of failures</h3>
+  <table>
+    <tr><th>Year</th><th>What failed</th><th>Source</th></tr>
+    <tr>
+      <td>2009</td>
+      <td>A single router in Salt Lake City took down other FAA systems and caused delays nationwide.</td>
+      <td><a href="https://www.nextgov.com/digital-government/2009/11/faa-it-failure-puts-shadow-on-harris-contract/250536/" target="_blank" rel="noopener">Nextgov</a></td>
+    </tr>
+    <tr>
+      <td>2006</td>
+      <td>A scheduled Harris software update knocked out lines at O'Hare. The technicians on site called it entirely avoidable.</td>
+      <td><a href="https://www.route-fifty.com/digital-government/2006/08/harris-rapped-for-fti-failures/283900/" target="_blank" rel="noopener">Route Fifty</a></td>
+    </tr>
+  </table>
+
+  <p>After 2009 the Inspector General warned that critical outages would stay a risk as new NextGen services got added to FTI. That is close to what Mullin described Friday.</p>
+
+  <p>Two things this investigation cannot nail down yet:</p>
+  <ul>
+    <li>Whether Duffy's "routers overloaded with data" and CBS's "an update caused a reboot" are the same event told two ways, or two different stories.</li>
+    <li>Peraton, the prime contractor running the whole rebuild, <a href="https://backend.ainonline.com/aviation-news/air-transport/2025-12-05/faa-awards-atc-upgrade-integration-contract-peraton" target="_blank" rel="noopener">used to be part of Harris</a>. That is corporate family history, not evidence of anything.</li>
+  </ul>
+
+  <h2 id="n13-versions">04 / Three Explanations in One Night</h2>
+  <p>Officials gave three versions on Friday, and none of them names what actually set it off.</p>
+
+  <p>Duffy said the routers started giving inconsistent data, so they shut the system down. Then he corrected himself mid-answer.</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Duffy, Nov. 13 press conference</div>
+    <blockquote>"got overloaded with data" / "I shouldn't say they went down." / "we use 1980s little copper lines"</blockquote>
+    <cite><a href="https://www.cbsnews.com/news/faa-issues-nationwide-ground-stop/" target="_blank" rel="noopener">CBS News</a> &middot; <a href="https://gizmodo.com/faa-issues-nationwide-ground-stop-due-to-extraordinary-circumstances-2000839944" target="_blank" rel="noopener">Gizmodo</a></cite>
+  </div>
+
+  <p>He also said <a href="https://abc7news.com/live-updates/faa-ground-stop-live-updates-what-know-nationwide-flights-are-grounded/20038887/" target="_blank" rel="noopener">none of the new equipment went down</a>.</p>
+
+  <p>Mullin told it differently. He said the patches and new equipment were overwhelming the older system:</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Mullin, Nov. 13 press conference</div>
+    <blockquote>"overwhelming the older system."</blockquote>
+    <cite><a href="https://gizmodo.com/faa-issues-nationwide-ground-stop-due-to-extraordinary-circumstances-2000839944" target="_blank" rel="noopener">Gizmodo</a></cite>
+  </div>
+
+  <p>That puts the upgrade work in the chain of events, which is a very different story from old wires dying of old age. Then there are CBS's sources pointing at an <a href="https://www.twz.com/air/faa-orders-ground-stop-for-all-flights-across-the-u-s" target="_blank" rel="noopener">L3Harris update</a>.</p>
+
+  <div class="receipt">
+    <div class="receipt-label">Duffy, on the cause and on what comes next</div>
+    <blockquote>"We're still working on the details of what went wrong today." / "You will have more of them"</blockquote>
+    <cite><a href="https://www.axios.com/2026/11/13/faa-nationwide-ground-stop" target="_blank" rel="noopener">Axios</a> &middot; <a href="https://www.latintimes.com/flights-are-moving-again-duffy-just-warned-congress-next-breakdown-already-its-way-601325" target="_blank" rel="noopener">Latin Times</a> (the second quote, in answer to CNN)</cite>
+  </div>
+
+  <p>Mullin ruled out a cyberattack and any link to the <a href="https://www.cbsnews.com/news/faa-issues-nationwide-ground-stop/" target="_blank" rel="noopener">Microsoft outage</a>, but that is their position, not a finding. Asked by CNN why the FAA was not ready, Duffy's answer was that there will be more of them unless Congress tells the agency to build.</p>
+
+  <div class="callout">
+    <div class="callout-label">Read</div>
+    The gap between Duffy and Mullin is the most useful thing on the record. "Old gear failed" sells the funding bill. "New gear overwhelmed old gear" means somebody installed something, and somebody signed off on it.
+  </div>
+
+  <h2 id="n13-money">05 / Follow the Invoice</h2>
+  <p>The $30.1 billion ask was already sitting with appropriators the day before the outage. By Friday night it was $50 billion.</p>
+
+  <table>
+    <tr><th>When</th><th>Ask</th><th>Context</th></tr>
+    <tr>
+      <td>Nov. 13, 2026, evening</td>
+      <td><a href="https://www.nbcnews.com/news/us-news/live-blog/live-updates-flights-grounded-faa-communications-outage-rcna609268" target="_blank" rel="noopener">"I want $50 billion"</a> in emergency funding</td>
+      <td>Hours after the ground stop</td>
+    </tr>
+    <tr>
+      <td>Nov. 12, 2026</td>
+      <td>$30.1 billion, "act swiftly"</td>
+      <td><a href="https://news.bgov.com/bloomberg-government-news/congress-faces-30-billion-ask-in-lame-duck-to-boost-air-safety" target="_blank" rel="noopener">Letter from Duffy and OMB Director Russ Vought</a> to appropriations leaders, the day before the outage</td>
+    </tr>
+    <tr>
+      <td>Sept. 22, 2026</td>
+      <td>$30 billion</td>
+      <td>Announced <a href="https://airwaysmag.com/new-post/duffy-30-billion-atc-airport-modernization" target="_blank" rel="noopener">the day after</a> a telecom failure and cut fiber line hit Northeast flights</td>
+    </tr>
+    <tr>
+      <td>Sept. 2026</td>
+      <td>$30 billion, including <a href="https://bellancaaircraft.com/faa-must-pause-use-of-ai-based-smart-atc-system-lawmakers-say/" target="_blank" rel="noopener">$600 million to finish SMART</a></td>
+      <td>Modern Skies Act introduced in House and Senate</td>
+    </tr>
+    <tr>
+      <td>Dec. 2025</td>
+      <td>"Another $20 billion"</td>
+      <td><a href="https://avweb.com/?p=330460" target="_blank" rel="noopener">Bedford</a>, when Peraton was named prime integrator</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>$12.5 billion, approved</td>
+      <td>One Big Beautiful Bill</td>
+    </tr>
+  </table>
+
+  <p>This is the second time an outage and a funding push have landed within a day of each other. The Nov. 12 letter is the sharpest timing fact in this whole thing. It does not prove intent, but it does prove the ask was being worked before the crash, not built because of it.</p>
+
+  <p>As for who gets paid: Peraton is the prime integrator on the whole rebuild, and its CEO <a href="https://www.airport-technology.com/?p=160121" target="_blank" rel="noopener">thanked Trump, Duffy and Bedford by name</a> when it won. L3Harris runs FTI, the network that reportedly crashed, and telecom upgrade money runs through that program. ASI's FAA ceiling is $875.9 million, but only about <a href="https://nohatehottakes.substack.com/p/a-small-ai-startup-1-billion-in-federal" target="_blank" rel="noopener">$23.3 million had actually been committed</a>, per research firm Altis. The rest depends on future money, including that $600 million SMART line. ASI also picked up an Army deal worth up to $99 million and a $26 million sole-source Air Force order in September.</p>
+
+  <p>So flip the question. Would the rush look any different without the money? A vendor with $852 million still on the table has every reason to want a fast, visible nationwide launch before appropriations.</p>
+
+  <h2 id="n13-purpose">06 / Was It on Purpose?</h2>
+  <p>The record does not support it, and this investigation does not claim it.</p>
+
+  <p><strong>What is on paper:</strong> the funding ask was ready before the outage, and it went from $30.1 billion to $50 billion the same night. SMART went nationwide before its own evaluation was done, over a written warning nobody publicly answered.</p>
+
+  <p><strong>What is reported but not confirmed:</strong> unnamed sources told CBS and the Journal that a network update triggered the crash. SMART playing any role is unproven. The timing and the footprint line up, but nothing connects it to the FTI network. And there is no evidence at all that anyone did this deliberately.</p>
+
+  <p>The "deliberate" version is also the weakest one to run with. It needs FAA techs, L3Harris staff, ASI and the controllers to all keep quiet, and NATCA is already saying publicly that it got shut out. It cannot be disproven, so every denial turns into more proof. And it hands Duffy an easy out: call it a conspiracy theory and skip the questions he cannot answer, like why the evaluation got cut short.</p>
+
+  <div class="callout">
+    <div class="callout-label">Read</div>
+    The version that holds up is worse for them anyway. A rushed contractor rollout ran into a fragile leased network after they had been warned in writing about exactly that. Then they used the wreckage to sell a bill they had already sent.
+  </div>
+
+  <h2 id="n13-next">07 / What to Pull Next</h2>
+  <p>Five questions would settle most of this:</p>
+  <ol>
+    <li>What exactly changed on the FTI network on Nov. 13, and when, compared to 3:30 p.m. ET?</li>
+    <li>Who signed off on taking SMART nationwide before the 90-day evaluation ended, and on what criteria?</li>
+    <li>Did SMART or FMDS data run over the FTI circuits that failed?</li>
+    <li>Did the FAA ever answer the Oct. 9 letter?</li>
+    <li>When was the Nov. 12 funding letter drafted, and was it timed to anything?</li>
+  </ol>
+
+  <h3>Archive these before they get edited or deleted</h3>
+  <ul class="checklist">
+    <li>ASI's Nov. 13 post on X denying SMART's role</li>
+    <li>The FAA's Nov. 10 announcement taking SMART nationwide</li>
+    <li>The FAA command center's ground stop advisories from Nov. 13</li>
+    <li>Duffy's and the FAA's posts on X from Nov. 13</li>
+  </ul>
+
+  <h3>FOIA to the FAA and DOT</h3>
+  <ul class="checklist">
+    <li>SMART's 90-day evaluation plan, success criteria and any interim results</li>
+    <li>Safety risk management paperwork for the nationwide expansion</li>
+    <li>Any FAA reply to the Oct. 9 congressional letter</li>
+    <li>FTI change and maintenance records and L3Harris incident reports for Nov. 12-13</li>
+    <li>Communications between DOT/FAA leadership and ASI, Sept. 21 through Nov. 13</li>
+    <li>The ASI equity term sheet Politico described</li>
+    <li>Drafts and transmittal records for the Nov. 12 Duffy-Vought letter</li>
+  </ul>
+
+  <h3>No FOIA needed, just look these up</h3>
+  <ul class="checklist">
+    <li>FEC: ASI PAC disbursements, to confirm the reported $2,500 to Michael Alfonso</li>
+    <li>Senate LDA database: 2026 lobbying filings by ASI, L3Harris and Peraton</li>
+    <li>USAspending and SAM.gov: ASI's FAA, Army and Air Force awards</li>
+  </ul>
+
+  <p>After that it is on the new Congress. Watch whether it demands the FTI root-cause report, and whether the DOT Inspector General opens a review like it did after the 2009 outage. If neither happens, that silence is the story.</p>
+
+  <h2 id="n13-sources">Sources</h2>
+  <p>Pages opened for this entry. Unnamed-source and secondary claims are flagged in the text.</p>
+
+  <h3>The outage and official statements</h3>
+  <ul>
+    <li><a href="https://www.axios.com/2026/11/13/faa-nationwide-ground-stop" target="_blank" rel="noopener">Axios</a> &mdash; FAA ends hours-long nationwide ground stop</li>
+    <li><a href="https://www.cbsnews.com/news/faa-issues-nationwide-ground-stop/" target="_blank" rel="noopener">CBS News</a> &mdash; no indication of "nefarious act"</li>
+    <li><a href="https://gizmodo.com/faa-issues-nationwide-ground-stop-due-to-extraordinary-circumstances-2000839944" target="_blank" rel="noopener">Gizmodo</a> &mdash; Duffy and Mullin press conference</li>
+    <li><a href="https://abc7news.com/live-updates/faa-ground-stop-live-updates-what-know-nationwide-flights-are-grounded/20038887/" target="_blank" rel="noopener">ABC7</a> &mdash; Duffy blames "overloaded" routers</li>
+    <li><a href="https://www.nbcnews.com/news/us-news/live-blog/live-updates-flights-grounded-faa-communications-outage-rcna609268" target="_blank" rel="noopener">NBC News live blog</a> &mdash; "I want $50 billion"</li>
+    <li><a href="https://www.latintimes.com/flights-are-moving-again-duffy-just-warned-congress-next-breakdown-already-its-way-601325" target="_blank" rel="noopener">Latin Times</a> &mdash; "You will have more of them"</li>
+    <li><a href="https://www.paddleyourownkanoo.com/2026/11/13/faa-announces-ground-stop-for-all-aircraft-across-the-entire-united-states/" target="_blank" rel="noopener">Paddle Your Own Kanoo</a> &mdash; Kansas City Center first</li>
+  </ul>
+
+  <h3>L3Harris and FTI</h3>
+  <ul>
+    <li><a href="https://www.twz.com/air/faa-orders-ground-stop-for-all-flights-across-the-u-s" target="_blank" rel="noopener">The War Zone</a> &mdash; WSJ and CBS reporting on the L3Harris network</li>
+    <li><a href="https://www.implicator.ai/faa-lifts-ground-stop-overloaded-routers/" target="_blank" rel="noopener">Implicator</a> &mdash; competing accounts</li>
+    <li><a href="https://webarchive.library.unt.edu/web/20161103185913/https://www.oig.dot.gov/sites/default/files/WEB%20FILE2_FTI%20%20Nov%2019%20outage-6-18-10_Final%20Signature%28a%29%20%282%29.pdf" target="_blank" rel="noopener">DOT Office of Inspector General</a> &mdash; report on the 2009 FTI outage (archived)</li>
+    <li><a href="https://www.nextgov.com/digital-government/2009/11/faa-it-failure-puts-shadow-on-harris-contract/250536/" target="_blank" rel="noopener">Nextgov</a> &mdash; 2009 FTI router failure</li>
+    <li><a href="https://www.route-fifty.com/digital-government/2006/08/harris-rapped-for-fti-failures/283900/" target="_blank" rel="noopener">Route Fifty</a> &mdash; 2006 O'Hare FTI failure</li>
+    <li><a href="https://www.yahoo.com/news/us-faa-not-considering-replacing-161335458.html" target="_blank" rel="noopener">Reuters via Yahoo</a> &mdash; L3Harris manages FTI and Starlink tests</li>
+  </ul>
+
+  <h3>SMART and Air Space Intelligence</h3>
+  <ul>
+    <li><a href="https://dronexl.co/2026/06/26/faa-smart-contract-asi-air-space-intelligence/" target="_blank" rel="noopener">DroneXL</a> &mdash; ASI wins $875M contract</li>
+    <li><a href="https://www.executivebiz.com/articles/faa-awards-asi-875m-air-traffic-modernization-contract" target="_blank" rel="noopener">ExecutiveBiz</a> &mdash; FMDS and SMART scope</li>
+    <li><a href="https://avweb.com/aviation-news/lawmakers-seek-pause-on-faa-ai-tool/" target="_blank" rel="noopener">AVweb</a> &mdash; lawmakers seek pause</li>
+    <li><a href="https://www.technology.org/2026/10/14/lawmakers-faa-pause-smart-ai-air-traffic-tool-washington/" target="_blank" rel="noopener">Technology.org</a> &mdash; NATCA not involved</li>
+    <li><a href="https://www.fcnp.com/2026/11/13/beyer-warned-of-faa-ai-safety-risks-weeks-before-nationwide-aviation-disruption/" target="_blank" rel="noopener">Falls Church News-Press</a> &mdash; Beyer warnings, ~50-day timing</li>
+    <li><a href="https://ivn.us/did-new-ai-software-just-crash-the-faas-network/" target="_blank" rel="noopener">IVN</a> &mdash; rollout timeline and caveats</li>
+    <li><a href="https://www.flyingmag.com/faa-seeks-ownership-stake-atc-contractor-asi/" target="_blank" rel="noopener">FLYING</a> &mdash; FAA seeks equity stake</li>
+    <li><a href="https://bellancaaircraft.com/faa-must-pause-use-of-ai-based-smart-atc-system-lawmakers-say/" target="_blank" rel="noopener">Bellanca / FLYING</a> &mdash; 90-day evaluation, $600M SMART line</li>
+    <li><a href="https://nohatehottakes.substack.com/p/a-small-ai-startup-1-billion-in-federal" target="_blank" rel="noopener">No Hate Hot Takes (Substack)</a> &mdash; ASI money and Alfonso donation, secondary sourcing</li>
+  </ul>
+
+  <h3>Funding and contractors</h3>
+  <ul>
+    <li><a href="https://news.bgov.com/bloomberg-government-news/congress-faces-30-billion-ask-in-lame-duck-to-boost-air-safety" target="_blank" rel="noopener">Bloomberg Government</a> &mdash; $30.1B Duffy-Vought letter</li>
+    <li><a href="https://airwaysmag.com/new-post/duffy-30-billion-atc-airport-modernization" target="_blank" rel="noopener">Airways</a> &mdash; Sept. 22 $30B ask</li>
+    <li><a href="https://avweb.com/?p=330460" target="_blank" rel="noopener">AVweb</a> &mdash; Peraton named, "another $20 billion"</li>
+    <li><a href="https://backend.ainonline.com/aviation-news/air-transport/2025-12-05/faa-awards-atc-upgrade-integration-contract-peraton" target="_blank" rel="noopener">AIN</a> &mdash; Peraton formerly part of Harris</li>
+    <li><a href="https://www.airport-technology.com/?p=160121" target="_blank" rel="noopener">Airport Technology</a> &mdash; Peraton CEO statement</li>
+  </ul>
+
+  <div class="article-footnote">
+    DNP Operations Archive — this entry will be updated as the FTI root-cause report, FOIA returns, and any Inspector General review come in.<br>
+    Submit tips via <a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Matrix</a> or the <a href="submit-tip.html">contact form</a>.
+  </div>
+
+</div>
+</div>
+<!-- ══ END ENTRY: NOV. 13 GROUND STOP ══ -->
 
 <!-- ADD NEW ENTRY PANELS BELOW THIS LINE
      Copy this block structure for each new entry:
