@@ -294,6 +294,12 @@
       footer { padding: 32px 20px; }
       .footer-note { text-align: left; }
     }
+
+    /* Keep the 9-link nav on one line between the desktop and tablet layouts */
+    @media (min-width: 1025px) and (max-width: 1260px) {
+      .nav-links { gap: 20px; }
+      .nav-links a { font-size: 11px; white-space: nowrap; }
+    }
   </style>
 </head>
 <body>
@@ -311,6 +317,7 @@
     <li><a href="profile.html">My Account</a></li>
     <li><a href="submit-tip.html" class="active">Submit Tip</a></li>
     <li><a href="feed-archive.html">Feed Archive</a></li>
+    <li><a href="how-it-works.html">How We Work</a></li>
   </ul>
 </nav>
 

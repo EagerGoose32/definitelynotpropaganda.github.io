@@ -563,6 +563,12 @@
       .feed-wrap { padding: 32px 20px 60px; }
       footer { padding: 32px 20px; }
     }
+
+    /* Keep the 9-link nav on one line between the desktop and tablet layouts */
+    @media (min-width: 1025px) and (max-width: 1260px) {
+      .nav-links { gap: 20px; }
+      .nav-links a { font-size: 11px; white-space: nowrap; }
+    }
   </style>
 </head>
 <body>
@@ -580,6 +586,7 @@
     <li><a href="submit-tip.html">Submit Tip</a></li>
     <li><a href="feed-archive.html">Feed Archive</a></li>
     <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="how-it-works.html">How We Work</a></li>
     <li><a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Chatroom</a></li>
   </ul>
   <div class="nav-badge">● Live</div>
