@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>How DNP Works — Definitely Not Propaganda</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230a0a0a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='28' fill='%23e8e8e8'%3EDNP%3C/text%3E%3Ccircle cx='55' cy='48' r='4' fill='%23c8f135'/%3E%3C/svg%3E">
+
+  <!-- Open Graph / Social Preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="How DNP Works — Definitely Not Propaganda" />
+  <meta property="og:description" content="How Definitely Not Propaganda researches stories, how Claude (an AI model) is used, and how every claim is verified before it runs." />
+  <meta property="og:url" content="https://definitelynotpropaganda.github.io/how-it-works.html" />
+  <meta property="og:site_name" content="Definitely Not Propaganda" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="How DNP Works — Definitely Not Propaganda" />
+  <meta name="twitter:description" content="How Definitely Not Propaganda researches stories, how Claude (an AI model) is used, and how every claim is verified before it runs." />
+  <meta name="description" content="How Definitely Not Propaganda researches stories, how Claude (an AI model) is used, and how every claim is verified before it runs." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #2a2a2a;
+      --accent: #c8f135;
+      --accent2: #ff3b3b;
+      --text: #e8e8e8;
+      --muted: #666;
+      --mono: 'Space Mono', monospace;
+      --display: 'Bebas Neue', sans-serif;
+      --body: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .logo {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .nav-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      background: var(--accent2);
+      color: #fff;
+      padding: 4px 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+
+    /* ARTICLE LAYOUT */
+    .article-wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 40px 100px;
+    }
+
+    /* TAG ROW */
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border: 1px solid;
+      border-radius: 2px;
+    }
+    .tag-confirmed { color: var(--accent2); border-color: var(--accent2); }
+    .tag-hasbara { color: #d4a017; border-color: #d4a017; }
+    .tag-disinfo { color: #7a7aff; border-color: #7a7aff; }
+    .tag-analysis { color: #3fbf7f; border-color: #3fbf7f; }
+    .tag-fara { color: #ff8c42; border-color: #ff8c42; }
+    .tag-astroturf { color: #c875f5; border-color: #c875f5; }
+    .tag-unconfirmed { color: #8fa3b8; border-color: #8fa3b8; }
+    .tag-invoice { color: var(--accent); border-color: var(--accent); }
+
+    /* ARTICLE TYPOGRAPHY */
+    .article-title {
+      font-family: var(--display);
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.0;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      margin-bottom: 12px;
+      border-left: 4px solid var(--accent2);
+      padding-left: 18px;
+    }
+    .article-subhead {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0 0 10px 22px;
+      max-width: 620px;
+    }
+    .article-byline {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0 0 36px 22px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-wrap h2 {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent2);
+      margin: 52px 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .article-wrap h3 {
+      font-family: var(--body);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 32px 0 12px;
+    }
+    .article-wrap p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: #d0d0d0;
+      margin-bottom: 18px;
+    }
+    .article-wrap ul, .article-wrap ol {
+      margin: 0 0 18px;
+      padding-left: 22px;
+    }
+    .article-wrap li {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #d0d0d0;
+      margin-bottom: 8px;
+    }
+    .article-wrap a {
+      color: var(--text);
+      text-decoration: underline;
+      text-decoration-color: var(--muted);
+      text-underline-offset: 3px;
+    }
+    .article-wrap a:hover { text-decoration-color: var(--accent); }
+
+    /* RECEIPT (sourced quote block) */
+    .receipt {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      padding: 18px 22px;
+      margin: 24px 0;
+    }
+    .receipt-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .receipt blockquote {
+      margin: 0;
+      padding-left: 14px;
+      border-left: 2px solid var(--border);
+      font-style: italic;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #c8c8c8;
+    }
+    .receipt cite {
+      display: block;
+      margin-top: 10px;
+      font-style: normal;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* CALLOUT */
+    .callout {
+      background: linear-gradient(180deg, rgba(255,59,59,0.07), transparent);
+      border: 1px solid rgba(255,59,59,0.3);
+      padding: 20px 22px;
+      margin: 28px 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #d0d0d0;
+    }
+    .callout-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent2);
+      margin-bottom: 10px;
+    }
+
+    /* TABLE */
+    .article-wrap table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 14px;
+    }
+    .article-wrap th, .article-wrap td {
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .article-wrap th {
+      background: var(--surface);
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .article-wrap td { color: #d0d0d0; line-height: 1.6; }
+
+    /* TOC */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 20px 22px;
+      margin: 0 0 44px;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+    .toc-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .toc ol { margin: 0; padding-left: 18px; }
+    .toc li { margin-bottom: 6px; }
+    .toc a { text-decoration: none; color: var(--text); }
+    .toc a:hover { color: var(--accent); }
+
+    /* CHECKLIST (to-do style lists) */
+    .article-wrap ul.checklist { list-style: none; padding-left: 0; }
+    .article-wrap ul.checklist li { position: relative; padding-left: 26px; }
+    .article-wrap ul.checklist li::before {
+      content: "\2610";
+      position: absolute;
+      left: 0;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    /* ARCHIVE LINK */
+    .archive-link {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ARTICLE FOOTER NOTE */
+    .article-footnote {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 40px;
+      display: flex;
+      align-items: flex-start;
+      gap: 48px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-logo {
+      font-family: var(--display);
+      font-size: 40px;
+      color: var(--text);
+      letter-spacing: 0.05em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .article-wrap { overflow-wrap: anywhere; }
+    .article-wrap .tag { overflow-wrap: normal; word-break: normal; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      nav { padding: 16px 28px; }
+      .nav-links { gap: 18px; }
+      .nav-links a { font-size: 11px; min-height: 44px; display: flex; align-items: center; }
+      .article-wrap { padding: 36px 28px 80px; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; flex-wrap: wrap; }
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        gap: 0;
+        margin-top: 12px;
+        border-top: 1px solid var(--border);
+        padding-top: 12px;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 0; font-size: 13px; min-height: 44px; }
+      .nav-toggle { display: block; }
+      .nav-badge { display: none; }
+      .article-wrap { padding: 28px 20px 60px; }
+      .article-title { font-size: 30px; }
+      footer { padding: 32px 20px; flex-direction: column; gap: 24px; }
+      .footer-note { margin-left: 0; text-align: left; }
+      .footer-links { gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a rel="me" href="https://mastodon.social/@Captured99" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Mastodon</a>
+  <a href="index.html" class="logo">DNP<span>.</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="feed.html">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="operations.html">Operations</a></li>
+    <li><a href="profile.html">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
+    <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Chatroom</a></li>
+  </ul>
+  <div class="nav-badge">● Live</div>
+</nav>
+
+<div class="article-wrap">
+
+  <h1 class="article-title">How DNP Works</h1>
+  <p class="article-subhead">Receipts first. If I can't link it, I don't claim it. How the research gets done, where Claude fits, what it does not do, and how every claim gets checked.</p>
+  <p class="article-byline">Method note &middot; Last updated November 14, 2026 &middot; DNP</p>
+
+  <p>DNP is receipts-first. If I can't link it, I don't claim it.</p>
+
+  <p>I use Claude, an AI model by Anthropic, as part of my workflow. It helps me sort through news coverage, build timelines, find related records and draft write-ups. It also pushes back when my instincts get ahead of the evidence, which happens.</p>
+
+  <p>Here's what it doesn't do: verify facts, file records requests, or decide what gets published. That's on me. Every claim in a published piece is checked against a source you can click, and anything I can't fully confirm is labeled as reported or inferred.</p>
+
+  <p>Tags mean what they say. Confirmed means primary documentation. Analysis means my read on the evidence. If something changes after publication, the correction goes at the top of the piece, not buried at the bottom.</p>
+
+  <div class="toc">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#hiw-rule">The rule</a></li>
+      <li><a href="#hiw-claude">Where Claude fits</a></li>
+      <li><a href="#hiw-not">What Claude does not do</a></li>
+      <li><a href="#hiw-leads">Leads are not facts</a></li>
+      <li><a href="#hiw-verify">How I verify</a></li>
+      <li><a href="#hiw-labels">What the labels mean</a></li>
+      <li><a href="#hiw-corrections">Corrections</a></li>
+      <li><a href="#hiw-practice">See it in practice</a></li>
+      <li><a href="#hiw-check">Check my work</a></li>
+    </ol>
+  </div>
+
+  <h2 id="hiw-rule">01 / The Rule</h2>
+  <p>Every claim in a published piece has to point at something a reader can open: a document, a filing, a recording, a transcript, or reporting from a named outlet. If I cannot give you that link, the claim does not run.</p>
+  <p>That is the whole rule. Everything below is how I try to keep to it, and where the tools I use could get in the way of it.</p>
+
+  <h2 id="hiw-claude">02 / Where Claude Fits</h2>
+  <p>Claude is a tool in the workflow, not a byline. Here is what I use it for.</p>
+
+  <h3>Sorting coverage</h3>
+  <p>When a story breaks there are dozens of articles, posts and statements. Claude helps me sort through them: who reported what, what is repeated across outlets, what only one outlet is saying, and what contradicts something else.</p>
+
+  <h3>Building timelines</h3>
+  <p>Dates, filings, statements and announcements get lined up in order, so that gaps and coincidences show up. A timeline is a way of seeing a pattern. It is not proof of one, and the pieces say so.</p>
+
+  <h3>Finding related records</h3>
+  <p>Claude helps me work out what other records might exist around a story: filings, contracts, earlier reports, prior incidents. Those are things to go and look up. They are leads, not findings.</p>
+
+  <h3>Drafting</h3>
+  <p>Claude helps me turn my notes into a readable write-up and tighten the structure. What the piece says, and what it leaves out, is my call.</p>
+
+  <h3>Pushing back</h3>
+  <p>It also pushes back when my instincts get ahead of the evidence, which happens. When I am leaning on a conclusion the sources do not support, that is useful to hear before a reader tells me.</p>
+
+  <h2 id="hiw-not">03 / What Claude Does Not Do</h2>
+  <p>Claude does not:</p>
+  <ul>
+    <li><strong>Verify facts.</strong> Checking a claim against its source is my job, done by me, with the source open.</li>
+    <li><strong>File records requests.</strong> Any FOIA or records request is mine to write and send.</li>
+    <li><strong>Decide what gets published.</strong> Nothing goes up unless I put it up.</li>
+    <li><strong>Pick the stories or decide the conclusions.</strong> What is worth documenting, and what the evidence adds up to, are my calls.</li>
+    <li><strong>Count as a source.</strong> A claim rests on a source you can click, never on something an AI said.</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-label">On Me</div>
+    Responsibility for what gets published sits with me, not the tool. If a piece gets something wrong, that is my error to correct.
+  </div>
+
+  <h2 id="hiw-leads">04 / Leads Are Not Facts</h2>
+  <p>A lead is a pointer: a name to search, a record to find, a connection worth testing. It might come from Claude or it might come from me. The rule is the same either way. A lead becomes a claim only after I have opened the source behind it and read it.</p>
+
+  <p>AI gets things wrong in a specific way. It can state something confidently that is not true: a citation that does not exist, a quote attributed to the wrong person, a number that quietly blends two different sources. That is why anything Claude surfaces is treated as unconfirmed until I have checked it against the real thing.</p>
+
+  <div class="callout">
+    <div class="callout-label">The Rule For Leads</div>
+    If I cannot find the source behind a lead, the lead is dropped. It does not get softened into "reportedly" and published anyway.
+  </div>
+
+  <h2 id="hiw-verify">05 / How I Verify</h2>
+  <p>For each claim that goes into a published piece:</p>
+  <ol>
+    <li><strong>Open the source.</strong> The source itself, not a summary of it, a search snippet, or a description from an AI.</li>
+    <li><strong>Check quotes and numbers at the original.</strong> If a quote comes from a document, filing or recording, I check the wording and the figures there, not in a secondhand write-up or an AI paraphrase.</li>
+    <li><strong>Link it.</strong> The claim and its link stay together, so a reader can repeat steps one and two.</li>
+    <li><strong>Label what I cannot fully confirm.</strong> A claim that rests on a single outlet, on unnamed sources, or on my own reasoning is labeled as reported or inferred, never written as fact.</li>
+    <li><strong>If I can't link it, it doesn't run.</strong></li>
+  </ol>
+
+  <p>Labeled does not mean verified. A claim marked <em>reported</em> is one I could trace to an outlet but could not confirm on my own. A claim marked <em>inferred</em> is my reasoning from the sources, and the piece says so.</p>
+
+  <h2 id="hiw-labels">06 / What the Labels Mean</h2>
+  <p>Tags are shorthand for how much weight a piece, or part of one, can carry.</p>
+
+  <div style="overflow-x: auto;">
+  <table>
+    <tr><th>Tag</th><th>What it means</th></tr>
+    <tr>
+      <td><span class="tag tag-confirmed">Confirmed</span></td>
+      <td>Primary documentation. The claim traces to the original document, filing, recording or record.</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-analysis">Analysis</span></td>
+      <td>My read on the evidence. The facts are sourced. The interpretation is mine, and it is labeled as interpretation.</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-unconfirmed">Unconfirmed</span></td>
+      <td>Reported or inferred, not fully confirmed. The piece, or part of it, rests on a single outlet, unnamed sources, or my own inference.</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-invoice">Follow the Invoice</span></td>
+      <td>The money trail: who pays, who gets paid, and which financial incentives and ownership sit behind a decision.</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-hasbara">Hasbara</span></td>
+      <td>Organized pro-Israel messaging and public-diplomacy efforts, as documented.</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-astroturf">Astroturf</span></td>
+      <td>Fake grassroots: coordinated campaigns made to look like organic public support.</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-disinfo">Disinfo</span></td>
+      <td>Information that is false or misleading and spread on purpose.</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-fara">FARA</span></td>
+      <td>Involves a Foreign Agents Registration Act filing or foreign-agent disclosure.</td>
+    </tr>
+  </table>
+  </div>
+
+  <p>A tag describes a piece. It does not replace the sources inside it.</p>
+
+  <h2 id="hiw-corrections">07 / Corrections</h2>
+  <p>I get things wrong. When something in a published piece changes or turns out to be mistaken, the correction goes at the top of the piece, dated, with what changed. Not buried at the bottom.</p>
+
+  <p>This is the format. It is an example, not a real correction:</p>
+
+  <div class="callout">
+    <div class="callout-label">Correction &middot; [date] &middot; Format example</div>
+    [What the piece said, what it says now, and why it changed.]
+  </div>
+
+  <p>Spotted a mistake? <a href="submit-tip.html">Send it through the tip form</a>.</p>
+
+  <h2 id="hiw-practice">08 / See It In Practice</h2>
+  <p>The <a href="operations.html#nov13">Nov. 13 ground stop entry</a> shows the labels at work. It carries the Unconfirmed tag, separates what is on paper from what is only reported, marks secondhand material with a "Confirm Before Citing" callout, and ends with the questions that are still open.</p>
+
+  <h2 id="hiw-check">09 / Check My Work</h2>
+  <p>The links are there so that you do not have to take my word for it.</p>
+  <ul>
+    <li>Click the link next to a claim and open the source.</li>
+    <li>Compare any quote against the original.</li>
+    <li>If the claim and the source do not match, tell me.</li>
+  </ul>
+
+  <p>DNP is one person using a tool. I make mistakes, and so does Claude. The process above is how I try to catch them before you do, and the corrections policy is what happens when I miss.</p>
+
+  <div class="article-footnote">
+    DNP — this page will be updated as the process changes.<br>
+    Submit tips or corrections via <a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Matrix</a> or the <a href="submit-tip.html">contact form</a>.
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DNP<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="feed.html">News Feed</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="operations.html">Operations</a></li>
+    <li><a href="profile.html">My Account</a></li>
+    <li><a href="submit-tip.html">Submit Tip</a></li>
+    <li><a href="feed-archive.html">Feed Archive</a></li>
+    <li><a href="index.html#methodology">Method</a></li>
+    <li><a href="how-it-works.html">How It Works</a></li>
+    <li><a href="https://matrix.to/#/#DNP5:matrix.org" target="_blank">Chatroom</a></li>
+    <li><a href="https://mastodon.social/@Captured99" target="_blank">Mastodon</a></li>
+    <li><a href="https://youtube.com/@DubbznWubbz99" target="_blank">YouTube</a></li>
+  </ul>
+  <div class="footer-note">
+    Definitely Not Propaganda<br>
+    All claims sourced · Receipts archived<br>
+    <a href="how-it-works.html" style="color: inherit; text-decoration: underline;">Research &amp; drafting assisted by Claude (AI)</a><br>
+    <span style="color: var(--accent);">Free press or no press.</span>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav
+  const navToggle = document.getElementById('navToggle');
+  const navLinks  = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  }
+</script>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c11d4aecef19499d875e1a4630efc593"}'></script>
+
+</body>
+</html>
