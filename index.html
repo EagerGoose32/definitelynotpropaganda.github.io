@@ -459,33 +459,98 @@
       margin-bottom: 16px;
     }
 
-    .pattern-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
+    .latest-link {
+      display: block;
+      padding: 10px 0;
       border-bottom: 1px solid var(--border);
-      font-size: 12px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1.5;
     }
-    .pattern-item:last-child { border-bottom: none; }
+    .latest-link:last-child { border-bottom: none; }
+    .latest-link:hover { color: var(--accent); }
+    .latest-link small {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-top: 4px;
+    }
 
-    .pattern-bar {
-      height: 3px;
-      background: var(--border);
-      flex: 1;
-      margin: 0 12px;
-      position: relative;
+    /* FEATURED INVESTIGATION */
+    .featured {
+      padding: 64px 40px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
     }
-    .pattern-fill {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      background: var(--accent);
-    }
-
-    .pattern-count {
+    .featured-kicker {
       font-family: var(--mono);
       font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
       color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .featured-title {
+      font-family: var(--display);
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 0.95;
+      letter-spacing: 0.01em;
+      max-width: 900px;
+      margin-bottom: 16px;
+    }
+    .featured-title a { color: var(--text); text-decoration: none; }
+    .featured-title a:hover { color: var(--accent); }
+    .featured-dek {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+      max-width: 760px;
+      margin-bottom: 32px;
+    }
+    .featured-how {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .label-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+    .label-card {
+      background: var(--bg);
+      padding: 20px;
+    }
+    .label-chip {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 3px 8px;
+      border: 1px solid currentColor;
+      margin-bottom: 10px;
+    }
+    .chip-unconfirmed { color: #8fa3b8; }
+    .chip-not-established { color: var(--accent2); }
+    .chip-secondhand { color: #f4a300; }
+    .chip-next { color: var(--accent); }
+    .label-card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 300;
     }
 
     /* CHATROOM */
@@ -702,6 +767,7 @@
       .feed-grid { grid-template-columns: 1fr; }
 .submit-section { grid-template-columns: 1fr; gap: 40px; padding: 40px 20px; }
       .section { padding: 48px 20px; }
+      .featured { padding: 48px 20px; }
       footer { padding: 32px 20px; }
     }
 
@@ -786,6 +852,36 @@
   </div>
 </section>
 
+<!-- FEATURED INVESTIGATION -->
+<section class="featured" id="featured">
+  <div class="featured-kicker">// Start here &middot; Latest investigation &middot; Nov. 14, 2026</div>
+  <h2 class="featured-title"><a href="operations.html#nov13">The Nov. 13 Ground Stop: What Broke, What Was Pushed Out Three Days Earlier, and Who Gets Paid</a></h2>
+  <p class="featured-dek">Three days before the nationwide ground stop, the FAA pushed an AI routing tool to every en route center before its own 90-day test was done. The day before, a $30.1 billion funding letter was already on appropriators' desks. That night the ask was $50 billion. Here is what the record shows, and what it doesn't.</p>
+  <div class="featured-how">How to read it: every claim carries a label</div>
+  <div class="label-grid">
+    <div class="label-card">
+      <span class="label-chip chip-unconfirmed">Unconfirmed</span>
+      <p>The cause of the outage is not officially established. The entry says so at the top, before any argument starts.</p>
+    </div>
+    <div class="label-card">
+      <span class="label-chip chip-not-established">Not Established</span>
+      <p>What the evidence does not prove gets spelled out. Nothing reviewed says the AI tool caused the crash, or that it was planned.</p>
+    </div>
+    <div class="label-card">
+      <span class="label-chip chip-secondhand">Secondhand</span>
+      <p>Leads that rest on someone else's reporting are flagged as leads to confirm, not findings, with the outlet named.</p>
+    </div>
+    <div class="label-card">
+      <span class="label-chip chip-next">What to Pull Next</span>
+      <p>Open questions, records requests and filings that would settle it. You can check our work or finish it.</p>
+    </div>
+  </div>
+  <div class="hero-cta">
+    <a href="operations.html#nov13" class="btn-primary">Read the Investigation &rarr;</a>
+    <a href="how-it-works.html" class="btn-secondary">How We Work</a>
+  </div>
+</section>
+
 <!-- METHODOLOGY -->
 <section class="section" id="methodology">
   <div class="section-header reveal">
@@ -863,27 +959,9 @@
 
     <div class="feed-sidebar">
       <div class="sidebar-block">
-        <div class="sidebar-title">// Active Patterns</div>
-        <div class="pattern-item" data-pattern="hasbara">
-          <span style="font-size: 11px;">Hasbara Ops</span>
-          <div class="pattern-bar"><div class="pattern-fill" style="width: 78%;"></div></div>
-          <span class="pattern-count">78%</span>
-        </div>
-        <div class="pattern-item" data-pattern="zoneflood">
-          <span style="font-size: 11px;">Zone Flood</span>
-          <div class="pattern-bar"><div class="pattern-fill" style="width: 54%;"></div></div>
-          <span class="pattern-count">54%</span>
-        </div>
-        <div class="pattern-item" data-pattern="taco">
-          <span style="font-size: 11px;">TACO Cycle</span>
-          <div class="pattern-bar"><div class="pattern-fill" style="width: 91%;"></div></div>
-          <span class="pattern-count">91%</span>
-        </div>
-        <div class="pattern-item" data-pattern="botsilence">
-          <span style="font-size: 11px;">Bot Silence</span>
-          <div class="pattern-bar"><div class="pattern-fill" style="width: 63%;"></div></div>
-          <span class="pattern-count">63%</span>
-        </div>
+        <div class="sidebar-title">// Operations Archive</div>
+        <a class="latest-link" href="operations.html#nov13">The Nov. 13 Ground Stop: what broke and who gets paid<small>Nov. 14, 2026 &middot; Unconfirmed &middot; Developing</small></a>
+        <a class="latest-link" href="operations.html#clocktower">The Clock Tower X Network: a $46.5M foreign influence operation<small>Updated Nov. 19, 2026 &middot; FARA</small></a>
       </div>
 
       <div class="sidebar-block">
@@ -1017,43 +1095,9 @@
     navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
   }
 
-  // ─── Documentation Feed: filter tabs + dynamic pattern percentages ────────
-  const FEED_PATTERNS = [
-    { id: 'hasbara',    keywords: ['hasbara', 'comment surge', 'coordinated', 'narrative deployed', 'platforms simultaneously'] },
-    { id: 'zoneflood',  keywords: ['zone flood', 'flooding', 'buried', 'burial', 'simultaneous', 'news cycles'] },
-    { id: 'taco',       keywords: ['taco', 'escalation', 'reversal', 'cycle', 'face-saving', 'rebrand'] },
-    { id: 'botsilence', keywords: ['bot', 'silence', 'silent', 'account creation', 'go silent'] },
-  ];
-
+  // ─── Documentation Feed: filter tabs ──────────────────────────────────────
   const feedFilterBar = document.getElementById('feedFilterBar');
   const feedItemsWrap = document.getElementById('feedItems');
-
-  function feedItemText(item) {
-    const title   = item.querySelector('.feed-title')?.textContent || '';
-    const excerpt = item.querySelector('.feed-excerpt')?.textContent || '';
-    const tags    = [...item.querySelectorAll('.feed-tag')].map(t => t.textContent).join(' ');
-    return (title + ' ' + excerpt + ' ' + tags).toLowerCase();
-  }
-
-  function recalcPatternPercentages() {
-    if (!feedItemsWrap) return;
-    const visibleItems = [...feedItemsWrap.querySelectorAll('.feed-item')]
-      .filter(item => item.style.display !== 'none');
-    if (!visibleItems.length) return;
-
-    const haystacks = visibleItems.map(feedItemText);
-
-    FEED_PATTERNS.forEach(pattern => {
-      const matches = haystacks.filter(text => pattern.keywords.some(kw => text.includes(kw))).length;
-      const pct = Math.round((matches / haystacks.length) * 100);
-      const row = document.querySelector(`.pattern-item[data-pattern="${pattern.id}"]`);
-      if (!row) return;
-      const fill  = row.querySelector('.pattern-fill');
-      const count = row.querySelector('.pattern-count');
-      if (fill)  fill.style.width = pct + '%';
-      if (count) count.textContent = pct + '%';
-    });
-  }
 
   if (feedFilterBar && feedItemsWrap) {
     feedFilterBar.addEventListener('click', (e) => {
@@ -1066,10 +1110,7 @@
         const show = filter === 'all' || item.dataset.category === filter;
         item.style.display = show ? '' : 'none';
       });
-      recalcPatternPercentages();
     });
-
-    recalcPatternPercentages();
   }
 
   // ─── Breaking entries: pulled live from the same sources as the News Feed,
@@ -1255,7 +1296,6 @@
       feedItemsWrap.querySelectorAll('.feed-item').forEach(item => {
         item.style.display = (activeFilter === 'all' || item.dataset.category === activeFilter) ? '' : 'none';
       });
-      recalcPatternPercentages();
     } catch (err) {
       console.error('Breaking news aggregation failed:', err);
       status.textContent = '⚑ Breaking entries unavailable right now — showing documented entries only.';
