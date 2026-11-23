@@ -1,18 +1,17 @@
-# Cloudflare Worker Setup for Real-Time Chat + Live Feed Proxy
+# Cloudflare Worker Setup: Real-Time Chat + Live Feed Proxy
 
-Your Worker at `https://dnf.definitelynotpropaganda.workers.dev` handles two jobs:
+The Worker at `https://dnf.definitelynotpropaganda.workers.dev` (`dnp-chat-bot` in
+`wrangler.jsonc`) handles two jobs:
 
-1. Relaying chat messages to/from the Matrix room (already set up)
-2. **NEW:** Fetching RSS feeds for the Live Feed page server-side, so the
+1. Relaying chat messages to and from the Matrix room
+2. Fetching RSS feeds for the News Feed and homepage server-side, so the
    browser never has to fight CORS or depend on flaky third-party proxy
-   services (allorigins, corsproxy, r.jina.ai, etc. — these come and go and
-   are why the feed page keeps saying sources are "unavailable")
+   services (allorigins, corsproxy, r.jina.ai, etc. come and go and are why
+   feed sources sometimes show as "unavailable")
 
-## Update Your Worker Code
+## Worker Code
 
-Replace your Cloudflare Worker code with this (it's your existing code plus
-one new `fetchFeed` action and its handler — nothing else changes, so chat
-keeps working exactly as before):
+Paste this into the Worker (Cloudflare dashboard → your worker → **Edit code**):
 
 ```javascript
 const MATRIX_HOME_SERVER = 'https://matrix.org';
@@ -241,20 +240,34 @@ async function handlePostMessage(body, env) {
 
 ## Setup Steps
 
-1. **Update the Worker**
-   - Go to your Cloudflare Workers dashboard → your worker → **Edit code**
-   - Replace the code with the version above
-   - **Save and Deploy**
-   - Your `MATRIX_BOT_TOKEN` variable stays as-is — nothing about the chat
-     setup changes.
+1. **Get a Matrix bot token** (first-time setup only)
+   - Create a Matrix account for the bot (or use an existing one) and log in
+     with Element
+   - Go to **Settings → Help & About**, scroll to **Advanced**, and copy the
+     access token
+   - Make sure the bot account has joined the room in `MATRIX_ROOM_ID`
 
-2. **Verify the feed proxy works**
-   - Test with: `curl "https://dnf.definitelynotpropaganda.workers.dev?action=fetchFeed&url=https://www.aljazeera.com/xml/rss/all.xml"`
+2. **Deploy the Worker**
+   - Go to your Cloudflare Workers dashboard → your worker → **Edit code**
+   - Replace the code with the version above, then **Save and Deploy**
+   - Store the token as an encrypted secret named `MATRIX_BOT_TOKEN`, either
+     in the dashboard (**Settings → Variables and Secrets → Add**, type
+     *Secret*) or with `npx wrangler secret put MATRIX_BOT_TOKEN`
+   - Don't put the token in `wrangler.jsonc`: that file is committed to this
+     public repo
+   - If the token is already set, redeploying leaves it in place
+
+3. **Verify chat**
+   - `curl "https://dnf.definitelynotpropaganda.workers.dev?action=getMessages&limit=3"`
+   - Should return JSON with the room's most recent messages
+
+4. **Verify the feed proxy**
+   - `curl "https://dnf.definitelynotpropaganda.workers.dev?action=fetchFeed&url=https://www.aljazeera.com/xml/rss/all.xml"`
    - Should return raw RSS/XML text starting with `<?xml ...`
 
-3. **If you add more news sources later**, add their domain(s) to the
-   `ALLOWED_FEED_HOSTS` list at the top of the Worker code — otherwise the
-   proxy will reject them with "Host not allowed".
+5. **If you add more news sources later**, add their domain(s) to the
+   `ALLOWED_FEED_HOSTS` list at the top of the Worker code, or the proxy
+   will reject them with "Host not allowed".
 
 ## Notes
 
@@ -264,6 +277,8 @@ async function handlePostMessage(body, env) {
 - Responses are cached at the edge for 3 minutes (`Cache-Control: public,
   max-age=180`) to cut down on repeat requests to the same feed.
 - `feed.html` tries this Worker endpoint first and falls back to the old
-  third-party proxy chain if the Worker is unreachable — so nothing breaks
-  while you're updating it, and once it's deployed the feed should become
-  far more reliable than it's been.
+  third-party proxy chain if the Worker is unreachable, so nothing breaks
+  while you're updating it.
+- Chat messages are fetched newest first, then reversed so the page shows
+  them oldest first. The bot posts under its own Matrix user ID.
+- The Worker handles CORS itself (the `OPTIONS` preflight branch).
