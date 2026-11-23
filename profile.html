@@ -226,15 +226,39 @@
       line-height: 1.8;
     }
     .acct-meta .val { color: var(--text); }
+    .acct-section-note a { color: var(--accent); }
 
-    .gate {
-      padding: 60px 40px;
-      text-align: center;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
+    .acct-summary {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 24px 32px;
+      margin-bottom: 24px;
     }
-    .gate a { color: var(--accent); }
+    .acct-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-ghost {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 11px 18px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .acct-nudge {
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--text);
+      border-left: 2px solid var(--accent2);
+      background: rgba(255, 59, 59, 0.06);
+      padding: 10px 14px;
+      margin-bottom: 20px;
+    }
 
     /* FOOTER */
     footer {
@@ -303,6 +327,7 @@
       .feed-header { padding: 40px 20px 24px; }
       .acct-wrap { padding: 32px 20px 60px; }
       .acct-section { padding: 24px; }
+      .acct-summary { padding: 20px 24px; }
       footer { padding: 32px 20px; }
     }
 
@@ -339,38 +364,69 @@
   <div class="feed-eyebrow"><div class="live-dot"></div>Account Settings</div>
   <h1 class="feed-headline">MY <span>ACCOUNT</span></h1>
   <p class="feed-sub">
-    Update your username, change your password, or close your account. Sensitive changes
-    require you to confirm your current password first.
+    Change your username or password, log out, or delete your account. Anything
+    sensitive asks for your current password first.
   </p>
 </div>
 
-<!-- LOGGED OUT GATE -->
-<div class="gate" id="loggedOutGate" style="display: none;">
-  Sign in to manage your account — head to the <a href="blog.html">Blog</a> page and log in.
+<!-- LOGGED OUT: INLINE LOGIN -->
+<div class="acct-wrap" id="loggedOutGate" style="display: none;">
+  <div class="acct-section">
+    <div class="acct-section-title">Log In</div>
+    <div class="acct-section-note">
+      Log in to manage your account. Don't have one yet?
+      <a href="blog.html">Sign up on the Blog page</a>.
+    </div>
+    <form id="loginForm">
+      <div class="auth-field">
+        <label class="auth-label" for="loginEmail">Email</label>
+        <input class="auth-input" type="email" id="loginEmail" autocomplete="email" required>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" for="loginPassword">Password</label>
+        <input class="auth-input" type="password" id="loginPassword" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-primary">Log In →</button>
+      <div class="auth-status" id="loginStatus" aria-live="polite"></div>
+    </form>
+  </div>
 </div>
 
 <!-- ACCOUNT PANELS -->
 <div class="acct-wrap" id="acctWrap" style="display: none;">
 
-  <div class="acct-meta">
-    Email: <span class="val" id="acctEmail"></span><br>
-    Status: <span class="val" id="acctStatus"></span>
+  <!-- SUMMARY + SESSION -->
+  <div class="acct-summary">
+    <div class="acct-meta">
+      Username: <span class="val" id="acctName"></span><br>
+      Email: <span class="val" id="acctEmail"></span><br>
+      Status: <span class="val" id="acctStatus"></span>
+    </div>
+    <div class="acct-actions">
+      <button type="button" class="btn-ghost" id="resendVerifyBtn" style="display: none;">Resend Verification Email</button>
+      <button type="button" class="btn-ghost" id="signOutBtn">Log Out</button>
+    </div>
+    <div class="auth-status" id="sessionStatus" aria-live="polite"></div>
   </div>
 
   <!-- USERNAME -->
   <div class="acct-section">
     <div class="acct-section-title">Username</div>
     <div class="acct-section-note">
-      This is the display name shown next to anything you publish (e.g. blog posts).
-      It does not change your login email.
+      Shown next to your comments. It doesn't change the email you log in with, and
+      comments you've already posted keep the name they were posted under.
+    </div>
+    <div class="acct-nudge" id="usernameNudge" style="display: none;">
+      You haven't set a username, so your comments show as
+      <strong id="fallbackNameLabel"></strong>. Pick a name below.
     </div>
     <form id="usernameForm">
       <div class="auth-field">
-        <label class="auth-label">Display Name</label>
+        <label class="auth-label" for="usernameInput">Username</label>
         <input class="auth-input" type="text" id="usernameInput" maxlength="40" placeholder="e.g. northkeep">
       </div>
       <button type="submit" class="btn-primary">Save Username →</button>
-      <div class="auth-status" id="usernameStatus"></div>
+      <div class="auth-status" id="usernameStatus" aria-live="polite"></div>
     </form>
   </div>
 
@@ -378,24 +434,24 @@
   <div class="acct-section">
     <div class="acct-section-title">Password</div>
     <div class="acct-section-note">
-      Changing your password requires re-entering your current one — Firebase requires a
-      recent login for sensitive account changes.
+      For your security, enter your current password before choosing a new one.
+      New passwords need at least 6 characters.
     </div>
     <form id="passwordForm">
       <div class="auth-field">
-        <label class="auth-label">Current Password</label>
+        <label class="auth-label" for="currentPassword">Current Password</label>
         <input class="auth-input" type="password" id="currentPassword" autocomplete="current-password" required>
       </div>
       <div class="auth-field">
-        <label class="auth-label">New Password</label>
+        <label class="auth-label" for="newPassword">New Password</label>
         <input class="auth-input" type="password" id="newPassword" autocomplete="new-password" minlength="6" required>
       </div>
       <div class="auth-field">
-        <label class="auth-label">Confirm New Password</label>
+        <label class="auth-label" for="newPasswordConfirm">Confirm New Password</label>
         <input class="auth-input" type="password" id="newPasswordConfirm" autocomplete="new-password" minlength="6" required>
       </div>
       <button type="submit" class="btn-primary">Update Password →</button>
-      <div class="auth-status" id="passwordStatus"></div>
+      <div class="auth-status" id="passwordStatus" aria-live="polite"></div>
     </form>
   </div>
 
@@ -403,17 +459,16 @@
   <div class="acct-section danger">
     <div class="acct-section-title">Delete Account</div>
     <div class="acct-section-note">
-      This permanently deletes your login — it cannot be undone. You'll need to re-enter
-      your password to confirm. (Note: this does not delete any blog posts published under
-      the editorial account; it only removes your personal login.)
+      Permanently deletes your account and stops all post emails to you. This can't be
+      undone. Comments you've already posted stay up under your username.
     </div>
     <form id="deleteForm">
       <div class="auth-field">
-        <label class="auth-label">Confirm Password</label>
+        <label class="auth-label" for="deletePassword">Confirm Password</label>
         <input class="auth-input" type="password" id="deletePassword" autocomplete="current-password" required>
       </div>
       <button type="submit" class="btn-danger">Permanently Delete My Account →</button>
-      <div class="auth-status" id="deleteStatus"></div>
+      <div class="auth-status" id="deleteStatus" aria-live="polite"></div>
     </form>
   </div>
 
@@ -446,6 +501,7 @@
 <!-- Firebase (compat SDK — same project as blog.html) -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script>
   // Mobile nav toggle
   const navToggle = document.getElementById('navToggle');
@@ -468,18 +524,28 @@
 
   if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
   const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  const loggedOutGate = document.getElementById('loggedOutGate');
-  const acctWrap = document.getElementById('acctWrap');
-  const acctEmail = document.getElementById('acctEmail');
-  const acctStatus = document.getElementById('acctStatus');
-  const usernameForm = document.getElementById('usernameForm');
-  const usernameInput = document.getElementById('usernameInput');
-  const usernameStatus = document.getElementById('usernameStatus');
-  const passwordForm = document.getElementById('passwordForm');
-  const passwordStatus = document.getElementById('passwordStatus');
-  const deleteForm = document.getElementById('deleteForm');
-  const deleteStatus = document.getElementById('deleteStatus');
+  const $ = (id) => document.getElementById(id);
+  const loggedOutGate = $('loggedOutGate');
+  const acctWrap = $('acctWrap');
+  const acctName = $('acctName');
+  const acctEmail = $('acctEmail');
+  const acctStatus = $('acctStatus');
+  const loginForm = $('loginForm');
+  const loginStatus = $('loginStatus');
+  const resendVerifyBtn = $('resendVerifyBtn');
+  const signOutBtn = $('signOutBtn');
+  const sessionStatus = $('sessionStatus');
+  const usernameNudge = $('usernameNudge');
+  const fallbackNameLabel = $('fallbackNameLabel');
+  const usernameForm = $('usernameForm');
+  const usernameInput = $('usernameInput');
+  const usernameStatus = $('usernameStatus');
+  const passwordForm = $('passwordForm');
+  const passwordStatus = $('passwordStatus');
+  const deleteForm = $('deleteForm');
+  const deleteStatus = $('deleteStatus');
 
   function setStatus(el, msg, color) {
     el.textContent = msg;
@@ -487,23 +553,142 @@
     if (msg) setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 8000);
   }
 
+  // Public name used on comments when no username is set. Must match blog.html.
+  // Never derive this from the email address — it's shown publicly.
+  function fallbackName(user) {
+    return 'Reader-' + user.uid.slice(0, 6);
+  }
+
+  // Turn Firebase error codes into plain language.
+  function friendlyError(err, fallback) {
+    switch (err && err.code) {
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+      case 'auth/invalid-login-credentials':
+        return 'That password is incorrect.';
+      case 'auth/too-many-requests':
+        return 'Too many attempts. Wait a few minutes and try again.';
+      case 'auth/network-request-failed':
+        return 'Network error. Check your connection and try again.';
+      case 'auth/weak-password':
+        return 'That password is too weak. Use at least 6 characters.';
+      case 'auth/requires-recent-login':
+        return 'For security, log out and back in, then try again.';
+      case 'auth/user-disabled':
+        return 'This account has been disabled.';
+      case 'auth/invalid-email':
+        return "That email address doesn't look right.";
+      default:
+        return fallback;
+    }
+  }
+
   async function reauthenticate(user, password) {
     const cred = firebase.auth.EmailAuthProvider.credential(user.email, password);
     await user.reauthenticateWithCredential(cred);
   }
 
-  auth.onAuthStateChanged(user => {
+  function subscriberRef(user) {
+    return db.collection('subscribers').doc(user.uid);
+  }
+
+  // Keep the name used in post-notification emails in step with the username.
+  // Non-fatal: the username itself is already saved on the auth profile.
+  async function syncSubscriberName(user) {
+    try {
+      const ref = subscriberRef(user);
+      const snap = await ref.get();
+      if (snap.exists) {
+        await ref.update({ displayName: user.displayName || user.email.split('@')[0] });
+      }
+    } catch (err) {
+      console.warn('[Account] could not sync subscriber name:', err);
+    }
+  }
+
+  // Stop post emails before the account goes away, otherwise the subscriber
+  // record outlives the login and keeps receiving mail. Throws if it can't.
+  async function removeSubscription(user) {
+    const ref = subscriberRef(user);
+    const snap = await ref.get();
+    if (!snap.exists) return;
+    try {
+      await ref.delete();
+    } catch (err) {
+      // Rules may not allow deletes; deactivating is enough to stop emails.
+      console.warn('[Account] subscriber delete refused, deactivating instead:', err);
+      await ref.update({ active: false });
+    }
+  }
+
+  function renderAccount(user) {
+    const hasName = !!user.displayName;
+    acctName.textContent = hasName ? user.displayName : 'Not set (comments show as ' + fallbackName(user) + ')';
+    acctName.style.color = hasName ? '' : 'var(--muted)';
+    acctEmail.textContent = user.email;
+    acctStatus.textContent = user.emailVerified ? 'Verified' : 'Not verified (check your inbox for the link)';
+    acctStatus.style.color = user.emailVerified ? 'var(--accent)' : 'var(--accent2)';
+    resendVerifyBtn.style.display = user.emailVerified ? 'none' : '';
+    usernameNudge.style.display = hasName ? 'none' : '';
+    fallbackNameLabel.textContent = fallbackName(user);
+  }
+
+  auth.onAuthStateChanged(async (user) => {
     if (!user) {
       loggedOutGate.style.display = '';
       acctWrap.style.display = 'none';
       return;
     }
+    // Pick up a verification that happened in another tab or via the email link.
+    try { await user.reload(); } catch (err) { console.warn('[Account] reload failed:', err); }
     loggedOutGate.style.display = 'none';
     acctWrap.style.display = '';
-    acctEmail.textContent = user.email;
-    acctStatus.textContent = user.emailVerified ? 'Verified' : 'Not verified';
-    acctStatus.style.color = user.emailVerified ? 'var(--accent)' : 'var(--accent2)';
     usernameInput.value = user.displayName || '';
+    renderAccount(user);
+  });
+
+  // ─── LOG IN ────────────────────────────────────────────────────────────────
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = $('loginEmail').value.trim();
+    const pw = $('loginPassword').value;
+    try {
+      setStatus(loginStatus, 'Logging in...', 'var(--muted)');
+      await auth.signInWithEmailAndPassword(email, pw);
+      loginForm.reset();
+      loginStatus.textContent = '';
+    } catch (err) {
+      console.error('[Account] login error:', err);
+      const badCreds = ['auth/wrong-password', 'auth/invalid-credential', 'auth/invalid-login-credentials', 'auth/user-not-found'];
+      const msg = badCreds.includes(err.code)
+        ? 'Email or password is incorrect.'
+        : friendlyError(err, 'Could not log in. Please try again.');
+      setStatus(loginStatus, msg, 'var(--accent2)');
+    }
+  });
+
+  // ─── LOG OUT ───────────────────────────────────────────────────────────────
+  signOutBtn.addEventListener('click', async () => {
+    try {
+      await auth.signOut();
+      setStatus(loginStatus, "You've been logged out.", 'var(--accent)');
+    } catch (err) {
+      console.error('[Account] sign out error:', err);
+      setStatus(sessionStatus, 'Could not log out. Please try again.', 'var(--accent2)');
+    }
+  });
+
+  // ─── RESEND VERIFICATION ───────────────────────────────────────────────────
+  resendVerifyBtn.addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+    try {
+      await user.sendEmailVerification();
+      setStatus(sessionStatus, 'Verification email sent. Check your inbox (and spam), then reload this page.', 'var(--accent)');
+    } catch (err) {
+      console.error('[Account] resend verification error:', err);
+      setStatus(sessionStatus, friendlyError(err, 'Could not send the verification email.'), 'var(--accent2)');
+    }
   });
 
   // ─── UPDATE USERNAME ───────────────────────────────────────────────────────
@@ -515,10 +700,12 @@
     try {
       setStatus(usernameStatus, 'Saving...', 'var(--muted)');
       await user.updateProfile({ displayName: name || null });
-      setStatus(usernameStatus, 'Username updated.', 'var(--accent)');
+      await syncSubscriberName(user);
+      renderAccount(user);
+      setStatus(usernameStatus, name ? 'Username updated.' : 'Username cleared.', 'var(--accent)');
     } catch (err) {
       console.error('[Account] username update error:', err);
-      setStatus(usernameStatus, err.message || 'Could not update username.', 'var(--accent2)');
+      setStatus(usernameStatus, friendlyError(err, 'Could not update your username.'), 'var(--accent2)');
     }
   });
 
@@ -527,13 +714,13 @@
     e.preventDefault();
     const user = auth.currentUser;
     if (!user) return;
-    const current = document.getElementById('currentPassword').value;
-    const next = document.getElementById('newPassword').value;
-    const confirm = document.getElementById('newPasswordConfirm').value;
-    if (next !== confirm) { setStatus(passwordStatus, 'New passwords do not match.', 'var(--accent2)'); return; }
+    const current = $('currentPassword').value;
+    const next = $('newPassword').value;
+    const confirmPw = $('newPasswordConfirm').value;
+    if (next !== confirmPw) { setStatus(passwordStatus, "The new passwords don't match.", 'var(--accent2)'); return; }
     if (next.length < 6) { setStatus(passwordStatus, 'New password must be at least 6 characters.', 'var(--accent2)'); return; }
     try {
-      setStatus(passwordStatus, 'Verifying current password...', 'var(--muted)');
+      setStatus(passwordStatus, 'Checking your current password...', 'var(--muted)');
       await reauthenticate(user, current);
       setStatus(passwordStatus, 'Updating password...', 'var(--muted)');
       await user.updatePassword(next);
@@ -541,10 +728,7 @@
       setStatus(passwordStatus, 'Password updated.', 'var(--accent)');
     } catch (err) {
       console.error('[Account] password update error:', err);
-      const msg = err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'
-        ? 'Current password is incorrect.'
-        : (err.message || 'Could not update password.');
-      setStatus(passwordStatus, msg, 'var(--accent2)');
+      setStatus(passwordStatus, friendlyError(err, 'Could not update your password.'), 'var(--accent2)');
     }
   });
 
@@ -553,20 +737,31 @@
     e.preventDefault();
     const user = auth.currentUser;
     if (!user) return;
-    const password = document.getElementById('deletePassword').value;
+    const password = $('deletePassword').value;
     if (!confirm('This will permanently delete your account. This cannot be undone. Continue?')) return;
     try {
-      setStatus(deleteStatus, 'Verifying password...', 'var(--muted)');
+      setStatus(deleteStatus, 'Checking your password...', 'var(--muted)');
       await reauthenticate(user, password);
+    } catch (err) {
+      console.error('[Account] delete reauth error:', err);
+      setStatus(deleteStatus, friendlyError(err, 'Could not confirm your password.'), 'var(--accent2)');
+      return;
+    }
+    try {
+      setStatus(deleteStatus, 'Turning off post emails...', 'var(--muted)');
+      await removeSubscription(user);
+    } catch (err) {
+      console.error('[Account] unsubscribe before delete failed:', err);
+      setStatus(deleteStatus, "Couldn't turn off your post emails, so your account was not deleted. Please try again.", 'var(--accent2)');
+      return;
+    }
+    try {
       setStatus(deleteStatus, 'Deleting account...', 'var(--muted)');
       await user.delete();
       window.location.href = 'index.html';
     } catch (err) {
       console.error('[Account] delete error:', err);
-      const msg = err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'
-        ? 'Password is incorrect.'
-        : (err.message || 'Could not delete account.');
-      setStatus(deleteStatus, msg, 'var(--accent2)');
+      setStatus(deleteStatus, friendlyError(err, 'Could not delete your account.'), 'var(--accent2)');
     }
   });
 </script>
